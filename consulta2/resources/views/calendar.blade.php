@@ -1,121 +1,152 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <meta charset="utf-8">
-    <title>Consulta2 - Turnos</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" rel="stylesheet"/>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
-    {{-- javascript --}}
+    <title>Consulta2 | Agendar</title>
+    
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.js"></script>
 </head>
-
 <body>
+  
+<div class="container">
+    <br />
+    <h1 class="text-center text-primary"><u>Consulta2 - Experimento calendario</u></h1>
+    <br />
 
-    <div class="container mt-4">
-        <h2 class="mb-5">Agendar turnos</h2>
-        @csrf
-        <div id='fullCalendar'></div>
-    </div>
+    <div id="calendar"></div>
 
-    <script>
-        $(document).ready(function () {
+</div>
+   
+<script>
 
-            var endpoint = "{{ url('/') }}";
+$(document).ready(function () {
 
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            var calendar = $('#fullCalendar').fullCalendar({
-                editable: true,
-                events: endpoint + "/show-event-calendar",
-                displayEventTime: true,
-                eventRender: function (event, element, view) {
-                    if (event.allDay === 'true') {
-                        event.allDay = true;
-                    } else {
-                        event.allDay = false;
-                    }
-                },
-                selectable: true,
-                selectHelper: true,
-                select: function (event_start, event_end, allDay) {
-                    var event_title = prompt('Event Name:');
-                    if (event_title) {
-                        var event_start = $.fullCalendar.formatDate(event_start, "Y-MM-DD HH:mm:ss");
-                        var event_end = $.fullCalendar.formatDate(event_end, "Y-MM-DD HH:mm:ss");
-                        $.ajax({
-                            url: endpoint + "/manage-events",
-                            data: {
-                                title: event_title,
-                                start: event_start,
-                                end: event_end,
-                                type: 'create'
-                            },
-                            type: "POST",
-                            success: function (data) {
-                                displayMessage("Event created.");
-
-                                calendar.fullCalendar('renderEvent', {
-                                    id: data.id,
-                                    title: event_title,
-                                    start: event_start,
-                                    end: event_end,
-                                    allDay: allDay
-                                }, true);
-                                calendar.fullCalendar('unselect');
-                            }
-                        });
-                    }
-                },
-                eventDrop: function (event, delta) {
-                    var event_start = $.fullCalendar.formatDate(event.start, "Y-MM-DD");
-                    var event_end = $.fullCalendar.formatDate(event.end, "Y-MM-DD");
-
-                    $.ajax({
-                        url: endpoint + '/manage-events',
-                        data: {
-                            title: event.event_title,
-                            start: event_start,
-                            end: event_end,
-                            id: event.id,
-                            type: 'edit'
-                        },
-                        type: "POST",
-                        success: function (response) {
-                            displayMessage("Event updated");
-                        }
-                    });
-                },
-                eventClick: function (event) {
-                    var removeEvent = confirm("Really?");
-                    if (removeEvent) {
-                        $.ajax({
-                            type: "POST",
-                            url: endpoint + '/manage-events',
-                            data: {
-                                id: event.id,
-                                type: 'delete'
-                            },success: function (response) {
-                                calendar.fullCalendar('removeEvents', event.id);
-                                displayMessage("Event deleted");
-                            }
-                        });
-                    }
-                }
-            });
-        });
-
-        function displayMessage(message) {
-            toastr.success(message, 'Event');            
+    $.ajaxSetup({
+        headers:{
+            'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
         }
-    </script>
+    });
+    var today = new Date();
+    var calendar = $('#calendar').fullCalendar({
+        editable:true,
+        header:{
+            left:'prev,next today',
+            center:'title',
+            right:'month,agendaWeek,agendaDay'
+        },
+        events:'/show-event-calendar',
+        slotDuration: '00:50',
+        minTime: '08:00:00',
+        validRange: {
+            start: today.setDate(today.getDate() - 1), //este recobeco es para sacar 1 dia antes
+        },
+        selectable:true,
+        selectHelper: true,
+        select:function(start, end, allDay)
+        {
+            var title = prompt('Event Title:');
+
+            if(title)
+            {
+                var start = $.fullCalendar.formatDate(start, 'Y-MM-DD HH:mm:ss');
+
+                var end = $.fullCalendar.formatDate(end, 'Y-MM-DD HH:mm:ss');
+
+                $.ajax({
+                    url:"/manage-events",
+                    type:"POST",
+                    data:{
+                        title: title,
+                        start: start,
+                        end: end,
+                        type: 'create'
+                    },
+                    success:function(data)
+                    {
+                        calendar.fullCalendar('refetchEvents');
+                        alert("Event Created Successfully");
+                    }
+                })
+            }
+        },
+        editable:true,
+        eventResize: function(event, delta)
+        {
+            var start = $.fullCalendar.formatDate(event.start, 'Y-MM-DD HH:mm:ss');
+            var end = $.fullCalendar.formatDate(event.end, 'Y-MM-DD HH:mm:ss');
+            var title = event.title;
+            var id = event.id;
+            $.ajax({
+                url:"/manage-events",
+                type:"POST",
+                data:{
+                    title: title,
+                    start: start,
+                    end: end,
+                    id: id,
+                    type: 'update'
+                },
+                success:function(response)
+                {
+                    calendar.fullCalendar('refetchEvents');
+                    alert("Event Updated Successfully");
+                }
+            })
+        },
+        eventDrop: function(event, delta)
+        {
+            var start = $.fullCalendar.formatDate(event.start, 'Y-MM-DD HH:mm:ss');
+            var end = $.fullCalendar.formatDate(event.end, 'Y-MM-DD HH:mm:ss');
+            var title = event.title;
+            var id = event.id;
+            $.ajax({
+                url:"/manage-events",
+                type:"POST",
+                data:{
+                    title: title,
+                    start: start,
+                    end: end,
+                    id: id,
+                    type: 'update'
+                },
+                success:function(response)
+                {
+                    calendar.fullCalendar('refetchEvents');
+                    alert("Event Updated Successfully");
+                }
+            })
+        },
+
+        eventClick:function(event)
+        {
+            if(confirm("Are you sure you want to remove it?"))
+            {
+                var id = event.id;
+                $.ajax({
+                    url:"/manage-events",
+                    type:"POST",
+                    data:{
+                        id:id,
+                        type:"delete"
+                    },
+                    success:function(response)
+                    {
+                        calendar.fullCalendar('refetchEvents');
+                        alert("Event Deleted Successfully");
+                    }
+                })
+            }
+        }
+    });
+
+});
+  
+</script>
+  
 </body>
 </html>

@@ -32,7 +32,7 @@ class EventController extends Controller
               return response()->json($calendarEvent);
              break;
   
-           case 'edit':
+           case 'update':
               $calendarEvent = CalendarEvent::find($request->id)->update([
                   'title' => $request->title,
                   'start' => $request->start,

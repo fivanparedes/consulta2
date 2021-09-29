@@ -21,10 +21,8 @@ Route::get('/', function () {
 Route::get('/show-event-calendar', [EventController::class, 'index']);
 Route::post('/manage-events', [EventController::class, 'manageEvents']);
 
-Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
