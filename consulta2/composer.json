@@ -24,13 +24,15 @@
     "autoload": {
         "psr-4": {
             "App\\": "app/",
+            "LaravelFrontendPresets\\LightBootstrapPreset\\": "presets/light-bootstrap/src",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\\": "tests/",
+            "LaravelFrontendPresets\\LightBootstrapPreset\\": "presets/light-bootstrap/src"
         }
     },
     "scripts": {
