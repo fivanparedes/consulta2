@@ -1,4 +1,4 @@
-@extends('layouts/app', ['activePage' => 'login', 'title' => 'Light Bootstrap Dashboard Laravel by Creative Tim & UPDIVISION'])
+@extends('layouts/app', ['activePage' => 'login', 'title' => 'Consulta2 | Iniciar sesión'])
 
 @section('content')
     <div class="full-page section-image" data-color="black" data-image="{{ asset('light-bootstrap/img/full-screen-image-2.jpg') }}">
@@ -9,12 +9,12 @@
                         @csrf
                         <div class="card card-login card-hidden">
                             <div class="card-header ">
-                                <h3 class="header text-center">{{ __('Login') }}</h3>
+                                <h3 class="header text-center">{{ __('Iniciar sesión') }}</h3>
                             </div>
                             <div class="card-body ">
                                 <div class="card-body">
                                     <div class="form-group">
-                                        <label for="email" class="col-md-6 col-form-label">{{ __('E-Mail Address') }}</label>
+                                        <label for="email" class="col-md-6 col-form-label">{{ __('Correo electrónico') }}</label>
             
                                         <div class="col-md-14">
                                             <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email', 'admin@lightbp.com') }}" required autocomplete="email" autofocus>
@@ -26,7 +26,7 @@
                                             @enderror
                                         </div>
                                         <div class="form-group">
-                                            <label for="password" class="col-md-6 col-form-label">{{ __('Password') }}</label>
+                                            <label for="password" class="col-md-6 col-form-label">{{ __('Contraseña') }}</label>
                 
                                             <div class="col-md-14">
                                                 <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" value="{{ old('password', 'secret') }}" required autocomplete="current-password">
@@ -43,7 +43,7 @@
                                                 <label class="form-check-label d-flex align-items-center">
                                                     <input class="form-check-input" type="checkbox" name="remember"  id="remember">
                                                     <span class="form-check-sign"></span>
-                                                    {{ __('Remember me') }}
+                                                    {{ __('Recordarme') }}
                                                 </label>
                                             </div>
                                         </div>
@@ -55,10 +55,10 @@
                                     </div>
                                     <div class="d-flex justify-content-between">
                                         <a class="btn btn-link"  style="color:#23CCEF" href="{{ route('password.request') }}">
-                                        {{ __('Forgot password?') }}
+                                        {{ __('¿Olvidó su contraseña?') }}
                                         </a>
                                         <a class="btn btn-link" style="color:#23CCEF" href="{{ route('register') }}">
-                                            {{ __('Create account') }}
+                                            {{ __('Registrarse') }}
                                         </a>
                                     </div>
                                     

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\PatientController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -33,6 +34,9 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::resource('user', 'App\Http\Controllers\UserController', ['except' => ['show']]);
 	Route::get('profile', ['as' => 'profile.edit', 'uses' => 'App\Http\Controllers\ProfileController@edit']);
 	Route::patch('profile', ['as' => 'profile.update', 'uses' => 'App\Http\Controllers\ProfileController@update']);
+	Route::get('profile/info', ['as' => 'profile.infoedit', 'uses' => 'App\Http\Controllers\PatientController@info']);
+	Route::patch('profile/info/update', ['as' => 'patient.update', 'uses' => 'App\Http\Controllers\PatientController@update']);
+	Route::post('/patient/create', [PatientController::class, 'store']);
 	Route::patch('profile/password', ['as' => 'profile.password', 'uses' => 'App\Http\Controllers\ProfileController@password']);
 });
 

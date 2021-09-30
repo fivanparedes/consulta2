@@ -4,19 +4,13 @@ Tip 1: You can change the color of the sidebar using: data-color="purple | blue 
 
 Tip 2: you can also add an image using data-image tag
 -->
-    <div class="sidebar-wrapper">
+    <div class="sidebar-wrapper" style="background-color: black">
         <div class="logo">
-            <a href="http://www.creative-tim.com" class="simple-text">
-                {{ __("Creative Tim") }}
+            <a href="/home" class="simple-text">
+                {{ __("Consulta2") }}
             </a>
         </div>
         <ul class="nav">
-            <li class="nav-item @if($activePage == 'dashboard') active @endif">
-                <a class="nav-link" href="{{route('dashboard')}}">
-                    <i class="nc-icon nc-chart-pie-35"></i>
-                    <p>{{ __("Dashboard") }}</p>
-                </a>
-            </li>
             <li class="nav-item @if($activePage == 'calendar') active @endif">
                 <a class="nav-link" href="{{route('page.index', 'calendar')}}">
                     <i class="nc-icon nc-paper-2"></i>
@@ -82,12 +76,18 @@ Tip 2: you can also add an image using data-image tag
                     <p>{{ __("Notifications") }}</p>
                 </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item @if($activePage == 'dashboard') active @endif">
+                <a class="nav-link" href="{{route('dashboard')}}">
+                    <i class="nc-icon nc-chart-pie-35"></i>
+                    <p>{{ __("Estadísticas") }}</p>
+                </a>
+            </li>
+            {{-- <li class="nav-item">
                 <a class="nav-link active bg-danger" href="{{route('page.index', 'upgrade')}}">
                     <i class="nc-icon nc-alien-33"></i>
                     <p>{{ __("Upgrade to PRO") }}</p>
                 </a>
-            </li>
+            </li> --}}
         </ul>
     </div>
 </div>

@@ -11,27 +11,27 @@
                         <div class="card-header">
                             <div class="row align-items-center">
                                 <div class="col-md-8">
-                                    <h3 class="mb-0">{{ __('Configuración') }}</h3>
+                                    <h3 class="mb-0">{{ __('Información del paciente') }}</h3>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body">
-                            <form method="post" action="{{ route('profile.update') }}" autocomplete="off"
+                            <form method="post" action="{{ route('patient.update') }}" autocomplete="off"
                                 enctype="multipart/form-data">
                                 @csrf
                                 @method('patch')
 
-                                <h6 class="heading-small text-muted mb-4">{{ __('User information') }}</h6>
+                                <h6 class="heading-small text-muted mb-4">{{ __('Información de contacto') }}</h6>
                                 
                                 @include('alerts.success')
                                 @include('alerts.error_self_update', ['key' => 'not_allow_profile'])
         
                                 <div class="pl-lg-4">
                                     <div class="form-group{{ $errors->has('name') ? ' has-danger' : '' }}">
-                                        <label class="form-control-label" for="input-name">
-                                            <i class="w3-xxlarge fa fa-user"></i>{{ __('Name') }}
+                                        <label class="form-control-label" for="bornDate">
+                                            <i class="w3-xxlarge fa fa-user"></i>{{ __('Fecha de nacimiento') }}
                                         </label>
-                                        <input type="text" name="name" id="input-name" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" placeholder="{{ __('Name') }}" value="{{ old('name', auth()->user()->name) }}" required autofocus>
+                                        <input type="text" name="bornDate" id="bornDate" class="form-control{{ $errors->has('bornDate') ? ' is-invalid' : '' }}" placeholder="{{ __('Fecha de nacimiento') }}" value="{{ old('bornDate', auth()->user()->profile()->bornDate) }}" required autofocus>
         
                                         @include('alerts.feedback', ['field' => 'name'])
                                     </div>
@@ -85,42 +85,6 @@
                                     </div>
                                 </div>
                             </form>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="card card-user">
-                            <div class="card-image">
-                                <img src="https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400" alt="...">
-                            </div>
-                            <div class="card-body">
-                                <div class="author">
-                                    <a href="#">
-                                        <img class="avatar border-gray" src="{{ asset('light-bootstrap/img/faces/face-3.jpg') }}" alt="...">
-                                        <h5 class="title">{{ __('Mike Andrew') }}</h5>
-                                    </a>
-                                    <p class="description">
-                                        {{ __('michael24') }}
-                                    </p>
-                                </div>
-                                <p class="description text-center">
-                                {{ __(' "Lamborghini Mercy') }}
-                                    <br> {{ __('Your chick she so thirsty') }}
-                                    <br> {{ __('I am in that two seat Lambo') }}
-                                </p>
-                            </div>
-                            <hr>
-                            <div class="button-container mr-auto ml-auto">
-                                <button href="#" class="btn btn-simple btn-link btn-icon">
-                                    <i class="fa fa-facebook-square"></i>
-                                </button>
-                                <button href="#" class="btn btn-simple btn-link btn-icon">
-                                    <i class="fa fa-twitter"></i>
-                                </button>
-                                <button href="#" class="btn btn-simple btn-link btn-icon">
-                                    <i class="fa fa-google-plus-square"></i>
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>

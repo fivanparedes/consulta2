@@ -20,7 +20,7 @@
                 <script>
                     document.write(new Date().getFullYear())
                 </script>
-                <a href="http://www.creative-tim.com">{{ __('Creative Tim') }}</a> &amp; <a href="https://www.updivision.com">{{ __('Updivision') }}</a> {{ __(', made with love for a better web') }}
+                <a href="https://fivanparedes.github.io/">{{ __('Fernando Iván Paredes') }}
             </p>
         </nav>
     </div>

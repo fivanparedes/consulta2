@@ -1,11 +1,8 @@
-@extends('layouts.app', ['activePage' => 'calendar', 'title' => 'Consulta2 | Agendar turnos', 'navName' => 'calendar', 'activeButton' => 'laravel'])
+@extends('layouts.app', ['activePage' => 'calendar', 'title' => 'Consulta2 | Agendar turnos', 'navName' => 'Agendar un turno', 'activeButton' => 'laravel'])
 
 @section('content')
 <div class="container">
-    <br />
-    <h1 class="text-center "><u>Agendar un turno</u></h1>
-    <br />
-    <div id="calendar"></div>
+    <div id="calendar" style="margin-top:1em"></div>
 </div>
 <script>
     $(document).ready(function () {
