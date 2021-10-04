@@ -14,14 +14,14 @@ class CreateProfilesTable extends Migration
     public function up()
     {
         Schema::create('profiles', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('id')->autoIncrement();
             $table->date('bornDate');
             $table->string('gender');
             $table->integer('phone');
             $table->string('address');
-            $table->integer('patient_id')->nullable();
-            $table->integer('professional_id')->nullable();
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('patient_profile_id')->nullable();
+            $table->unsignedBigInteger('professional_profile_id')->nullable();
             $table->timestamps();
         });
     }

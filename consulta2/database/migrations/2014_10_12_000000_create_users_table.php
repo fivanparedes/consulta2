@@ -17,13 +17,21 @@ class CreateUsersTable extends Migration
             $table->unsignedBigInteger('id', true);
             $table->string('name');
             $table->string('lastname');
-            $table->integer('dni');
+            $table->integer('dni')->unique();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->integer('profile_id');
+            $table->integer('role_id');
+            $table->unsignedBigInteger('profile_id');
+            $table->unsignedBigInteger('calendar_event_id');
             $table->rememberToken();
             $table->timestamps();
+        });
+
+        Schema::create('roles', function(Blueprint $table) {
+            $table->integer('id')->unique();
+            $table->string('name');
+            $table->string('description');
         });
     }
 

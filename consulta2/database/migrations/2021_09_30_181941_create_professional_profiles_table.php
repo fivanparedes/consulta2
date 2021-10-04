@@ -14,11 +14,11 @@ class CreateProfessionalProfilesTable extends Migration
     public function up()
     {
         Schema::create('professional_profiles', function (Blueprint $table) {
-            $table->increments('id');
+            $table->unsignedBigInteger('id')->autoIncrement();
             $table->string('licensePlate');
             $table->string('field');
             $table->string('specialty');
-            $table->integer('parentprofile_id');
+            $table->unsignedBigInteger('profile_id');
             $table->timestamps();
         });
     }

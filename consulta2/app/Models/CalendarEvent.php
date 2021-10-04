@@ -9,9 +9,19 @@ class CalendarEvent extends Model
 {
     use HasFactory;
 
+    protected $table = 'calendar_events';
+
     protected $fillable = [
         'title',
         'start',
-        'end'
+        'end',
     ];
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
+
+    public function cite() {
+        return $this->hasOne(Cite::class);
+    }
 }

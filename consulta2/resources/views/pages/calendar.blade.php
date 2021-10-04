@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="container">
+    <p id="cuser_id" style="opacity: 0">{{auth()->user()->id}}</p>
     <div id="calendar" style="margin-top:1em"></div>
 </div>
 <script>
@@ -12,9 +13,12 @@
         }
     });
     var today = new Date();
+    // TODO: PARAMETRIZE THE CALENDAR AS MUCH AS POSSIBLE
     var calendar = $('#calendar').fullCalendar({
         height: 700,
-        editable:true,
+        editable:false,
+        nowIndicator: true,
+        eventOverlap: false,
         header:{
             left:'prev,next today',
             center:'title',
@@ -23,16 +27,19 @@
         events:'/show-event-calendar',
         slotDuration: '00:50',
         minTime: '08:00:00',
+        maxTime: '20:00:00',
         validRange: {
             start: today.setDate(today.getDate() - 1), //este recobeco es para sacar 1 dia antes
         },
         selectable:true,
+        selectOverlap: false,
         selectHelper: true,
         select:function(start, end, allDay)
         {
-            var title = prompt('Event Title:');
-
-            if(title)
+            if (calendar.view == 'month') {
+                calendar.changeView('agendaWeek');
+            }
+            if(confirm("¿Desea agendar un turno en esta fecha y hora?"))
             {
                 var start = $.fullCalendar.formatDate(start, 'Y-MM-DD HH:mm:ss');
 
@@ -42,21 +49,22 @@
                     url:"/manage-events",
                     type:"POST",
                     data:{
-                        title: title,
+                        title: "Nuevo turno",
                         start: start,
                         end: end,
+                        user_id: 1,
                         type: 'create'
                     },
                     success:function(data)
                     {
                         calendar.fullCalendar('refetchEvents');
-                        alert("Event Created Successfully");
+                        alert("Turno agendado.");
                     }
                 })
             }
         },
-        editable:true,
-        eventResize: function(event, delta)
+        editable:false,
+        /* eventResize: function(event, delta)
         {
             var start = $.fullCalendar.formatDate(event.start, 'Y-MM-DD HH:mm:ss');
             var end = $.fullCalendar.formatDate(event.end, 'Y-MM-DD HH:mm:ss');
@@ -78,14 +86,15 @@
                     alert("Event Updated Successfully");
                 }
             })
-        },
+        }, */
         eventDrop: function(event, delta)
         {
             var start = $.fullCalendar.formatDate(event.start, 'Y-MM-DD HH:mm:ss');
             var end = $.fullCalendar.formatDate(event.end, 'Y-MM-DD HH:mm:ss');
             var title = event.title;
             var id = event.id;
-            $.ajax({
+            if (title != null) {
+                $.ajax({
                 url:"/manage-events",
                 type:"POST",
                 data:{
@@ -98,16 +107,19 @@
                 success:function(response)
                 {
                     calendar.fullCalendar('refetchEvents');
-                    alert("Event Updated Successfully");
+                    alert("Turno actualizado.");
                 }
             })
+            }
+            
         },
 
         eventClick:function(event)
         {
-            if(confirm("Are you sure you want to remove it?"))
-            {
-                var id = event.id;
+            var id = event.id;      
+            if (event.title != null) {
+                if(confirm("¿Desea remover este turno?"))
+                {
                 $.ajax({
                     url:"/manage-events",
                     type:"POST",
@@ -118,10 +130,11 @@
                     success:function(response)
                     {
                         calendar.fullCalendar('refetchEvents');
-                        alert("Event Deleted Successfully");
+                        alert("Turno eliminado. Puede volver a agendar en otra fecha.");
                     }
                 })
-            }
+            }}
+            
         }
     });
 

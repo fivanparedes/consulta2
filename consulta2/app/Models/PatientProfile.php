@@ -9,6 +9,8 @@ class PatientProfile extends Model
 {
     use HasFactory;
 
+    protected $table = 'patient_profiles';
+
     protected $fillable = [
         'bornPlace',
         'familyGroup',
@@ -18,7 +20,7 @@ class PatientProfile extends Model
         'occupation'
     ];
 
-    public function parentProfile() {
-        return $this->belongsTo(Profile::class, 'parentprofile_id', 'id');
+    public function profile() {
+        return $this->belongsTo(Profile::class);
     }
 }

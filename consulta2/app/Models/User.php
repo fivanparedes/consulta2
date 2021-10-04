@@ -45,6 +45,14 @@ class User extends Authenticatable
     ];
 
     public function profile() {
-        return $this->hasOne(Profile::class, 'profile_id', 'user_id');
+        return $this->hasOne(Profile::class);
+    }
+
+    public function calendarEvents() {
+        return $this->hasMany(CalendarEvent::class);
+    }
+
+    public function role() {
+        return $this->belongsTo(Role::class);
     }
 }

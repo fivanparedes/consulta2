@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\PatientProfile;
+use App\Models\Profile;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -66,8 +68,11 @@ class RegisterController extends Controller
     {
         return User::create([
             'name' => $data['name'],
+            'lastname' => $data['lastname'],
             'email' => $data['email'],
+            'dni' => $data['dni'],
             'password' => Hash::make($data['password']),
+            'role_id' => 4
         ]);
     }
 }

@@ -14,16 +14,16 @@ class CreatePatientProfilesTable extends Migration
     public function up()
     {
         Schema::create('patient_profiles', function (Blueprint $table) {
-            $table->increments('id');
+            $table->unsignedBigInteger('id')->autoIncrement();
             $table->string('bornPlace');
             $table->string('familyGroup');
             $table->integer('familyPhone');
             $table->string('civilState');
             $table->string('scholarity');
             $table->string('occupation');
-            $table->integer('medicalHistory_id');
-            $table->integer('lifesheet_id');
-            $table->integer('parentprofile_id');
+            $table->unsignedBigInteger('medicalHistory_id');
+            $table->unsignedBigInteger('lifesheet_id');
+            $table->unsignedBigInteger('profile_id');
             $table->timestamps();
         });
     }

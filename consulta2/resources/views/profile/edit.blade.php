@@ -21,7 +21,7 @@
                                 @csrf
                                 @method('patch')
 
-                                <h6 class="heading-small text-muted mb-4">{{ __('User information') }}</h6>
+                                <h6 class="heading-small text-muted mb-4">{{ __('Datos de cuenta') }}</h6>
                                 
                                 @include('alerts.success')
                                 @include('alerts.error_self_update', ['key' => 'not_allow_profile'])
@@ -29,9 +29,25 @@
                                 <div class="pl-lg-4">
                                     <div class="form-group{{ $errors->has('name') ? ' has-danger' : '' }}">
                                         <label class="form-control-label" for="input-name">
-                                            <i class="w3-xxlarge fa fa-user"></i>{{ __('Name') }}
+                                            <i class="w3-xxlarge fa fa-user"></i>{{ __('Nombre(s)') }}
                                         </label>
-                                        <input type="text" name="name" id="input-name" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" placeholder="{{ __('Name') }}" value="{{ old('name', auth()->user()->name) }}" required autofocus>
+                                        <input type="text" name="name" id="input-name" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" placeholder="{{ __('Nombre') }}" value="{{ old('name', auth()->user()->name) }}" required autofocus>
+        
+                                        @include('alerts.feedback', ['field' => 'name'])
+                                    </div>
+                                    <div class="form-group{{ $errors->has('lastname') ? ' has-danger' : '' }}">
+                                        <label class="form-control-label" for="input-lastname">
+                                            <i class="w3-xxlarge fa fa-user"></i>{{ __('Apellido(s)') }}
+                                        </label>
+                                        <input type="text" name="lastname" id="input-lastname" class="form-control{{ $errors->has('lastname') ? ' is-invalid' : '' }}" placeholder="{{ __('Apellido') }}" value="{{ old('lastname', auth()->user()->lastname) }}" required autofocus>
+        
+                                        @include('alerts.feedback', ['field' => 'lastname'])
+                                    </div>
+                                    <div class="form-group{{ $errors->has('dni') ? ' has-danger' : '' }}">
+                                        <label class="form-control-label" for="input-dni">
+                                            <i class="w3-xxlarge fa fa-user"></i>{{ __('Número de documento') }}
+                                        </label>
+                                        <input type="text" name="dni" id="input-dni" class="form-control{{ $errors->has('dni') ? ' is-invalid' : '' }}" placeholder="{{ __('N° Doc') }}" value="{{ old('dni', auth()->user()->dni) }}" required autofocus>
         
                                         @include('alerts.feedback', ['field' => 'name'])
                                     </div>
@@ -42,7 +58,7 @@
                                         @include('alerts.feedback', ['field' => 'email'])
                                     </div>
                                     <div class="text-center">
-                                        <button type="submit" class="btn btn-default mt-4">{{ __('Save') }}</button>
+                                        <button type="submit" class="btn btn-default mt-4">{{ __('Guardar') }}</button>
                                     </div>
                                 </div>
                             </form>
@@ -51,7 +67,7 @@
                                 @csrf
                                 @method('patch')
         
-                                <h6 class="heading-small text-muted mb-4">{{ __('Password') }}</h6>
+                                <h6 class="heading-small text-muted mb-4">{{ __('Contraseña') }}</h6>
         
                                 @include('alerts.success', ['key' => 'password_status'])
                                 @include('alerts.error_self_update', ['key' => 'not_allow_password'])
@@ -59,36 +75,36 @@
                                 <div class="pl-lg-4">
                                     <div class="form-group{{ $errors->has('old_password') ? ' has-danger' : '' }}">
                                         <label class="form-control-label" for="input-current-password">
-                                            <i class="w3-xxlarge fa fa-eye-slash"></i>{{ __('Current Password') }}
+                                            <i class="w3-xxlarge fa fa-eye-slash"></i>{{ __('Contraseña actual') }}
                                         </label>
-                                        <input type="password" name="old_password" id="input-current-password" class="form-control{{ $errors->has('old_password') ? ' is-invalid' : '' }}" placeholder="{{ __('Current Password') }}" value="" required>
+                                        <input type="password" name="old_password" id="input-current-password" class="form-control{{ $errors->has('old_password') ? ' is-invalid' : '' }}" placeholder="{{ __('Contraseña actual') }}" value="" required>
         
                                         @include('alerts.feedback', ['field' => 'old_password'])
                                     </div>
                                     <div class="form-group{{ $errors->has('password') ? ' has-danger' : '' }}">
                                         <label class="form-control-label" for="input-password">
-                                            <i class="w3-xxlarge fa fa-eye-slash"></i>{{ __('New Password') }}
+                                            <i class="w3-xxlarge fa fa-eye-slash"></i>{{ __('Nueva contraseña') }}
                                         </label>
-                                        <input type="password" name="password" id="input-password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" placeholder="{{ __('New Password') }}" value="" required>
+                                        <input type="password" name="password" id="input-password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" placeholder="{{ __('Contraseña nueva') }}" value="" required>
         
                                         @include('alerts.feedback', ['field' => 'password'])
                                     </div>
                                     <div class="form-group">
                                         <label class="form-control-label" for="input-password-confirmation">
-                                            <i class="w3-xxlarge fa fa-eye-slash"></i>{{ __('Confirm New Password') }}
+                                            <i class="w3-xxlarge fa fa-eye-slash"></i>{{ __('Confirmar la nueva contraseña') }}
                                         </label>
-                                        <input type="password" name="password_confirmation" id="input-password-confirmation" class="form-control" placeholder="{{ __('Confirm New Password') }}" value="" required>
+                                        <input type="password" name="password_confirmation" id="input-password-confirmation" class="form-control" placeholder="{{ __('Confirmar contraseña') }}" value="" required>
                                     </div>
         
                                     <div class="text-center">
-                                        <button type="submit" class="btn btn-default mt-4">{{ __('Change password') }}</button>
+                                        <button type="submit" class="btn btn-default mt-4">{{ __('Cambiar contraseña') }}</button>
                                     </div>
                                 </div>
                             </form>
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    {{-- <div class="col-md-4">
                         <div class="card card-user">
                             <div class="card-image">
                                 <img src="https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400" alt="...">
@@ -120,7 +136,7 @@
                                 <button href="#" class="btn btn-simple btn-link btn-icon">
                                     <i class="fa fa-google-plus-square"></i>
                                 </button>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                 </div>

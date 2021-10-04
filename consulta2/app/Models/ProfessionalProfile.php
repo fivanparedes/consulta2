@@ -8,14 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class ProfessionalProfile extends Model
 {
     use HasFactory;
-
+    
+    protected $table = 'professional_profiles';
+    
     protected $fillable = [
         'licensePlate',
         'field',
         'specialty'
     ];
 
-    public function parentProfile() {
-        return $this->belongsTo(Profile::class, 'parentprofile_id', 'id');
+    public function profile() {
+        return $this->belongsTo(Profile::class);
     }
 }

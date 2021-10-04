@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'user', 'title' => 'Consulta2 | Configuración de cuenta', 'navName' => 'Mi cuenta', 'activeButton' => 'laravel'])
+@extends('layouts.app', ['activePage' => 'infoedit', 'title' => 'Consulta2 | Datos personales', 'navName' => 'Mi cuenta', 'activeButton' => 'laravel'])
 
 @section('content')
     <div class="content">
@@ -11,12 +11,12 @@
                         <div class="card-header">
                             <div class="row align-items-center">
                                 <div class="col-md-8">
-                                    <h3 class="mb-0">{{ __('Información del paciente') }}</h3>
+                                    <h3 class="mb-0">{{ __('Información personal') }}</h3>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body">
-                            <form method="post" action="{{ route('patient.update') }}" autocomplete="off"
+                            <form method="post" action="{{ route('generalinfo.update') }}" autocomplete="off"
                                 enctype="multipart/form-data">
                                 @csrf
                                 @method('patch')
@@ -31,57 +31,96 @@
                                         <label class="form-control-label" for="bornDate">
                                             <i class="w3-xxlarge fa fa-user"></i>{{ __('Fecha de nacimiento') }}
                                         </label>
-                                        <input type="text" name="bornDate" id="bornDate" class="form-control{{ $errors->has('bornDate') ? ' is-invalid' : '' }}" placeholder="{{ __('Fecha de nacimiento') }}" value="{{ old('bornDate', auth()->user()->profile()->bornDate) }}" required autofocus>
+                                        <input type="date" name="bornDate" id="bornDate" class="form-control{{ $errors->has('bornDate') ? ' is-invalid' : '' }}" placeholder="{{ __('Fecha de nacimiento') }}" value="{{ old('bornDate', $user_profile->bornDate) }}" required autofocus>
         
-                                        @include('alerts.feedback', ['field' => 'name'])
+                                        @include('alerts.feedback', ['field' => 'bornDate'])
                                     </div>
-                                    <div class="form-group{{ $errors->has('email') ? ' has-danger' : '' }}">
-                                        <label class="form-control-label" for="input-email"><i class="w3-xxlarge fa fa-envelope-o"></i>{{ __('Email') }}</label>
-                                        <input type="email" name="email" id="input-email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" placeholder="{{ __('Email') }}" value="{{ old('email', auth()->user()->email) }}" required>
+                                    <div class="form-group{{ $errors->has('gender') ? ' has-danger' : '' }}">
+                                        <label class="form-control-label" for="input-gender"><i class="w3-xxlarge fa fa-envelope-o"></i>{{ __('Género') }}</label>
+                                        <input type="text" name="gender" id="input-gender" class="form-control{{ $errors->has('gender') ? ' is-invalid' : '' }}" placeholder="{{ __('Género') }}" value="{{ old('gender', $user_profile->gender) }}" required>
         
-                                        @include('alerts.feedback', ['field' => 'email'])
+                                        @include('alerts.feedback', ['field' => 'gender'])
                                     </div>
+                                    <div class="form-group{{ $errors->has('address') ? ' has-danger' : '' }}">
+                                        <label class="form-control-label" for="input-address"><i class="w3-xxlarge fa fa-envelope-o"></i>{{ __('Domicilio') }}</label>
+                                        <input type="text" name="address" id="input-address" class="form-control{{ $errors->has('address') ? ' is-invalid' : '' }}" placeholder="{{ __('Domicilio') }}" value="{{ old('address', $user_profile->address) }}" required>
+        
+                                        @include('alerts.feedback', ['field' => 'gender'])
+                                    </div>
+                                    <hr class="my-4" />
+                                    {{-- Este formulario aparece si el usuario esta logueado como paciente --}}
+                                    @if ($patient_profile != null)
+                                        <h6 class="heading-small text-muted mb-4">{{ __('Datos del paciente') }}</h6>
+                                        <div class="pl-lg-4">
+                                        <div class="form-group{{ $errors->has('bornPlace') ? ' has-danger' : '' }}">
+                                            <label class="form-control-label" for="bornPlace">
+                                            <i class="w3-xxlarge fa fa-user"></i>{{ __('Lugar de nacimiento') }}
+                                            </label>
+                                            <input type="text" name="bornPlace" id="bornPlace" class="form-control{{ $errors->has('bornPlace') ? ' is-invalid' : '' }}" placeholder="{{ __('Ciudad, Provincia, Pais') }}" value="{{ old('bornPlace', $patient_profile->bornPlace) }}" required autofocus>
+    
+                                            @include('alerts.feedback', ['field' => 'bornPlace'])
+                                        </div>
+                                        <div class="form-group{{ $errors->has('familyGroup') ? ' has-danger' : '' }}">
+                                            <label class="form-control-label" for="input-familyGroup"><i class="w3-xxlarge fa fa-envelope-o"></i>{{ __('Grupo familiar conviviente') }}</label>
+                                            <input type="text" name="familyGroup" id="input-familyGroup" class="form-control{{ $errors->has('familyGroup') ? ' is-invalid' : '' }}" placeholder="{{ __('Madre, Padre, hermanos / Solo/a / En pareja') }}" value="{{ old('familyGroup', $patient_profile->familyGroup) }}" required>
+    
+                                            @include('alerts.feedback', ['field' => 'familyGroup'])
+                                        </div>
+                                        <div class="form-group{{ $errors->has('familyPhone') ? ' has-danger' : '' }}">
+                                            <label class="form-control-label" for="input-familyPhone"><i class="w3-xxlarge fa fa-envelope-o"></i>{{ __('Teléfono de un familiar cercano') }}</label>
+                                            <input type="text" name="familyPhone" id="input-familyPhone" class="form-control{{ $errors->has('familyPhone') ? ' is-invalid' : '' }}" placeholder="{{ __('N° Teléfono') }}" value="{{ old('familyPhone', $patient_profile->familyPhone) }}">
+    
+                                            @include('alerts.feedback', ['field' => 'familyPhone'])
+                                        </div>
+                                        <div class="form-group{{ $errors->has('civilState') ? ' has-danger' : '' }}">
+                                            <label class="form-control-label" for="input-civilState"><i class="w3-xxlarge fa fa-envelope-o"></i>{{ __('Estado civil') }}</label>
+                                            <input type="text" name="civilState" id="input-civilState" class="form-control{{ $errors->has('civilState') ? ' is-invalid' : '' }}" placeholder="{{ __('Solter@/Casad@/Divorciad@/Viud@') }}" value="{{ old('civilState', $patient_profile->civilState) }}">
+    
+                                            @include('alerts.feedback', ['field' => 'civilState'])
+                                        </div>
+                                        <div class="form-group{{ $errors->has('scholarity') ? ' has-danger' : '' }}">
+                                            <label class="form-control-label" for="input-scholarity"><i class="w3-xxlarge fa fa-envelope-o"></i>{{ __('Escolaridad') }}</label>
+                                            <input type="text" name="scholarity" id="input-scholarity" class="form-control{{ $errors->has('scholarity') ? ' is-invalid' : '' }}" placeholder="{{ __('Ejemplo: Secundario completo') }}" value="{{ old('scholarity', $patient_profile->scholarity) }}">
+    
+                                            @include('alerts.feedback', ['field' => 'scholarity'])
+                                        </div>
+                                        <div class="form-group{{ $errors->has('occupation') ? ' has-danger' : '' }}">
+                                            <label class="form-control-label" for="input-occupation"><i class="w3-xxlarge fa fa-envelope-o"></i>{{ __('Ocupación') }}</label>
+                                            <input type="text" name="occupation" id="input-occupation" class="form-control{{ $errors->has('occupation') ? ' is-invalid' : '' }}" placeholder="{{ __('Empleado de atención al público en La Verde S.A.') }}" value="{{ old('occupation', $patient_profile->occupation) }}">
+    
+                                            @include('alerts.feedback', ['field' => 'occupation'])
+                                        </div>
+
+                                    {{-- formulario correspondiente al profesional. --}}
+                                    {{-- TODO: comprobar por ROLE_ID en vez de PROFILE_ID--}}
+                                    @elseif ($professional_profile != null)
+
+                                        <h6 class="heading-small text-muted mb-4">{{ __('Datos del profesional') }}</h6>
+                                        <div class="pl-lg-4">
+                                        <div class="form-group{{ $errors->has('licensePlate') ? ' has-danger' : '' }}">
+                                            <label class="form-control-label" for="licensePlate">
+                                            <i class="w3-xxlarge fa fa-user"></i>{{ __('Matrícula profesional') }}
+                                            </label>
+                                            <input type="text" name="licensePlate" id="licensePlate" class="form-control{{ $errors->has('licensePlate') ? ' is-invalid' : '' }}" placeholder="{{ __('Matrícula N°') }}" value="{{ old('licensePlate', $professional_profile->licensePlate) }}" required autofocus>
+
+                                            @include('alerts.feedback', ['field' => 'licensePlate'])
+                                        </div>
+                                        <div class="form-group{{ $errors->has('field') ? ' has-danger' : '' }}">
+                                            <label class="form-control-label" for="input-field"><i class="w3-xxlarge fa fa-envelope-o"></i>{{ __('Campo de estudio') }}</label>
+                                            <input type="text" name="field" id="input-field" class="form-control{{ $errors->has('field') ? ' is-invalid' : '' }}" placeholder="{{ __('Ej: Psicología/Odontología/etc.') }}" value="{{ old('field', $professional_profile->field) }}" required>
+
+                                            @include('alerts.feedback', ['field' => 'field'])
+                                        </div>
+                                        <div class="form-group{{ $errors->has('specialty') ? ' has-danger' : '' }}">
+                                            <label class="form-control-label" for="input-specialty"><i class="w3-xxlarge fa fa-envelope-o"></i>{{ __('Especialización') }}</label>
+                                            <input type="text" name="specialty" id="input-specialty" class="form-control{{ $errors->has('specialty') ? ' is-invalid' : '' }}" placeholder="{{ __('Especificar especialización') }}" value="{{ old('specialty', $professional_profile->specialty) }}" required>
+
+                                            @include('alerts.feedback', ['field' => 'specialty'])
+                                        </div>
+                                    </div>
+                                    @endif 
                                     <div class="text-center">
-                                        <button type="submit" class="btn btn-default mt-4">{{ __('Save') }}</button>
-                                    </div>
-                                </div>
-                            </form>
-                            <hr class="my-4" />
-                            <form method="post" action="{{ route('profile.password') }}">
-                                @csrf
-                                @method('patch')
-        
-                                <h6 class="heading-small text-muted mb-4">{{ __('Password') }}</h6>
-        
-                                @include('alerts.success', ['key' => 'password_status'])
-                                @include('alerts.error_self_update', ['key' => 'not_allow_password'])
-        
-                                <div class="pl-lg-4">
-                                    <div class="form-group{{ $errors->has('old_password') ? ' has-danger' : '' }}">
-                                        <label class="form-control-label" for="input-current-password">
-                                            <i class="w3-xxlarge fa fa-eye-slash"></i>{{ __('Current Password') }}
-                                        </label>
-                                        <input type="password" name="old_password" id="input-current-password" class="form-control{{ $errors->has('old_password') ? ' is-invalid' : '' }}" placeholder="{{ __('Current Password') }}" value="" required>
-        
-                                        @include('alerts.feedback', ['field' => 'old_password'])
-                                    </div>
-                                    <div class="form-group{{ $errors->has('password') ? ' has-danger' : '' }}">
-                                        <label class="form-control-label" for="input-password">
-                                            <i class="w3-xxlarge fa fa-eye-slash"></i>{{ __('New Password') }}
-                                        </label>
-                                        <input type="password" name="password" id="input-password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" placeholder="{{ __('New Password') }}" value="" required>
-        
-                                        @include('alerts.feedback', ['field' => 'password'])
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-control-label" for="input-password-confirmation">
-                                            <i class="w3-xxlarge fa fa-eye-slash"></i>{{ __('Confirm New Password') }}
-                                        </label>
-                                        <input type="password" name="password_confirmation" id="input-password-confirmation" class="form-control" placeholder="{{ __('Confirm New Password') }}" value="" required>
-                                    </div>
-        
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-default mt-4">{{ __('Change password') }}</button>
+                                        <button type="submit" class="btn btn-default mt-4">{{ __('Guardar') }}</button>
                                     </div>
                                 </div>
                             </form>
