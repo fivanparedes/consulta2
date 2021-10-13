@@ -51,7 +51,7 @@
                                         <tr>
                                             <td>{{ $cite->id}}</td>
                                             <td>{{ $cite->title}}</td>
-                                            <td>{{ date('d-m-Y',strtotime($cite->start)) }}</td>
+                                            <td>{{ date('d-m-Y h:m',strtotime($cite->start)) }}</td>
                                             <td>@if ($cite->assisted)
                                                 Sí.
                                             @else

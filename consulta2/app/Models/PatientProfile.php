@@ -23,4 +23,16 @@ class PatientProfile extends Model
     public function profile() {
         return $this->belongsTo(Profile::class);
     }
+
+    public function calendarEvents() {
+        return $this->belongsToMany(CalendarEvent::class);
+    }
+
+    public function lifesheet() {
+        return $this->hasOne(Lifesheet::class);
+    }
+    
+    public function medicalHistory() {
+        return $this->hasOne(MedicalHistory::class);
+    }
 }

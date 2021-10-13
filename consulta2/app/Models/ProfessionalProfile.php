@@ -20,4 +20,12 @@ class ProfessionalProfile extends Model
     public function profile() {
         return $this->belongsTo(Profile::class);
     }
+
+    public function calendarEvents() {
+        return $this->hasMany(CalendarEvent::class);
+    }
+
+    public function institution() {
+        return $this->belongsTo(Institution::class);
+    }
 }

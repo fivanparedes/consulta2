@@ -24,6 +24,14 @@ class CreateProfilesTable extends Migration
             $table->unsignedBigInteger('professional_profile_id')->nullable();
             $table->timestamps();
         });
+
+        Schema::create('institutions', function(Blueprint $table) {
+            $table->integer('id')->autoIncrement();
+            $table->string('name');
+            $table->string('description');
+            $table->string('address');
+            $table->string('phone');
+        });
     }
 
     /**

@@ -41,6 +41,14 @@
         
                                         @include('alerts.feedback', ['field' => 'gender'])
                                     </div>
+                                    <div class="form-group{{ $errors->has('phone') ? ' has-danger' : '' }}">
+                                        <label class="form-control-label" for="phone">
+                                        <i class="w3-xxlarge fa fa-user"></i>{{ __('Teléfono') }}
+                                        </label>
+                                        <input type="text" name="phone" id="phone" class="form-control{{ $errors->has('phone') ? ' is-invalid' : '' }}" placeholder="{{ __('Número de teléfono') }}" value="{{ old('phone', $user_profile->phone) }}" required autofocus>
+
+                                        @include('alerts.feedback', ['field' => 'phone'])
+                                    </div>
                                     <div class="form-group{{ $errors->has('address') ? ' has-danger' : '' }}">
                                         <label class="form-control-label" for="input-address"><i class="w3-xxlarge fa fa-envelope-o"></i>{{ __('Domicilio') }}</label>
                                         <input type="text" name="address" id="input-address" class="form-control{{ $errors->has('address') ? ' is-invalid' : '' }}" placeholder="{{ __('Domicilio') }}" value="{{ old('address', $user_profile->address) }}" required>
@@ -57,6 +65,14 @@
                                             <i class="w3-xxlarge fa fa-user"></i>{{ __('Lugar de nacimiento') }}
                                             </label>
                                             <input type="text" name="bornPlace" id="bornPlace" class="form-control{{ $errors->has('bornPlace') ? ' is-invalid' : '' }}" placeholder="{{ __('Ciudad, Provincia, Pais') }}" value="{{ old('bornPlace', $patient_profile->bornPlace) }}" required autofocus>
+    
+                                            @include('alerts.feedback', ['field' => 'bornPlace'])
+                                        </div>
+                                        <div class="form-group{{ $errors->has('phone') ? ' has-danger' : '' }}">
+                                            <label class="form-control-label" for="phone">
+                                            <i class="w3-xxlarge fa fa-user"></i>{{ __('Teléfono') }}
+                                            </label>
+                                            <input type="text" name="phone" id="phone" class="form-control{{ $errors->has('phone') ? ' is-invalid' : '' }}" placeholder="{{ __('Número de teléfono') }}" value="{{ old('phone', $patient_profile->phone) }}" required autofocus>
     
                                             @include('alerts.feedback', ['field' => 'bornPlace'])
                                         </div>

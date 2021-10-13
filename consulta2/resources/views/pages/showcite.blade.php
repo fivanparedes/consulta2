@@ -12,6 +12,8 @@
                             <div class="row align-items-center">
                                 <div class="col-md-8">
                                     <h3 class="mb-0">{{ 'Sesión N° '.$cite->id }}</h3>
+                                    <p>Paciente: {{$cite->calendarEvent->title}}</p>
+                                    <p>Fecha de turno: {{$cite->calendarEvent->start}}</p>
                                     @if (date_diff(date_create($calendarEvent->start), date_create(now()))->format('%d') > 0)
                                     <div class="alert alert-warning">
                                         <button type="button" aria-hidden="true" class="close" data-dismiss="alert">

@@ -5,24 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Cite extends Model
+class Reminder extends Model
 {
     use HasFactory;
 
-    protected $table = 'cites';
+    protected $table = 'reminders';
 
     protected $fillable = [
-        'assisted',
-        'isVirtual',
-        'covered',
-        'paid'
+        'sent',
+        'answered'
     ];
 
     public function calendarEvent() {
         return $this->belongsTo(CalendarEvent::class);
     }
 
-    public function practice() {
-        return $this->belongsTo(Practice::class);
+    public function user() {
+        return $this->belongsTo(User::class);
     }
 }

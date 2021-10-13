@@ -48,11 +48,11 @@ class User extends Authenticatable
         return $this->hasOne(Profile::class);
     }
 
-    public function calendarEvents() {
-        return $this->hasMany(CalendarEvent::class);
-    }
-
     public function role() {
         return $this->belongsTo(Role::class);
+    }
+
+    public function reminders() {
+        return $this->hasMany(Reminder::class);
     }
 }

@@ -15,7 +15,8 @@ class CreateCalendarEventsTable extends Migration
     {
         Schema::create('calendar_events', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->autoIncrement();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('patient_profile_id');
+            $table->unsignedBigInteger('professional_profile_id');
             $table->string('title');
             $table->dateTime('start')->unique();
             $table->dateTime('end')->unique();

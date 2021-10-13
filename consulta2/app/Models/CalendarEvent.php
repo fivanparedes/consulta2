@@ -17,11 +17,19 @@ class CalendarEvent extends Model
         'end',
     ];
 
-    public function user() {
-        return $this->belongsTo(User::class);
+    public function patientProfile() {
+        return $this->belongsToMany(PatientProfile::class);
+    }
+
+    public function professionalProfile() {
+        return $this->belongsTo(ProfessionalProfile::class);
     }
 
     public function cite() {
         return $this->hasOne(Cite::class);
+    }
+
+    public function reminder() {
+        return $this->hasMany(Reminder::class);
     }
 }
