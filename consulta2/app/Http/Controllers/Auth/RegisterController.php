@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\PatientProfile;
+use App\Models\Permission;
 use App\Models\Profile;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
@@ -54,6 +55,7 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'dni' => ['required', 'numeric', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
@@ -66,13 +68,21 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $_user = User::create([
             'name' => $data['name'],
             'lastname' => $data['lastname'],
             'email' => $data['email'],
             'dni' => $data['dni'],
-            'password' => Hash::make($data['password']),
-            'role_id' => 4
+            'password' => Hash::make($data['password'])
         ]);
+        if ($data['type'] == 0) {
+            $_perm = Permission::where('name', '_consulta2_patient_profile_perm')->first();
+            $_user->attachPermission($_perm);
+        } else {
+            $_perm = Permission::where('name', '_consulta2_professional_profile_perm')->first();
+            $_user->attachPermission($_perm);
+        }
+        $_user->save();
+        return $_user;
     }
 }

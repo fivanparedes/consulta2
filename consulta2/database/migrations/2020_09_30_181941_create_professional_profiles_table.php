@@ -19,6 +19,11 @@ class CreateProfessionalProfilesTable extends Migration
             $table->string('field');
             $table->string('specialty');
             $table->unsignedBigInteger('profile_id');
+            $table->unsignedBigInteger('institution_id');
+            $table->foreign('profile_id')->references('id')->on('profiles')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('institution_id')->references('id')->on('institution_profiles')
+                ->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
         });
     }

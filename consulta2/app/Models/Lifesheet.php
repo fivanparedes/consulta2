@@ -25,4 +25,8 @@ class Lifesheet extends Model
     public function patientProfile() {
         return $this->belongsTo(PatientProfile::class);
     }
+
+    public function coverage() {
+        return $this->hasOne(Coverage::class);
+    }
 }

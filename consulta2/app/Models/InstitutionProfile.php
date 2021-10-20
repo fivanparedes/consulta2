@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Institution extends Model
+class InstitutionProfile extends Model
 {
     use HasFactory;
 
-    protected $table = 'institutions';
+    protected $table = 'institution_profiles';
 
     protected $fillable = [
         'name',
@@ -20,6 +20,10 @@ class Institution extends Model
 
     public function professionalProfiles() {
         return $this->hasMany(ProfessionalProfile::class);
+    }
+
+    public function user() {
+        return $this->belongsTo(User::class);
     }
 
     public function city() {

@@ -21,9 +21,10 @@ class CreatePatientProfilesTable extends Migration
             $table->string('civilState');
             $table->string('scholarity');
             $table->string('occupation');
-            $table->unsignedBigInteger('medicalHistory_id');
-            $table->unsignedBigInteger('lifesheet_id');
             $table->unsignedBigInteger('profile_id');
+            
+            $table->foreign('profile_id')->references('id')->on('profiles')
+                ->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -20,17 +20,29 @@ class CreateProfilesTable extends Migration
             $table->integer('phone');
             $table->string('address');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('patient_profile_id')->nullable();
-            $table->unsignedBigInteger('professional_profile_id')->nullable();
+            $table->integer('city_id');
+            
+            $table->foreign('user_id')
+                ->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('city_id')->references('id')->on('cities')
+                ->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
         });
 
-        Schema::create('institutions', function(Blueprint $table) {
-            $table->integer('id')->autoIncrement();
+        Schema::create('institution_profiles', function(Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->integer('city_id');
             $table->string('name');
             $table->string('description');
             $table->string('address');
             $table->string('phone');
+            $table->foreign('user_id')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('city_id')->references('id')->on('cities')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->timestamps();
         });
     }
 

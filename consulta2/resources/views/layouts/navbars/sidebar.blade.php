@@ -11,8 +11,8 @@ Tip 2: you can also add an image using data-image tag
             </a>
         </div>
         <ul class="nav">
-            <li class="nav-item @if($activePage == 'calendar') active @endif">
-                <a class="nav-link" href="{{route('page.index', 'calendar')}}">
+            <li class="nav-item @if($activePage == 'professional_index') active @endif">
+                <a class="nav-link" href="{{route('professional.index')}}">
                     <i class="nc-icon nc-paper-2"></i>
                     <p>{{ __("Agendar turno") }}</p>
                 </a>
@@ -32,13 +32,13 @@ Tip 2: you can also add an image using data-image tag
                         <li class="nav-item @if($activePage == 'user') active @endif">
                             <a class="nav-link" href="{{route('profile.edit')}}">
                                 <i class="nc-icon nc-single-02"></i>
-                                <p>{{ __("Perfil") }}</p>
+                                <p>{{ __("Cuenta") }}</p>
                             </a>
                         </li>
                         <li class="nav-item @if($activePage == 'infoedit') active @endif">
                             <a class="nav-link" href="{{route('profile.infoedit')}}">
                                 <i class="nc-icon nc-circle-09"></i>
-                                <p>{{ __("Datos personales") }}</p>
+                                <p>{{ __("Perfil") }}</p>
                             </a>
                         </li>
                         @if (auth()->user()->role_id == 4)

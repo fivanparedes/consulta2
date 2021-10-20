@@ -36,6 +36,13 @@
                                             <div class="form-group">
                                                 <input type="password" name="password_confirmation" placeholder="Confirmar contraseña" class="form-control" required autofocus>
                                             </div>
+                                            <div class="form-group">
+                                                <label for="type">Yo soy...</label>
+                                                <select class="form-control" name="type">
+                                                    <option value="0">Paciente</option>
+                                                    <option value="1">Profesional</option>
+                                                </select>
+                                            </div>
                                             <div class="form-group d-flex justify-content-center">
                                                 <div class="form-check rounded col-md-10 text-left">
                                                     <label class="form-check-label text-white d-flex align-items-center">

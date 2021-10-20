@@ -13,24 +13,30 @@ class CreateCitiesTable extends Migration
      */
     public function up()
     {
-        Schema::create('cities', function (Blueprint $table) {
+        Schema::create('countries', function (Blueprint $table) {
             $table->integer('id')->autoIncrement();
             $table->string('name');
-            $table->integer('province_id');
-            $table->timestamps();
+            $table->integer('code');
         });
 
         Schema::create('provinces', function (Blueprint $table) {
             $table->integer('id')->autoIncrement();
             $table->string('name');
             $table->integer('country_id');
+            $table->foreign('country_id')->references('id')->on('countries')
+                ->onUpdate('cascade')->onDelete('cascade');
         });
 
-        Schema::create('countries', function (Blueprint $table) {
+        Schema::create('cities', function (Blueprint $table) {
             $table->integer('id')->autoIncrement();
             $table->string('name');
-            $table->integer('code');
+            $table->integer('zipcode');
+            $table->integer('province_id');
+            $table->foreign('province_id')->references('id')->on('provinces')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->timestamps();
         });
+        
     }
 
     /**

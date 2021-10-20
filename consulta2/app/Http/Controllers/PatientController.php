@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\InstitutionProfile;
 use App\Models\PatientProfile;
 use App\Models\ProfessionalProfile;
 use App\Models\Profile;
@@ -13,18 +14,6 @@ use Illuminate\Support\Facades\Auth;
 
 class PatientController extends Controller
 {
-
-    // Recovers the correct info depending on the type of login.
-    // TODO: Use ROLE instead of PROFILE 
-    public function info() {
-        $user_profile = Profile::where('user_id', auth()->user()->id)->first();
-        $patient_profile = PatientProfile::where('profile_id', $user_profile->id)->first();
-        $professional_profile = ProfessionalProfile::where('profile_id', $user_profile->id)->first();
-        return view('profile.infoedit')->with([
-            'user_profile' => $user_profile,
-            'patient_profile' => $patient_profile,
-            'professional_profile' => $professional_profile]);
-    }
 
     public function update(Request $request)
     {
@@ -59,41 +48,28 @@ class PatientController extends Controller
     }
 
 
-    //Creates a patient profile after registering.
+    //Creates a blank patient profile after registering.
     // TODO: make this damn thing work
     public function create() {
         $user = User::find(auth()->user()->id);
-        $user->role_id = 4;
-        $patient = new PatientProfile([
-            'bornPlace' => 'Ej. Posadas',
-            'familyGroup' => 'Ej. Conviviendo con los padres y hermanos',
-            'familyPhone' => '3764000000',
-            'civilState' => 'Ej: Soltero/a',
-            'scholarity' => 'Ej: Universitario en curso',
-            'occupation' => 'Ej: Atención al cliente'
-        ]);
-        $patient->save();
-
-        $profile = new Profile([
-            'patient_profile_id' => $patient->id,
-            'bornDate' => now(),
-            'gender' => 'Femenino',
-            'phone' => '3764123123',
-            'address' => 'Domicilio',
-        ]);
-
-        $profile->save();
-
-        $patient->profile()->associate($profile);
-        $patient->save();
-
+        if (!empty(Profile::where('user_id', auth()->user()->id))) {
+            return abort(404);
+        }       
+        $profile = new Profile();
         $profile->user()->associate($user);
-
-        $user->update([
-            'profile_id' => $profile->id
-        ]);
-        $profile->save();
         $user->save();
+        if ($user->isAbleTo('_consulta2_patient_profile_perm')) {
+            $patient = new PatientProfile();
+            $patient->profile()->associate($profile);
+            $patient->save();
+            $profile->save();
+        } else if ($user->isAbleTo('_consulta2_professional_profile_perm')) {
+            $professional = new ProfessionalProfile();
+            $professional->profile()->associate($profile);
+            $professional->save();
+            $profile->save();
+        }
+        
         return redirect('/profile/info');
     }
 

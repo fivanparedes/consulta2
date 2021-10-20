@@ -14,10 +14,11 @@ class CreatePracticesTable extends Migration
     public function up()
     {
         Schema::create('practices', function (Blueprint $table) {
-            $table->id();
+            $table->integer('id')->autoIncrement();
             $table->string('name');
             $table->string('nomenclature');
             $table->string('description');
+            $table->integer('maxtime');
             $table->float('price');
             $table->float('copayment');
             $table->timestamps();
