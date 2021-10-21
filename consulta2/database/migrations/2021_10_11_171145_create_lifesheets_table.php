@@ -18,7 +18,6 @@ class CreateLifesheetsTable extends Migration
             $table->string('name');
             $table->string('address');
             $table->string('phone');
-            $table->boolean('supported');
             $table->timestamps();
         });
         Schema::create('lifesheets', function (Blueprint $table) {
@@ -65,5 +64,7 @@ class CreateLifesheetsTable extends Migration
     public function down()
     {
         Schema::dropIfExists('lifesheets');
+        Schema::dropIfExists('coverages');
+        Schema::dropIfExists('medical_histories');
     }
 }

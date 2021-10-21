@@ -29,7 +29,7 @@ class ProfileController extends Controller
                 'institution' => $institution_profile
             ]);
         } else if ($user->isAbleTo('_consulta2_professional_profile_perm')) {
-            $user_profile = Profile::where('user_id', '=', auth()->user()->id)->get();
+            $user_profile = Profile::where('user_id', '=', auth()->user()->id)->first();
             $professional_profile = ProfessionalProfile::where('profile_id', $user_profile->id)->first();
             return view('profile.infoedit')->with([
                 'user_profile' => $user_profile,

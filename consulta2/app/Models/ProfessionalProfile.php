@@ -26,6 +26,6 @@ class ProfessionalProfile extends Model
     }
 
     public function institution() {
-        return $this->belongsTo(Institution::class);
+        return $this->belongsTo(InstitutionProfile::class);
     }
 }

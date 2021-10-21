@@ -86,4 +86,13 @@ class EventController extends Controller
              break;
         }
     }
+
+    /* * Function to store new Events via the new system
+        * */
+    public function store(Request $request) {
+            $_event = new CalendarEvent([
+                'start' => $request->start,
+                'end' => $request->end
+            ]);
+    }
 }

@@ -41,9 +41,9 @@ Tip 2: you can also add an image using data-image tag
                                 <p>{{ __("Perfil") }}</p>
                             </a>
                         </li>
-                        @if (auth()->user()->role_id == 4)
+                        @if (Auth::user()->isAbleTo('_consulta2_patient_profile_perm'))
                         <li class="nav-item @if($activePage == 'user-management') active @endif">
-                            <a class="nav-link" href="{{route('user.index')}}">
+                            <a class="nav-link" href="{{route('profile.lifesheet')}}">
                                 <i class="nc-icon nc-circle-09"></i>
                                 <p>{{ __("Hoja de vida") }}</p>
                             </a>
@@ -54,7 +54,7 @@ Tip 2: you can also add an image using data-image tag
                     </ul>
                 </div>
             </li>
-            @if (auth()->user()->role_id < 4)
+            @if (!Auth::user()->isAbleTo('_consulta2_patient_profile_perm'))
             <li class="nav-item @if($activePage == 'cites') active @endif">
                 <a class="nav-link" href="{{route('cite.index')}}">
                     <i class="nc-icon nc-notes"></i>

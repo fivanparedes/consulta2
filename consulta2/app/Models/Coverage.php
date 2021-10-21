@@ -9,7 +9,7 @@ class Coverage extends Model
 {
     use HasFactory;
 
-    protected $table = 'coverage';
+    protected $table = 'coverages';
 
     protected $fillable = [
         'name',
@@ -19,6 +19,6 @@ class Coverage extends Model
     ];
 
     public function lifesheet() {
-        return $this->belongsTo(Lifesheet::class);
+        return $this->hasMany(Lifesheet::class);
     }
 }

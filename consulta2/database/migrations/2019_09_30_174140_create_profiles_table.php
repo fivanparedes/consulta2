@@ -17,7 +17,7 @@ class CreateProfilesTable extends Migration
             $table->unsignedBigInteger('id')->autoIncrement();
             $table->date('bornDate');
             $table->string('gender');
-            $table->integer('phone');
+            $table->string('phone');
             $table->string('address');
             $table->unsignedBigInteger('user_id');
             $table->integer('city_id');

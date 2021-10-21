@@ -268,7 +268,7 @@ return [
         | Turn this value to false if you don't want to use Laratrust admin panel
         |
         */
-        'register' => false,
+        'register' => true,
 
         /*
         |--------------------------------------------------------------------------
@@ -279,7 +279,7 @@ return [
         | will be accessible from.
         |
         */
-        'path' => 'laratrust',
+        'path' => 'config/roles_permissions',
 
         /*
         |--------------------------------------------------------------------------
@@ -322,13 +322,13 @@ return [
         */
         'roles_restrictions' => [
             // The user won't be able to remove roles already assigned to users.
-            'not_removable' => [],
+            'not_removable' => ['Patient', 'Professional', 'Admin'],
 
             // The user won't be able to edit the role and the permissions assigned.
             'not_editable' => [],
 
             // The user won't be able to delete the role.
-            'not_deletable' => [],
+            'not_deletable' => ['Patient', 'Professional', 'Admin'],
         ],
     ]
 ];

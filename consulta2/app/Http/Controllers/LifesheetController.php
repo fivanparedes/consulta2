@@ -17,7 +17,7 @@ class LifesheetController extends Controller
         $profile = Profile::where('user_id', auth()->user()->id)->first();
         $patient = $profile->patientProfile;
         $lifesheet = $patient->lifesheet;
-        $chosencoverage = Coverage::find($request->coverage);
+        $chosencoverage = Coverage::find($request->coverages);
 
         $lifesheet->update([
             'diseases' => $request->diseases,

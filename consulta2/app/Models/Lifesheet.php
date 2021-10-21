@@ -27,6 +27,6 @@ class Lifesheet extends Model
     }
 
     public function coverage() {
-        return $this->hasOne(Coverage::class);
+        return $this->belongsTo(Coverage::class);
     }
 }

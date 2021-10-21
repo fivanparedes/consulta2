@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\Coverage;
 
 class LocationSeeder extends Seeder
 {
@@ -34,6 +35,12 @@ class LocationSeeder extends Seeder
             'name' => 'Apóstoles',
             'zipcode' => 3350,
             'province_id' => 1
+        ]);
+
+        Coverage::create([
+            'name' => 'Particular',
+            'address' => '',
+            'phone' => ''
         ]);
     }
 }

@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\City;
+use App\Models\Coverage;
 use App\Models\InstitutionProfile;
+use App\Models\Lifesheet;
 use App\Models\PatientProfile;
 use App\Models\ProfessionalProfile;
 use App\Models\Profile;
@@ -22,6 +25,7 @@ class PatientController extends Controller
         $professional_profile = ProfessionalProfile::where('profile_id', $user_profile->id)->first();
         $user_profile->update([
             'bornDate' => $request->bornDate,
+            'phone' => $request->phone,
             'gender' => $request->gender,
             'address' => $request->address
         ]);
@@ -52,20 +56,29 @@ class PatientController extends Controller
     // TODO: make this damn thing work
     public function create() {
         $user = User::find(auth()->user()->id);
-        if (!empty(Profile::where('user_id', auth()->user()->id))) {
+        $city = City::find(1);
+        if ($user->profile != null) {
             return abort(404);
         }       
         $profile = new Profile();
         $profile->user()->associate($user);
+        $profile->city()->associate($city);
+        $profile->save();
         $user->save();
         if ($user->isAbleTo('_consulta2_patient_profile_perm')) {
             $patient = new PatientProfile();
+            $lifesheet = new Lifesheet();
+            $coverage = Coverage::find(1);
+            $lifesheet->coverage()->associate($coverage);
+            $lifesheet->patientProfile()->associate($patient);
             $patient->profile()->associate($profile);
             $patient->save();
-            $profile->save();
+            $lifesheet->save();
         } else if ($user->isAbleTo('_consulta2_professional_profile_perm')) {
+            $institution = InstitutionProfile::find(1);
             $professional = new ProfessionalProfile();
             $professional->profile()->associate($profile);
+            $professional->institution()->associate($institution);
             $professional->save();
             $profile->save();
         }

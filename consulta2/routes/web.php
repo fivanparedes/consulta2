@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\PatientController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Session;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +21,14 @@ use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('/clearapp', function() {
+	Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('view:clear');
+    Session::flush();
+    return redirect('/');
 });
 
 Route::get('/show-event-calendar', [EventController::class, 'index']);
@@ -44,10 +54,11 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/profile/create', [PatientController::class, 'create']);
 	Route::patch('profile/info/update', ['as' => 'generalinfo.update', 'uses' => 'App\Http\Controllers\PatientController@update']);
 	Route::patch('profile/password', ['as' => 'profile.password', 'uses' => 'App\Http\Controllers\ProfileController@password']);
+	Route::get('/profile/lifesheet', ['as' => 'profile.lifesheet', 'uses' => 'App\Http\Controllers\LifesheetController@show']);
+	Route::patch('lifesheet/update', ['as' => 'lifesheet.update', 'uses' => 'App\Http\Controllers\LifesheetController@update']);
 	Route::get('professionals/list/', ['as' => 'professional.index', 'uses' => 'App\Http\Controllers\ProfessionalController@index']);
 });
 
 Route::group(['middleware' => 'auth'], function () {
 	Route::get('{page}', ['as' => 'page.index', 'uses' => 'App\Http\Controllers\PageController@index']);
 });
-

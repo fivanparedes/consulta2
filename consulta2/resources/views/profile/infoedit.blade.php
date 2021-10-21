@@ -57,7 +57,7 @@
                                     </div>
                                     <hr class="my-4" />
                                     {{-- Este formulario aparece si el usuario esta logueado como paciente --}}
-                                    @if ($patient_profile != null)
+                                    @if (isset($patient_profile))
                                         <h6 class="heading-small text-muted mb-4">{{ __('Datos del paciente') }}</h6>
                                         <div class="pl-lg-4">
                                         <div class="form-group{{ $errors->has('bornPlace') ? ' has-danger' : '' }}">
@@ -65,14 +65,6 @@
                                             <i class="w3-xxlarge fa fa-user"></i>{{ __('Lugar de nacimiento') }}
                                             </label>
                                             <input type="text" name="bornPlace" id="bornPlace" class="form-control{{ $errors->has('bornPlace') ? ' is-invalid' : '' }}" placeholder="{{ __('Ciudad, Provincia, Pais') }}" value="{{ old('bornPlace', $patient_profile->bornPlace) }}" required autofocus>
-    
-                                            @include('alerts.feedback', ['field' => 'bornPlace'])
-                                        </div>
-                                        <div class="form-group{{ $errors->has('phone') ? ' has-danger' : '' }}">
-                                            <label class="form-control-label" for="phone">
-                                            <i class="w3-xxlarge fa fa-user"></i>{{ __('Teléfono') }}
-                                            </label>
-                                            <input type="text" name="phone" id="phone" class="form-control{{ $errors->has('phone') ? ' is-invalid' : '' }}" placeholder="{{ __('Número de teléfono') }}" value="{{ old('phone', $patient_profile->phone) }}" required autofocus>
     
                                             @include('alerts.feedback', ['field' => 'bornPlace'])
                                         </div>
@@ -109,7 +101,7 @@
 
                                     {{-- formulario correspondiente al profesional. --}}
                                     {{-- TODO: comprobar por ROLE_ID en vez de PROFILE_ID--}}
-                                    @elseif ($professional_profile != null)
+                                    @elseif (isset($professional_profile))
 
                                         <h6 class="heading-small text-muted mb-4">{{ __('Datos del profesional') }}</h6>
                                         <div class="pl-lg-4">
