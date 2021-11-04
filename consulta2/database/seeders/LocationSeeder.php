@@ -37,10 +37,5 @@ class LocationSeeder extends Seeder
             'province_id' => 1
         ]);
 
-        Coverage::create([
-            'name' => 'Particular',
-            'address' => '',
-            'phone' => ''
-        ]);
     }
 }

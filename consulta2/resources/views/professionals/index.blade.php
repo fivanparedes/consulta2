@@ -25,7 +25,7 @@
         @else
             Trabaja en: <?php $institution = \DB::table('institution_profiles')->where('id', $professional->institution_id)->first(); echo $institution->name;?>
         @endif</p>
-          <a href="#" class="btn btn-primary">Agendar turno</a>
+          <a href="/professional/show/{{ $professional->id }}" class="btn btn-primary">Reservar turno</a>
         </div>
       </div>
             </div>

@@ -21,4 +21,8 @@ class Coverage extends Model
     public function lifesheet() {
         return $this->hasMany(Lifesheet::class);
     }
+
+    public function practices() {
+        return $this->belongsToMany(Practice::class);
+    }
 }

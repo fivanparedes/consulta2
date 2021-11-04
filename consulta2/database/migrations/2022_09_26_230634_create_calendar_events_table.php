@@ -17,10 +17,14 @@ class CreateCalendarEventsTable extends Migration
             $table->unsignedBigInteger('id')->autoIncrement();
             $table->unsignedBigInteger('professional_profile_id');
             $table->string('title');
-            $table->dateTime('start')->unique();
-            $table->dateTime('end')->unique();
+            $table->dateTime('start');
+            $table->dateTime('end');
+            $table->boolean('approved');
             $table->boolean('confirmed');
-
+            $table->boolean('isVirtual');
+            $table->integer('consult_type_id');
+            $table->foreign('consult_type_id')->references('id')->on('consult_types')
+                ->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('professional_profile_id')
                 ->references('id')->on('professional_profiles')
                 ->onUpdate('cascade')->onDelete('cascade');
@@ -42,7 +46,6 @@ class CreateCalendarEventsTable extends Migration
             $table->unsignedBigInteger('calendar_event_id');
             $table->integer('practice_id');
             $table->boolean('assisted');
-            $table->boolean('isVirtual');
             $table->boolean('covered');
             $table->boolean('paid');
             $table->foreign('calendar_event_id')

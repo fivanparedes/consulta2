@@ -18,6 +18,9 @@ class CreateLifesheetsTable extends Migration
             $table->string('name');
             $table->string('address');
             $table->string('phone');
+            $table->integer('city_id');
+            $table->foreign('city_id')->references('id')->on('cities')
+                ->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
         });
         Schema::create('lifesheets', function (Blueprint $table) {

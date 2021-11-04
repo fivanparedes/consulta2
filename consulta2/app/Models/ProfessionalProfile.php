@@ -28,4 +28,8 @@ class ProfessionalProfile extends Model
     public function institution() {
         return $this->belongsTo(InstitutionProfile::class);
     }
+
+    public function businessHours() {
+        return $this->belongsToMany(BusinessHour::class, 'hours_professionals', 'professional_profile_id', 'business_hour_id');
+    }
 }

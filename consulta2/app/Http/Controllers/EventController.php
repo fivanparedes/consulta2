@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\CalendarEvent;
 use App\Models\Cite;
+use App\Models\ConsultType;
 use App\Models\Profile;
 use App\Models\PatientProfile;
+use App\Models\Practice;
 use App\Models\ProfessionalProfile;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
@@ -40,7 +43,18 @@ class EventController extends Controller
         }
         return view('calendar');
     }
- 
+    
+    public function showAvailableEvents(Request $request) {
+        if ($request->ajax()) {
+            $professional = ProfessionalProfile::where('id', $request->profid)->first();
+            $hours = $professional->businessHours;
+            $dayturns = CalendarEvent::where('start', 'like', '%'.$request->currendate.'%')->get();
+            foreach ($hours as $hour) {
+                $date = $request->currentdate . ' ' . $hour->time;
+
+            }
+        }
+    }
 
     public function manageEvents(Request $request)
     {
@@ -91,8 +105,37 @@ class EventController extends Controller
         * */
     public function store(Request $request) {
             $_event = new CalendarEvent([
-                'start' => $request->start,
-                'end' => $request->end
+                'start' => $request->input('time'),
+                'end' => $request->end,
+                'approved' => true,
+                'confirmed' => false,
+                'isVirtual' => false
             ]);
+            $_patient = PatientProfile::where('profile_id', Auth::user()->profile->id);
+            $_event->patientProfile()->attach($_patient->id);
+
+            $_consult_type = ConsultType::find($request->input('consult_type'));
+            $_event->consultType()->associate($_consult_type);
+
+            $_professional = ProfessionalProfile::find($request->input('profid'));
+            $_event->professionalProfile()->associate($_professional);
+            
+            $covered = true;
+            if ($_patient->lifesheet->coverage->id == 1) {
+                $covered = false;
+            }
+            $_cite = new Cite([
+                'assisted' => false,
+                'covered' => $covered,
+                'paid' => false
+            ]);
+            $_cite->calendarEvent()->associate($_event);
+
+            $_practice = Practice::where('consult_type_id', $request->input('consult_type'))->first();
+
+            $_cite->practice()->associate($_practice);
+            $_event->save();
+
+            return redirect('/professionals/list');
     }
 }

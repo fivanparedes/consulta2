@@ -1,7 +1,10 @@
 <?php
 namespace Database\Seeders;
 
+use App\Models\BusinessHour;
+use App\Models\ConsultType;
 use App\Models\Permission;
+use App\Models\ProfessionalProfile;
 use App\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
@@ -77,13 +80,49 @@ class UsersTableSeeder extends Seeder
             'city_id' => 1
         ]);
     
-        DB::table('professional_profiles')->insert([
+        $_prof_prof = ProfessionalProfile::create([
             'licensePlate' => 'M0002',
             'field' => 'Psicología',
             'specialty' => 'Sin especializar',
             'profile_id' => 1,
-            'institution_id' => 1
-        ]);
+            'institution_id' => 1]);
+    
+
+        $businesshours = [
+            [
+                'time' => '08:00'
+            ],
+            [
+                'time' => '09:00'
+            ],
+            [
+                'time' => '10:00'
+            ],
+            [
+                'time' => '11:00'
+            ],
+            [
+                'time' => '16:00'
+            ],
+            [
+                'time' => '17:00'
+            ],
+            [
+                'time' => '18:00'
+            ],
+            [
+                'time' => '19:00'
+            ],
+        ];
+        
+        foreach ($businesshours as $key => $value) {
+            $hour = BusinessHour::create([
+                'time' => $value['time']
+            ]);
+            $hour->save();
+            $_prof_prof->businessHours()->attach($hour->id);
+        }
+        
         $_perm = Permission::where('name', '_consulta2_institution_profile_perm')->first();
         $_perm2 = Permission::where('name', '_consulta2_professional_profile_perm')->first();
         $_role = Role::where('name', 'Admin')->first();
@@ -101,5 +140,14 @@ class UsersTableSeeder extends Seeder
         $_role2->save();
         $_prof->attachRole($_role2);
         $_prof->save();
+        
+        $_prof_prof->save();
+        
+        $_consult1 = ConsultType::where('id', 1)->first();
+        $_consult2 = ConsultType::where('id', 2)->first();
+        $_consult1->businessHours()->attach([1,2,3,4]);
+        $_consult2->businessHours()->attach([5,6,7,8]);
+        $_consult1->save();
+        $_consult2->save();
     }
 }

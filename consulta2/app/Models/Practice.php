@@ -13,17 +13,19 @@ class Practice extends Model
 
     protected $fillable = [
         'name',
-        'nomenclature',
         'description',
-        'price',
-        'copayment'
+        'maxtime'
     ];
 
     public function coverages() {
-        return $this->hasMany(Coverage::class);
+        return $this->belongsToMany(Coverage::class);
     }
 
     public function cites() {
         return $this->hasMany(Cite::class);
+    }
+
+    public function nomenclature() {
+        return $this->belongsTo(Nomenclature::class);
     }
 }

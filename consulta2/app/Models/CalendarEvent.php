@@ -29,6 +29,10 @@ class CalendarEvent extends Model
         return $this->hasOne(Cite::class);
     }
 
+    public function consultType() {
+        return $this->belongsTo(ConsultType::class);
+    }
+
     public function reminder() {
         return $this->hasMany(Reminder::class);
     }

@@ -57,6 +57,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/profile/lifesheet', ['as' => 'profile.lifesheet', 'uses' => 'App\Http\Controllers\LifesheetController@show']);
 	Route::patch('lifesheet/update', ['as' => 'lifesheet.update', 'uses' => 'App\Http\Controllers\LifesheetController@update']);
 	Route::get('professionals/list/', ['as' => 'professional.index', 'uses' => 'App\Http\Controllers\ProfessionalController@index']);
+	Route::get('professional/show/{id}', ['as' => 'professional.show', 'uses' => 'App\Http\Controllers\ProfessionalController@show']);
 });
 
 Route::group(['middleware' => 'auth'], function () {

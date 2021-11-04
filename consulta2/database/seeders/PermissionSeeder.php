@@ -40,6 +40,11 @@ class PermissionSeeder extends Seeder
                 'name' => '_consulta2_institution_profile_perm',
                 'display_name' => 'Institution Profile',
                 'description' => "It's a special kind of profile that represents an organisation."
+            ],
+            [
+                'name' => 'LifesheetController@index',
+                'display_name' => 'Lifesheet: view',
+                'description' => 'Can see users lifesheet.'
             ]
         ];
 

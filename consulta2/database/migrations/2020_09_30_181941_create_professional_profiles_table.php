@@ -14,7 +14,7 @@ class CreateProfessionalProfilesTable extends Migration
     public function up()
     {
         Schema::create('professional_profiles', function (Blueprint $table) {
-            $table->unsignedBigInteger('id')->autoIncrement();
+            $table->id();
             $table->string('licensePlate');
             $table->string('field');
             $table->string('specialty');

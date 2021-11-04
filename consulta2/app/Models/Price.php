@@ -5,20 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Cite extends Model
+class Price extends Model
 {
     use HasFactory;
 
-    protected $table = 'cites';
+    protected $table = 'prices';
 
     protected $fillable = [
-        'assisted',
-        'covered',
-        'paid'
+        'price',
+        'copayment'
     ];
 
-    public function calendarEvent() {
-        return $this->belongsTo(CalendarEvent::class);
+    public function coverage() {
+        return $this->belongsTo(Coverage::class);
     }
 
     public function practice() {
