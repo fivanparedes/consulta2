@@ -16,6 +16,7 @@ class CreatePracticesTable extends Migration
         Schema::create('consult_types', function(Blueprint $table) {
             $table->integer('id')->autoIncrement();
             $table->string('name');
+            $table->string('availability');
             $table->timestamps();
         });
         Schema::create('practices', function (Blueprint $table) {

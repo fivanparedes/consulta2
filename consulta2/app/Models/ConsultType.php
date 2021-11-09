@@ -12,7 +12,8 @@ class ConsultType extends Model
     protected $table = 'consult_types';
 
     protected $fillable = [
-        'name'
+        'name',
+        'availability'
     ];
 
     public function practices() {
@@ -26,4 +27,5 @@ class ConsultType extends Model
     public function businessHours() {
         return $this->belongsToMany(BusinessHour::class);
     }
+
 }

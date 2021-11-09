@@ -18,7 +18,7 @@ class CalendarEvent extends Model
     ];
 
     public function patientProfile() {
-        return $this->belongsToMany(PatientProfile::class);
+        return $this->belongsToMany(PatientProfile::class, 'calendar_event_patient', 'calendar_event_id', 'patient_id');
     }
 
     public function professionalProfile() {

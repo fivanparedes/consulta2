@@ -25,10 +25,10 @@ class CreateLifesheetsTable extends Migration
         });
         Schema::create('lifesheets', function (Blueprint $table) {
             $table->id();
-            $table->multiLineString('diseases');
-            $table->multiLineString('surgeries');
-            $table->multiLineString('medication');
-            $table->multiLineString('allergies');
+            $table->string('diseases');
+            $table->string('surgeries');
+            $table->string('medication');
+            $table->string('allergies');
             $table->integer('smokes');
             $table->integer('drinks');
             $table->integer('exercises');
@@ -46,7 +46,7 @@ class CreateLifesheetsTable extends Migration
         Schema::create('medical_histories', function (Blueprint $table) {
             $table->id();
             $table->date('indate');
-            $table->multiLineString('psicological_history');
+            $table->string('psicological_history');
             $table->string('visitreason');
             $table->string('diagnosis');
             $table->string('clinical_history')->nullable();

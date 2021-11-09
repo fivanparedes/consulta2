@@ -97,10 +97,12 @@ class PracticesSeeder extends Seeder {
 
         $consult_types = [
             [
-                'name' => 'Primera entrevista'
+                'name' => 'Primera entrevista',
+                'availability' => '1;2;3;4'
             ],
             [
-                'name' => 'Sesión de terapia'
+                'name' => 'Sesión de terapia',
+                'availability' => '1;2;3;4;5'
             ]
         ];
 
@@ -136,7 +138,8 @@ class PracticesSeeder extends Seeder {
 
         foreach ($consult_types as $key => $value) {
             $consult_type = ConsultType::create([
-                'name' => $value['name']
+                'name' => $value['name'],
+                'availability' => $value['availability']
             ]);
             $consult_type->save();
         }

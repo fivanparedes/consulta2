@@ -6,6 +6,12 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card strpied-tabled-with-hover">
+                    @if (isset($justregistered))
+                        <div class="alert alert-success alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            Turno agendado exitosamente!
+                        </div>
+                    @endif
                     <div class="card-header ">
                         <h4 class="card-title">Agendar turno.</h4>
                         <p class="card-category">Lista de profesionales disponibles</p>

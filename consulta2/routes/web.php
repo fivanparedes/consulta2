@@ -31,8 +31,7 @@ Route::get('/clearapp', function() {
     return redirect('/');
 });
 
-Route::get('/show-event-calendar', [EventController::class, 'index']);
-Route::post('/manage-events', [EventController::class, 'manageEvents']);
+
 
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -42,11 +41,28 @@ Auth::routes();
 Route::get('/home', 'App\Http\Controllers\HomeController@index')->name('dashboard');
 
 Route::group(['middleware' => 'auth'], function () {
+
+	/**
+	 * Controlador de eventos (turnos de calendario)
+	 */
+	Route::get('/show-event-calendar', [EventController::class, 'index']);
+	Route::post('/manage-events', [EventController::class, 'manageEvents']);
+	Route::get('/show-available-hours', [EventController::class, 'showAvailableTimes']);
+	Route::get('/event/confirm', [EventController::class, 'confirm']);
+	Route::post('/event/store', [EventController::class, 'store']);
+
+	/**
+	 * Controlador de citas (sesiones de consultorio)
+	 */
 	Route::get('cite', ['as' => 'cite.index', 'uses' => 'App\Http\Controllers\CiteController@index']);
 	Route::get('/cite/{id}', ['as' => 'cite.show', 'uses' => 'App\Http\Controllers\CiteController@show']);
 	Route::get('/cite/edit/{id}', ['as' => 'cite.edit', 'uses' => 'App\Http\Controllers\CiteController@edit']);
 	Route::get('/cite/pdf/{filter1}/{filter2}', [CiteController::class, 'createPDF']);
 	Route::patch('/cite/update/{id}', ['as' => 'cite.update', 'uses' => 'App\Http\Controllers\CiteController@update']);
+	
+	/**
+	 * Perfiles de usuario
+	 */
 	Route::resource('user', 'App\Http\Controllers\UserController', ['except' => ['show']]);
 	Route::get('profile', ['as' => 'profile.edit', 'uses' => 'App\Http\Controllers\ProfileController@edit']);
 	Route::patch('profile', ['as' => 'profile.update', 'uses' => 'App\Http\Controllers\ProfileController@update']);
@@ -54,12 +70,16 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/profile/create', [PatientController::class, 'create']);
 	Route::patch('profile/info/update', ['as' => 'generalinfo.update', 'uses' => 'App\Http\Controllers\PatientController@update']);
 	Route::patch('profile/password', ['as' => 'profile.password', 'uses' => 'App\Http\Controllers\ProfileController@password']);
+	
+	/**
+	 * Perfiles de pacientes (para ojos de profesionales)
+	 */
 	Route::get('/profile/lifesheet', ['as' => 'profile.lifesheet', 'uses' => 'App\Http\Controllers\LifesheetController@show']);
 	Route::patch('lifesheet/update', ['as' => 'lifesheet.update', 'uses' => 'App\Http\Controllers\LifesheetController@update']);
+	
+	/**
+	 * Perfiles profesionales (publicos)
+	 */
 	Route::get('professionals/list/', ['as' => 'professional.index', 'uses' => 'App\Http\Controllers\ProfessionalController@index']);
 	Route::get('professional/show/{id}', ['as' => 'professional.show', 'uses' => 'App\Http\Controllers\ProfessionalController@show']);
-});
-
-Route::group(['middleware' => 'auth'], function () {
-	Route::get('{page}', ['as' => 'page.index', 'uses' => 'App\Http\Controllers\PageController@index']);
 });

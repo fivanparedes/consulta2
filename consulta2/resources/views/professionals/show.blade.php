@@ -11,41 +11,82 @@
         <div class="card">
             <div class="card-body">
                 <h4>Reservar fecha</h4>
-                <form action="/event/store">
-                    <input type="date" name="day" id="input-day"/>
-                    <input type="hidden" name="profid" value="{{ $professional->id }}"/>
-                    <div class="form-group">
-                        @foreach ($workingHours as $hour)
-                            <span class="badge badge-secondary"><input type="radio" name="time" id="input-time"><p>{{ $hour->time }}</p></span>
+                <form  id="reserve-form" action="/event/confirm">
+                    <input type="date" name="date" id="input-day"/>
+                    <select class="form-control" name="consult-type" id="input-consult">
+                        @foreach ($consulttypes as $consulttype)
+                            <option value="{{ $consulttype->id }}">{{ $consulttype->name }}</option>
                         @endforeach
+                    </select>
+                    <input type="hidden" name="profid" value="{{ $professional->id }}"/>
+                    <div class="form-group" id="hour-group">
+                        
                     </div>
                     
-                    <button type="submit">Reservar turno</button>
+                    <button onclick="eventclick()" id="submit-button" type="submit">Reservar turno</button>
                 </form>
             </div>
         </div>
     </div>
     <script>
         $(document).ready(function() {
-            $('#input-date').datepicker({
-                format: 'mm/dd/yyyy',
-                beforeShowDay: function(date){
-                var dayNr = date.getDay();
-                if (dayNr==0  ||  dayNr==6){
-                    if (enableDays.indexOf(formatDate(date)) >= 0) {
-                        return true;
-                    }
-                return false;
-            }
-            if (disabledDays.indexOf(formatDate(date)) >= 0) {
-               return false;
-            }
-            return true;
-        }
-   });
+            $('#submit-button').prop("disabled",true);
+            
         });
-        $('#input-time').change(function() {
+        function eventclick() {
+            if ($('input[type=radio][name=time]').val() != null) {
+                $('#reserve-channel').submit();
+            }
+        }
+        function toggleBusinessHours() {
+            var headers = {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+            $.ajax( {
+                url: '/show-available-hours',
+                type: 'GET',
+                dataType: 'json',
+                headers: headers,
+                data: {
+                    profid: <?php echo $professional->id ?>,
+                    consultid: $('#input-consult option:selected').val(),
+                    currentdate: $('#input-day').val()
+                },
+                success: function (response) {
+                    $("#hour-group").empty();
+                    
+                    if (response.length != 0) {
+                        let data = response.content;
+                        console.log($('#input-day').val());
+                        console.log(JSON.stringify(response));
+                        if (data != "empty") {
+                            $('#submit-button').prop("disabled",true);
+                            for (var i = 0; i < data.length; i++) {
+                                $("#hour-group").append(
+                                '<span class="badge badge-secondary"><input type="radio" name="time" class="input-time" value="'+ data[i] +'" onchange="allowButton()"><p>' + data[i] +'</p></span>'
+                                );
+                            }
+                        } else {
+                            $('#hour-group').append('<p>No hay turnos disponibles para este día.</p>');
+                        }
+                    } 
+                }
+            });
+        }
+        function allowButton() {
+            $('#submit-button').prop("disabled",false);
+        }
+        $('#input-day').change(function() {
+            toggleBusinessHours();
+        });
 
+        $('#input-consult').change(function() {
+            toggleBusinessHours();
         });
     </script>
-@endsection
+    @endsection
+    
+
+
+   
+    

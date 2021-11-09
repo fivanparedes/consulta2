@@ -1,10 +1,16 @@
 <?php
+
 namespace Database\Seeders;
 
 use App\Models\BusinessHour;
+use App\Models\City;
 use App\Models\ConsultType;
+use App\Models\Lifesheet;
+use App\Models\MedicalHistory;
+use App\Models\PatientProfile;
 use App\Models\Permission;
 use App\Models\ProfessionalProfile;
+use App\Models\Profile;
 use App\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
@@ -30,7 +36,7 @@ class UsersTableSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now()
         ]);
-        
+
         DB::table('institution_profiles')->insert([
             'user_id' => 1,
             'name' => 'Independiente',
@@ -50,7 +56,7 @@ class UsersTableSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now()
         ]);
-        
+
         DB::table('institution_profiles')->insert([
             'user_id' => 2,
             'name' => 'Sanatorio Patito',
@@ -71,22 +77,84 @@ class UsersTableSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now()
         ]);
-        
+
         DB::table('profiles')->insert([
             'bornDate' => date_create('20/01/1996'),
             'gender' => 'Femenino',
             'address' => 'Chacra 500 calle 100',
+            'phone' => 3765121212,
             'user_id' => 3,
             'city_id' => 1
         ]);
-    
+
         $_prof_prof = ProfessionalProfile::create([
             'licensePlate' => 'M0002',
             'field' => 'Psicología',
             'specialty' => 'Sin especializar',
             'profile_id' => 1,
-            'institution_id' => 1]);
-    
+            'institution_id' => 1
+        ]);
+
+        /**
+         * Paciente de ejemplo
+        */
+        $posadas = City::find(1);
+        $user_patient = User::create([
+            'dni' => 949494,
+            'name' => 'Nombre del',
+            'lastname' => 'Paciente',
+            'email' => 'paciente@consulta2.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make('secret'),
+        ]);
+
+        $profile_patient = Profile::create([
+            'bornDate' => date_create('29/01/1999'),
+            'gender' => 'Masculino',
+            'address' => '75C',
+            'phone' => 3764299742,
+            'user_id' => $user_patient->id,
+            'city_id' => $posadas->id
+        ]);
+
+        $patient = PatientProfile::create([
+            'bornPlace' => $posadas->name,
+            'familyGroup' => 'Convive con padres y hermanos',
+            'familyPhone' => 4466666,
+            'civilState' => 'Soltero',
+            'scholarity' => 'Universitario en curso',
+            'occupation' => 'Programador',
+            'profile_id' => $profile_patient->id
+        ]);
+
+        $lifesheet_patient = Lifesheet::create([
+            'diseases' => 'Ninguna',
+            'surgeries' => 'Ninguna',
+            'medication' => 'Ninguna',
+            'allergies' => 'Ninguna',
+            'smokes' => 0,
+            'drinks' => 2,
+            'exercises' => 1,
+            'hceu' => 'AA00001',
+            'patient_profile_id' => $patient->id,
+            'coverage_id' => 2
+        ]);
+
+        $history_patient = MedicalHistory::create([
+            'indate' => now(),
+            'psicological_history' => encrypt('Es programador y está medio quemado de la cabeza'),
+            'visitreason' => encrypt('Estrés por el trabajo'),
+            'diagnosis' => encrypt('Va progresando con el paso del tiempo'),
+            'clinical_history' => encrypt('Historia médica...'),
+            'patient_profile_id' => $patient->id
+        ]);
+
+        $role_patient = Role::where('name', 'Patient')->first();
+        $user_patient->attachRole($role_patient);
+        $perm_patient = Permission::where('name', '_consulta2_patient_profile_perm')->first();
+        $user_patient->attachPermission($perm_patient);
+        $user_patient->save();
+
 
         $businesshours = [
             [
@@ -114,7 +182,7 @@ class UsersTableSeeder extends Seeder
                 'time' => '19:00'
             ],
         ];
-        
+
         foreach ($businesshours as $key => $value) {
             $hour = BusinessHour::create([
                 'time' => $value['time']
@@ -122,7 +190,7 @@ class UsersTableSeeder extends Seeder
             $hour->save();
             $_prof_prof->businessHours()->attach($hour->id);
         }
-        
+
         $_perm = Permission::where('name', '_consulta2_institution_profile_perm')->first();
         $_perm2 = Permission::where('name', '_consulta2_professional_profile_perm')->first();
         $_role = Role::where('name', 'Admin')->first();
@@ -140,13 +208,13 @@ class UsersTableSeeder extends Seeder
         $_role2->save();
         $_prof->attachRole($_role2);
         $_prof->save();
-        
+
         $_prof_prof->save();
-        
+
         $_consult1 = ConsultType::where('id', 1)->first();
         $_consult2 = ConsultType::where('id', 2)->first();
-        $_consult1->businessHours()->attach([1,2,3,4]);
-        $_consult2->businessHours()->attach([5,6,7,8]);
+        $_consult1->businessHours()->attach([1, 2, 3, 4]);
+        $_consult2->businessHours()->attach([5, 6, 7, 8]);
         $_consult1->save();
         $_consult2->save();
     }

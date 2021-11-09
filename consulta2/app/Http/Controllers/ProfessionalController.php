@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BusinessHours;
+use App\Models\ConsultType;
 use App\Models\ProfessionalProfile;
 use App\Models\Profile;
 use Illuminate\Http\Request;
@@ -26,12 +27,15 @@ class ProfessionalController extends Controller
             ->where('users.id', $request->id)->first();
         $_prof = Profile::where('user_id', $request->id)->first();
 
+        $_consults = ConsultType::all();
+
         $_workingHours = $_prof->professionalProfile->businessHours()->get();
 
             return view('professionals.show')
                 ->with([
                     'professional' => $_professional,
-                    'workingHours' => $_workingHours
+                    'workingHours' => $_workingHours,
+                    'consulttypes' => $_consults
         ]);
         
     }
