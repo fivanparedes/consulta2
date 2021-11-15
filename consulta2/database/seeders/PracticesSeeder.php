@@ -7,6 +7,7 @@ use App\Models\Coverage;
 use App\Models\Nomenclature;
 use App\Models\Practice;
 use App\Models\Price;
+use App\Models\Specialty;
 use Illuminate\Database\Seeder;
 class PracticesSeeder extends Seeder {
     public function run() {
@@ -34,19 +35,23 @@ class PracticesSeeder extends Seeder {
         $nomenclatures = [
             [
                 'code' => '00001',
-                'description' => 'PRIMERA ENTREVISTA'
+                'description' => 'PRIMERA ENTREVISTA',
+                'specialty_id' => 1
             ],
             [
                 'code' => '00002',
-                'description' => 'PSICOTERAPIA INDIVIDUAL'
+                'description' => 'PSICOTERAPIA INDIVIDUAL',
+                'specialty_id' => 1
             ],
             [
                 'code' => '00003',
-                'description' => 'PSICOTERAPIA GRUPAL'
+                'description' => 'PSICOTERAPIA GRUPAL',
+                'specialty_id' => 1
             ],
             [
                 'code' => '00004',
-                'description' => 'PRUEBAS PSICOMETRICAS'
+                'description' => 'PRUEBAS PSICOMETRICAS',
+                'specialty_id' => 1
             ]
         ];
 
@@ -56,53 +61,36 @@ class PracticesSeeder extends Seeder {
                 'description' => 'Primera entrevista que se hace al paciente.',
                 'maxtime' => 60,
                 'nomenclature_id' => 1,
-                'consult_type_id' => 1
             ],
             [
                 'name' => 'Psicoterapia Individual',
                 'description' => 'Sesión de terapia de una sola persona',
                 'maxtime' => 40,
                 'nomenclature_id' => 2,
-                'consult_type_id' => 2
             ],
             [
                 'name' => 'Psicoterapia Grupal',
                 'description' => 'Sesión de terapia de hasta 6 personas',
                 'maxtime' => 60,
                 'nomenclature_id' => 3,
-                'consult_type_id' => 2
             ],
             [
                 'name' => 'Psicoterapia de Pareja o Familia',
                 'description' => 'Sesión de terapia de 2 a 6 personas',
                 'maxtime' => 60,
                 'nomenclature_id' => 3,
-                'consult_type_id' => 2
             ],
             [
                 'name' => 'Pruebas Psicométricas',
                 'description' => 'Evaluación de conocimientos, aptitudes psíquicas, comportamientos, rasgos de personalidad y capacidades del individuo',
                 'maxtime' => 40,
                 'nomenclature_id' => 4,
-                'consult_type_id' => 2
             ],
             [
                 'name' => 'Psicodiagnóstico',
                 'description' => 'Diagnóstico de enfermedades, síndromes o alteraciones mentales',
                 'maxtime' => 60,
                 'nomenclature_id' => 4,
-                'consult_type_id' => 2
-            ]
-        ];
-
-        $consult_types = [
-            [
-                'name' => 'Primera entrevista',
-                'availability' => '1;2;3;4'
-            ],
-            [
-                'name' => 'Sesión de terapia',
-                'availability' => '1;2;3;4;5'
             ]
         ];
 
@@ -127,6 +115,29 @@ class PracticesSeeder extends Seeder {
             ]
         ];
 
+        $specialties = [
+            [
+                'name' => 'psicology',
+                'displayname' => 'Psicología'
+            ],
+            [
+                'name' => 'odontology',
+                'displayname' => 'Odontología'
+            ],
+            [
+                'name' => 'general-medicine',
+                'displayname' => 'Medicina general'
+            ],
+            [
+                'name' => 'phonoaudiology',
+                'displayname' => 'Fonoaudiología'
+            ],
+            [
+                'name' => 'neurology',
+                'displayname' => 'Neurología'
+            ]
+        ];
+
         foreach ($coverages as $key => $value) {
             $coverage = Coverage::create([
                 'name' => $value['name'],
@@ -136,18 +147,18 @@ class PracticesSeeder extends Seeder {
             ]);
         }
 
-        foreach ($consult_types as $key => $value) {
-            $consult_type = ConsultType::create([
+        foreach ($specialties as $key => $value) {
+            $specialty = Specialty::create([
                 'name' => $value['name'],
-                'availability' => $value['availability']
+                'displayname' => $value['displayname']
             ]);
-            $consult_type->save();
         }
 
         foreach ($nomenclatures as $key => $value) {
             $nomenclature = Nomenclature::create([
                 'code' => $value['code'],
-                'description' => $value['description']
+                'description' => $value['description'],
+                'specialty_id' => 1
             ]);
         }
 
@@ -157,7 +168,6 @@ class PracticesSeeder extends Seeder {
                 'description' => $value['description'],
                 'maxtime' => $value['maxtime'],
                 'nomenclature_id' => $value['nomenclature_id'],
-                'consult_type_id' => $value['consult_type_id']
             ]);
         }
 
@@ -169,7 +179,5 @@ class PracticesSeeder extends Seeder {
                 'coverage_id' => $value['coverage_id']
             ]);
         }
-
-
     }
 }

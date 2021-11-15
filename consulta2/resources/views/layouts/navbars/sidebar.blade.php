@@ -10,13 +10,24 @@ Tip 2: you can also add an image using data-image tag
                 {{ __("Consulta2") }} 
             </a>
         </div>
+        
         <ul class="nav">
+            @if (Auth::user()->hasRole('Patient'))
             <li class="nav-item @if($activePage == 'professional_index') active @endif">
                 <a class="nav-link" href="{{route('professional.index')}}">
                     <i class="nc-icon nc-paper-2"></i>
                     <p>{{ __("Agendar turno") }}</p>
                 </a>
             </li>
+        @endif
+            @if (Auth::user()->isAbleTo('_consulta2_patient_profile_perm'))
+                        <li class="nav-item @if($activePage == 'patient_events') active @endif">
+                            <a class="nav-link" href="{{route('profile.events')}}">
+                                <i class="nc-icon nc-calendar"></i>
+                                <p>{{ __("Mis turnos") }}</p>
+                            </a>
+                        </li>
+                        @endif
             <li class="nav-item">
                 <a class="nav-link" data-toggle="collapse" href="#laravelExamples" @if($activeButton =='laravel') aria-expanded="true" @endif>
                     <i>
@@ -54,7 +65,7 @@ Tip 2: you can also add an image using data-image tag
                     </ul>
                 </div>
             </li>
-            @if (!Auth::user()->isAbleTo('_consulta2_patient_profile_perm'))
+            @if (Auth::user()->hasRole('Professional'))
             <li class="nav-item @if($activePage == 'cites') active @endif">
                 <a class="nav-link" href="{{route('cite.index')}}">
                     <i class="nc-icon nc-notes"></i>
@@ -62,13 +73,40 @@ Tip 2: you can also add an image using data-image tag
                 </a>
             </li>
             @endif
-            @if (auth()->user()->role_id < 3)
+            @if (Auth::user()->hasRole('Professional'))
+            <li class="nav-item @if($activePage == 'attendees') active @endif">
+                <a class="nav-link" href="{{route('profile.attendees')}}">
+                    <i class="nc-icon nc-chart-pie-35"></i>
+                    <p>{{ __("Pacientes") }}</p>
+                </a>
+            </li>
+            @endif
+            @if (Auth::user()->hasRole('Professional'))
             <li class="nav-item @if($activePage == 'dashboard') active @endif">
                 <a class="nav-link" href="{{route('dashboard')}}">
                     <i class="nc-icon nc-chart-pie-35"></i>
                     <p>{{ __("Estadísticas") }}</p>
                 </a>
             </li>
+            @endif
+            @if (Auth::user()->hasRole('Admin'))
+            <li class="nav-item @if($activePage == 'dashboard') active @endif">
+                <a class="nav-link" href="{{route('laratrust.roles-assignment.index')}}">
+                    <i class="nc-icon nc-chart-pie-35"></i>
+                    <p>{{ __("Roles y Permisos") }}</p>
+                </a>
+            </li>  
+            @endif
+
+            @if (Auth::user()->hasRole('Admin'))
+            <li class="nav-item @if($activePage == 'professionals') active @endif">
+                <a class="nav-link" href="{{route('admin.professionals')}}">
+                    <i class="nc-icon nc-chart-pie-35"></i>
+                    <p>{{ __("Profesionales") }}</p>
+                </a>
+            </li> 
+            @else
+                
             @endif
             
             {{-- <li class="nav-item">

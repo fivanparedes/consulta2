@@ -15,9 +15,12 @@ class CalendarEvent extends Model
         'title',
         'start',
         'end',
+        'approved',
+        'confirmed',
+        'isVirtual'
     ];
 
-    public function patientProfile() {
+    public function patientProfiles() {
         return $this->belongsToMany(PatientProfile::class, 'calendar_event_patient', 'calendar_event_id', 'patient_id');
     }
 

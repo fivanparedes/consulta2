@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Coverage;
 use App\Models\PatientProfile;
 use App\Models\Profile;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class LifesheetController extends Controller
@@ -14,10 +15,9 @@ class LifesheetController extends Controller
     }
 
     public function update(Request $request) {
-        $profile = Profile::where('user_id', auth()->user()->id)->first();
-        $patient = $profile->patientProfile;
+        $patient = Auth::user()->profile->patientProfile;
         $lifesheet = $patient->lifesheet;
-        $chosencoverage = Coverage::find($request->coverages);
+        $chosencoverage = Coverage::find($request->input('coverage'));
 
         $lifesheet->update([
             'diseases' => $request->diseases,

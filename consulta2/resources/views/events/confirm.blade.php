@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'event', 'title' => 'Consulta2 | Confirmar turno', 'navName' => 'Agendar un turno', 'activeButton' => 'laravel'])
+@extends('layouts.app', ['activePage' => 'professional_show', 'title' => 'Consulta2 | Confirmar turno', 'navName' => 'Agendar un turno', 'activeButton' => 'laravel'])
 
 @section('content')
  <div class="content">
@@ -21,11 +21,19 @@
                             <h3>Tipo de consulta:</h3>
                             <label> {{ $consult_type->name }}</label>
                             <input type="hidden" name="consult-type" value="{{ $consult_type->id }}">
+                            <h3>Modalidad:</h3>
+                            <label> @if ($isVirtual == 0)
+                                Presencial
+                                @else
+                                Virtual
+                            @endif</label>
+                            <input type="hidden" name="isVirtual" value="{{ $isVirtual }}">
                             <br>
                             <br>
                             <label>Confirmar:</label>
                             <br>
-                            <button class="btn" type="submit">Confirmar turno</button>
+                            <button class="btn btn-red"><a href="{{ back() }}">Cancelar</a></button>
+                            <button class="btn btn-blue" type="submit">Confirmar turno</button>
                         </form>
                     </div>
                 </div>

@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'cite', 'title' => 'Consulta2 | Ver sesión', 'navName' => 'Detalles de sesión', 'activeButton' => 'laravel'])
+@extends('layouts.app', ['activePage' => 'professionals', 'title' => 'Consulta2 | Editar profesional', 'navName' => 'Detalles de sesión', 'activeButton' => 'laravel'])
 
 @section('content')
     <div class="content">
@@ -11,26 +11,18 @@
                         <div class="card-header">
                             <div class="row align-items-center">
                                 <div class="col-md-8">
-                                    <h3 class="mb-0">{{ 'Sesión N° '.$cite->id }}</h3>
-                                    <p>Paciente: {{$cite->calendarEvent->title}}</p>
-                                    <p>Fecha de turno: {{$cite->calendarEvent->start}}</p>
-                                    @if (date_create($calendarEvent->start) > date_create('now'))
-                                    <div class="alert alert-warning">
-                                        <button type="button" aria-hidden="true" class="close" data-dismiss="alert">
-                                            <i class="nc-icon nc-simple-remove"></i>
-                                        </button>
-                                        <span>
-                                            <b> Información: </b> Faltan {{date_diff(date_create($calendarEvent->start), date_create(now()))->format('%d')}} días para llevarse a cabo esta reunión.</span>
-                                    </div>
-                                    @endif
+                                    <h3 class="mb-0">{{ $professional->profile->user->name . ' ' . $professional->profile->user->lastname }}</h3>
+                                    <p>Matrícula: {{$professional->licensePlate}}</p>
+                                    <p>DNI: {{$professional->profile->user->dni}}</p>
+                                    <p>Especialización: {{ $professional->specialty->displayname }}</p>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body">
-                            <form method="post" action="/cite/update/{{$cite->id}}" autocomplete="off"
+                            <form method="POST" action="/admin/professionals/store/{{$professional->id}}" autocomplete="off"
                                 enctype="multipart/form-data">
                                 @csrf
-                                @method('patch')
+                                @method('PUT')
 
                                 <h6 class="heading-small text-muted mb-4">{{ __('Datos de agenda') }}</h6>
                                 
@@ -38,32 +30,16 @@
                                 @include('alerts.error_self_update', ['key' => 'not_allow_profile'])
         
                                 <div class="pl-lg-4">
-                                    
-                                    <div class="form-group{{ $errors->has('assisted') ? ' has-danger' : '' }}">
-                                        <label class="form-control-label" for="input-assisted">¿Asistió a la reunión?</label>
-                                            @if (date_diff(date_create($calendarEvent->start), date_create(now()))->format('%d') > 0)
-                                            <select disabled="true" class="form-control" name="assisted" id="input-assisted">
-                                            @else
-                                            <select  class="form-control" name="assisted" id="input-assisted">
-                                            @endif
-                                                <option value="1" @if (old('assisted', $cite->assisted) == 1) selected @endif>Asistió.</option>
-                                                <option value="0" @if (old('assisted', $cite->assisted) == 0) selected @endif>No asistió.</option>
-                                            </select>
-                                        </div>
-                                        
-                                        @include('alerts.feedback', ['field' => 'assisted'])
-                                        
-                                    </div>
-                                    <div class="form-group{{ $errors->has('isVirtual') ? ' has-error' : '' }}">
-                                        <label for="input-isVirtual">Modalidad</label>
-                                        <select class="form-control" name="isVirtual" id="input-isVirtual">
-                                            <option value="1" @if (old('isVirtual', $cite->isVirtual) == 1) selected @endif>Virtual</option>
-                                            <option value="0" @if (old('isVirtual', $cite->isVirtual) == 0) selected @endif>Presencial</option>
+                                    <div class="form-group{{ $errors->has('status') ? ' has-error' : '' }}">
+                                        <label for="input-isVirtual">Estado</label>
+                                        <select class="form-control" name="status" id="input-status">
+                                            <option value="1" @if (old('status', $professional->status) == 1) selected @endif>Habilitado</option>
+                                            <option value="0" @if (old('status', $professional->status) == 0) selected @endif>Inhabilitado</option>
                                         </select>
 
-                                        @include('alerts.feedback', ['field' => 'isVirtual'])
+                                        @include('alerts.feedback', ['field' => 'status'])
                                     </div>
-                                    <input type="hidden" value="{{$cite->id}}">
+                                    <input type="hidden" value="{{$professional->id}}">
                                     <div class="text-center">
                                         <button type="submit" class="btn btn-default mt-4">{{ __('Guardar') }}</button>
                                     </div>

@@ -23,6 +23,16 @@ class CreateLifesheetsTable extends Migration
                 ->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
         });
+
+        Schema::create('coverage_professionals', function (Blueprint $table) {
+            $table->unsignedBigInteger('professional_id');
+            $table->unsignedBigInteger('coverage_id');
+            $table->foreign('professional_id')->references('id')->on('professional_profiles')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('coverage_id')->references('id')->on('coverages')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->primary(['professional_id', 'coverage_id'], 'coverage_professionals');
+        });
         Schema::create('lifesheets', function (Blueprint $table) {
             $table->id();
             $table->string('diseases');
@@ -45,7 +55,7 @@ class CreateLifesheetsTable extends Migration
 
         Schema::create('medical_histories', function (Blueprint $table) {
             $table->id();
-            $table->date('indate');
+            $table->string('indate');
             $table->string('psicological_history');
             $table->string('visitreason');
             $table->string('diagnosis');
@@ -68,6 +78,7 @@ class CreateLifesheetsTable extends Migration
     {
         Schema::dropIfExists('lifesheets');
         Schema::dropIfExists('coverages');
+        Schema::dropIfExists('coverage_professionals');
         Schema::dropIfExists('medical_histories');
     }
 }

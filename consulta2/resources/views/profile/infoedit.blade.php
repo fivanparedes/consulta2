@@ -121,8 +121,11 @@
                                         </div>
                                         <div class="form-group{{ $errors->has('specialty') ? ' has-danger' : '' }}">
                                             <label class="form-control-label" for="input-specialty"><i class="w3-xxlarge fa fa-envelope-o"></i>{{ __('Especialización') }}</label>
-                                            <input type="text" name="specialty" id="input-specialty" class="form-control{{ $errors->has('specialty') ? ' is-invalid' : '' }}" placeholder="{{ __('Especificar especialización') }}" value="{{ old('specialty', $professional_profile->specialty) }}" required>
-
+                                            <select name="specialty" id="input-specialty" class="form-control{{ $errors->has('specialty') ? ' is-invalid' : ''}}">
+                                                @foreach (\App\Models\Specialty::all() as $specialty)
+                                                    <option value="{{ $specialty->id }}" @if($specialty->id == $professional_profile->specialty_id) selected @endif >{{ $specialty->displayname }}</option>
+                                                @endforeach
+                                            </select>
                                             @include('alerts.feedback', ['field' => 'specialty'])
                                         </div>
                                     </div>

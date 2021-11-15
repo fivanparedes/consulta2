@@ -3,6 +3,7 @@
 use App\Http\Controllers\CiteController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\MedicalHistoryController;
 use App\Http\Controllers\PatientController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Artisan;
@@ -43,6 +44,12 @@ Route::get('/home', 'App\Http\Controllers\HomeController@index')->name('dashboar
 Route::group(['middleware' => 'auth'], function () {
 
 	/**
+	 * Admin routes
+	 */
+	Route::get('/admin/professionals', ['as' => 'admin.professionals', 'uses' => 'App\Http\Controllers\ProfessionalController@adminList']);
+	Route::get('/admin/professionals/edit/{id}', ['as' => 'admin.professionals.edit', 'uses' => 'App\Http\Controllers\ProfessionalController@edit']);
+	Route::put('/admin/professionals/store/{id}', ['as' => 'admin.professionals.store', 'uses' => 'App\Http\Controllers\ProfessionalController@save']);
+	/**
 	 * Controlador de eventos (turnos de calendario)
 	 */
 	Route::get('/show-event-calendar', [EventController::class, 'index']);
@@ -76,7 +83,16 @@ Route::group(['middleware' => 'auth'], function () {
 	 */
 	Route::get('/profile/lifesheet', ['as' => 'profile.lifesheet', 'uses' => 'App\Http\Controllers\LifesheetController@show']);
 	Route::patch('lifesheet/update', ['as' => 'lifesheet.update', 'uses' => 'App\Http\Controllers\LifesheetController@update']);
+	Route::get('/profile/events', ['as' => 'profile.events', 'uses' => 'App\Http\Controllers\PatientController@listEvents']);
+	Route::get('/profile/events/{id}', [PatientController::class, 'showEvent']);
+	Route::get('/profile/attendees', ['as' => 'profile.attendees', 'uses' => 'App\Http\Controllers\UserController@listAtendees']);
 	
+	/**
+	 * Historias médicas (ultra sensible)
+	 */
+	Route::get('/profile/attendees/history/{id}', ['as' => 'history.show', 'uses' => 'App\Http\Controllers\MedicalHistoryController@show']);
+	Route::get('/profile/attendees/history/decryptContent', [MedicalHistoryController::class, 'decryptField']);
+	Route::patch('/profile/attendees/history/update/{id}', ['as' => 'history.update', 'uses' => 'App\Http\Controllers\MedicalHistoryController@update']);
 	/**
 	 * Perfiles profesionales (publicos)
 	 */

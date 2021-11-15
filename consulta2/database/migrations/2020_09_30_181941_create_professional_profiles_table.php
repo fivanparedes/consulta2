@@ -16,13 +16,16 @@ class CreateProfessionalProfilesTable extends Migration
         Schema::create('professional_profiles', function (Blueprint $table) {
             $table->id();
             $table->string('licensePlate');
+            $table->integer('status');
             $table->string('field');
-            $table->string('specialty');
+            $table->unsignedBigInteger('specialty_id');
             $table->unsignedBigInteger('profile_id');
             $table->unsignedBigInteger('institution_id');
             $table->foreign('profile_id')->references('id')->on('profiles')
                 ->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('institution_id')->references('id')->on('institution_profiles')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('specialty_id')->references('id')->on('specialties')
                 ->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
         });

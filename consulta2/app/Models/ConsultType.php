@@ -17,7 +17,7 @@ class ConsultType extends Model
     ];
 
     public function practices() {
-        return $this->hasMany(Practice::class);
+        return $this->belongsToMany(Practice::class);
     }
 
     public function calendarEvent() {
@@ -26,6 +26,10 @@ class ConsultType extends Model
 
     public function businessHours() {
         return $this->belongsToMany(BusinessHour::class);
+    }
+
+    public function professionalProfile() {
+        return $this->belongsTo(ProfessionalProfile::class);
     }
 
 }

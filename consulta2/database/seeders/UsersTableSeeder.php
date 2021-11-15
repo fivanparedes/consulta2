@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\BusinessHour;
 use App\Models\City;
 use App\Models\ConsultType;
+use App\Models\Coverage;
 use App\Models\Lifesheet;
 use App\Models\MedicalHistory;
 use App\Models\PatientProfile;
@@ -89,8 +90,8 @@ class UsersTableSeeder extends Seeder
 
         $_prof_prof = ProfessionalProfile::create([
             'licensePlate' => 'M0002',
-            'field' => 'Psicología',
-            'specialty' => 'Sin especializar',
+            'field' => 'general',
+            'specialty_id' => 1,
             'profile_id' => 1,
             'institution_id' => 1
         ]);
@@ -183,12 +184,33 @@ class UsersTableSeeder extends Seeder
             ],
         ];
 
+        $consult_types = [
+            [
+                'name' => 'Primera entrevista',
+                'availability' => '1;2;3;4',
+                'professional_profile_id' => 1
+            ],
+            [
+                'name' => 'Sesión de terapia',
+                'availability' => '1;2;3;4;5',
+                'professional_profile_id' => 1
+            ]
+        ];
+
         foreach ($businesshours as $key => $value) {
             $hour = BusinessHour::create([
                 'time' => $value['time']
             ]);
             $hour->save();
             $_prof_prof->businessHours()->attach($hour->id);
+        }
+
+        foreach ($consult_types as $key => $value) {
+            $consult_type = ConsultType::create([
+                'name' => $value['name'],
+                'availability' => $value['availability'],
+                'professional_profile_id' => $value['professional_profile_id']
+            ]);
         }
 
         $_perm = Permission::where('name', '_consulta2_institution_profile_perm')->first();
@@ -209,12 +231,18 @@ class UsersTableSeeder extends Seeder
         $_prof->attachRole($_role2);
         $_prof->save();
 
+        $_coverage1 = Coverage::find(1);
+        $_coverage2 = Coverage::find(2);
+        $_prof_prof->coverages()->attach($_coverage1->id);
+        $_prof_prof->coverages()->attach($_coverage2->id);
         $_prof_prof->save();
 
         $_consult1 = ConsultType::where('id', 1)->first();
         $_consult2 = ConsultType::where('id', 2)->first();
         $_consult1->businessHours()->attach([1, 2, 3, 4]);
+        $_consult1->practices()->attach(1);
         $_consult2->businessHours()->attach([5, 6, 7, 8]);
+        $_consult2->practices()->attach([2,3,4,5]);
         $_consult1->save();
         $_consult2->save();
     }

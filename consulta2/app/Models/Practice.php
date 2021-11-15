@@ -28,4 +28,8 @@ class Practice extends Model
     public function nomenclature() {
         return $this->belongsTo(Nomenclature::class);
     }
+
+    public function consultTypes() {
+        return $this->belongsToMany(ConsultType::class);
+    }
 }

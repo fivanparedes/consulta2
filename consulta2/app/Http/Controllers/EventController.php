@@ -48,8 +48,7 @@ class EventController extends Controller
     public function showAvailableTimes(Request $request)
     {
         if ($request->ajax()) {
-            $profuser = User::find($request->profid);
-            $professional = $profuser->profile->professionalProfile;
+            $professional = ProfessionalProfile::find($request->input('profid'));
             $hours = $professional->businessHours;
             $consult = ConsultType::find($request->consultid);
             $arr = array();
@@ -126,13 +125,13 @@ class EventController extends Controller
     public function confirm(Request $request)
     {
         $selectedDate = $request->input('date') . ' ' . $request->input('time');
-        $_prof = User::find($request->input('profid'));
-        $_professional = $_prof->profile->professionalProfile;
+        $_professional = ProfessionalProfile::find($request->input('profid'));
         $_consult_type = ConsultType::find($request->input('consult-type'));
         return view('events.confirm')->with([
             'professional' => $_professional,
             'selectedDate' => $selectedDate,
-            'consult_type' => $_consult_type
+            'consult_type' => $_consult_type,
+            'isVirtual' => $request->input('isVirtual')
         ]);
     }
 
@@ -152,21 +151,24 @@ class EventController extends Controller
         $futureDate = $currentDate + (60 * $_practice->maxtime);
         $formatDate = date("Y-m-d H:i:s", $futureDate);
         $_event = new CalendarEvent([
+            'title' => $user->name . ' ' . $user->lastname,
             'start' => $selectedDate,
             'end' => $formatDate,
             'approved' => true,
             'confirmed' => false,
-            'isVirtual' => false,
+            'isVirtual' => boolval($request->input('isVirtual')),
         ]);
         $_patient = PatientProfile::where('profile_id', Auth::user()->profile->id)->first();
-        $_patient->calendarEvents()->attach($_event->id);
-
+        
+        
         $_event->consultType()->associate($_consult_type);
 
         $profuser = User::find($request->profid);
         $professional = $profuser->profile->professionalProfile;
         $_event->professionalProfile()->associate($professional);
-
+        $_event->save();
+        $_event->patientProfile()->attach($_patient->id);
+        $_event->save();
         $covered = true;
         if ($_patient->lifesheet->coverage->id == 1) {
             $covered = false;
@@ -177,10 +179,11 @@ class EventController extends Controller
             'paid' => false
         ]);
         $_cite->calendarEvent()->associate($_event);
-
         $_cite->practice()->associate($_practice);
-        $_event->save();
-
+        $_cite->save();
+        
+        $_cite->save();
+        
         return redirect('/professionals/list')->with(['justregistered' => true]);
     }
 }

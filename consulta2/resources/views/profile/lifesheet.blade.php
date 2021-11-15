@@ -10,13 +10,10 @@
                         <div class="card-header">
                             <div class="row align-items-center">
                                 <div class="col-8">
-                                    <h3 class="mb-0">Hoja de vida</h3>
+                                    <h1 class="mb-0">Hoja de vida</h1>
                                     <p class="text-sm mb-0">
                                         Rellene esta página con información sobre su salud y estilo de vida actuales.
                                     </p>
-                                </div>
-                                <div class="col-4 text-right">
-                                    <a href="#" class="btn btn-sm btn-default">Add user</a>
                                 </div>
                             </div>
                         </div>
@@ -39,7 +36,7 @@
                                     <label class="form-control-label" for="coverage">
                                         <i class="w3-xxlarge fa fa-user"></i>{{ __('Obra Social') }}
                                     </label>
-                                    <select name="coverage" id="coverage">
+                                    <select class="form-control" name="coverage" id="coverage">
                                         @foreach ($coverages as $coverage)
                                         <option value="{{ $coverage->id }}" @if ($coverage == $lifesheet->coverage)
                                             selected
@@ -52,13 +49,13 @@
                                     <label class="form-control-label" for="diseases">
                                         <i class="w3-xxlarge fa fa-user"></i>{{ __('Enfermedades base') }}
                                     </label>
-                                    <textarea name="diseases" id="diseases" class="form-control{{ $errors->has('diseases') ? ' is-invalid' : '' }}" placeholder="{{ __('Ejemplo: diabetes, hipertensión, etc.') }}" value="{{ old('diseases', $lifesheet->diseases) }}" required autofocus></textarea>
+                                    <textarea name="diseases" id="diseases" class="form-control{{ $errors->has('diseases') ? ' is-invalid' : '' }}" placeholder="{{ __('Ejemplo: diabetes, hipertensión, etc.') }}" value="{{ old('diseases', $lifesheet->diseases) }}" autofocus></textarea>
                                     
                                     @include('alerts.feedback', ['field' => 'diseases'])
                                 </div>
                                 <div class="form-group{{ $errors->has('surgeries') ? ' has-danger' : '' }}">
                                     <label class="form-control-label" for="surgeries"><i class="w3-xxlarge fa fa-envelope-o"></i>{{ __('Cirugías/Operaciones') }}</label>
-                                    <textarea name="surgeries" id="surgeries" class="form-control{{ $errors->has('surgeries') ? ' is-invalid' : '' }}" placeholder="{{ __('Lista de cirugías.') }}" value="{{ old('surgeries', $lifesheet->surgeries) }}" required autofocus></textarea>
+                                    <textarea name="surgeries" id="surgeries" class="form-control{{ $errors->has('surgeries') ? ' is-invalid' : '' }}" placeholder="{{ __('Lista de cirugías.') }}" value="{{ old('surgeries', $lifesheet->surgeries) }}" autofocus></textarea>
                                     
                                     @include('alerts.feedback', ['field' => 'surgeries'])
                                 </div>
@@ -66,7 +63,7 @@
                                     <label class="form-control-label" for="medication">
                                     <i class="w3-xxlarge fa fa-user"></i>{{ __('Medicamentos') }}
                                     </label>
-                                    <textarea name="medication" id="medication" class="form-control{{ $errors->has('medication') ? ' is-invalid' : '' }}" placeholder="{{ __('Lista de medicamentos que consuma actualmente.') }}" value="{{ old('medication', $lifesheet->medication) }}" required autofocus></textarea>
+                                    <textarea name="medication" id="medication" class="form-control{{ $errors->has('medication') ? ' is-invalid' : '' }}" placeholder="{{ __('Lista de medicamentos que consuma actualmente.') }}" value="{{ old('medication', $lifesheet->medication) }}" autofocus></textarea>
                                     
                                     @include('alerts.feedback', ['field' => 'medication'])
                                 </div>
@@ -78,10 +75,10 @@
                                             <p>¿Fuma?</p>
                                             <label class="form-control-label" for="smokes-no">{{ __('No.') }}</label>
                                             <input type="radio" name="smokes" id="smokes-no" class="form-control{{ $errors->has('smokes') ? ' is-invalid' : '' }}"  value="0" required @if($lifesheet->smokes == 0) checked @endif>
-                                            <label class="form-control-label" for="smokes-no">{{ __('Ocasionalmente.') }}</label>
-                                            <input type="radio" name="smokes" id="smokes-no" class="form-control{{ $errors->has('smokes') ? ' is-invalid' : '' }}"  value="1" required @if($lifesheet->smokes == 1) checked @endif>
-                                            <label class="form-control-label" for="smokes-no">{{ __('Siempre.') }}</label>
-                                            <input type="radio" name="smokes" id="smokes-no" class="form-control{{ $errors->has('smokes') ? ' is-invalid' : '' }}"  value="2" required @if($lifesheet->smokes == 2) checked @endif>
+                                            <label class="form-control-label" for="smokes-mid">{{ __('Ocasionalmente.') }}</label>
+                                            <input type="radio" name="smokes" id="smokes-mid" class="form-control{{ $errors->has('smokes') ? ' is-invalid' : '' }}"  value="1" required @if($lifesheet->smokes == 1) checked @endif>
+                                            <label class="form-control-label" for="smokes-yes">{{ __('Siempre.') }}</label>
+                                            <input type="radio" name="smokes" id="smokes-yes" class="form-control{{ $errors->has('smokes') ? ' is-invalid' : '' }}"  value="2" required @if($lifesheet->smokes == 2) checked @endif>
                                             @include('alerts.feedback', ['field' => 'smokes'])
                                         </div>
                                         <div class="form-group{{ $errors->has('drinks') ? ' has-danger' : '' }}">
@@ -97,11 +94,11 @@
                                         <div class="form-group{{ $errors->has('exercises') ? ' has-danger' : '' }}">
                                             <p>¿Realiza ejercicio?</p>
                                             <label class="form-control-label" for="exercises-no">{{ __('No.') }}</label>
-                                            <input type="radio" name="smokes" id="exercises-no" class="form-control{{ $errors->has('exercises') ? ' is-invalid' : '' }}"  value="0" required @if($lifesheet->exercises == 0) checked @endif>
+                                            <input type="radio" name="exercises" id="exercises-no" class="form-control{{ $errors->has('exercises') ? ' is-invalid' : '' }}"  value="0" required @if($lifesheet->exercises == 0) checked @endif>
                                             <label class="form-control-label" for="exercises-no">{{ __('Ocasionalmente.') }}</label>
-                                            <input type="radio" name="smokes" id="exercises-no" class="form-control{{ $errors->has('exercises') ? ' is-invalid' : '' }}"  value="1" required @if($lifesheet->exercises == 1) checked @endif>
+                                            <input type="radio" name="exercises" id="exercises-no" class="form-control{{ $errors->has('exercises') ? ' is-invalid' : '' }}"  value="1" required @if($lifesheet->exercises == 1) checked @endif>
                                             <label class="form-control-label" for="exercises-no">{{ __('Siempre.') }}</label>
-                                            <input type="radio" name="smokes" id="exercises-no" class="form-control{{ $errors->has('exercises') ? ' is-invalid' : '' }}"  value="2" required @if($lifesheet->exercises == 2) checked @endif>
+                                            <input type="radio" name="exercises" id="exercises-no" class="form-control{{ $errors->has('exercises') ? ' is-invalid' : '' }}"  value="2" required @if($lifesheet->exercises == 2) checked @endif>
                                             @include('alerts.feedback', ['field' => 'exercises'])
                                         </div>
                                 <div class="text-center">

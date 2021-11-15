@@ -6,7 +6,7 @@ use App\Models\CalendarEvent;
 use App\Models\Cite;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Barryvdh\DomPDF\PDF;
+use Illuminate\Support\Facades\Auth;
 
 class CiteController extends Controller
 {
@@ -23,23 +23,31 @@ class CiteController extends Controller
             if (!empty($filter2)) {
                 $query = DB::table('calendar_events')
                     ->join('cites', 'calendar_events.id', '=', 'cites.calendar_event_id')
+                    ->join('professional_profiles', 'calendar_events.professional_profile_id' ,'=', 'professional_profiles.id')
                     ->where('calendar_events.start', 'like', '%'.$filter.'%')
                     ->where('calendar_events.title', 'like', '%'.$filter2.'%')
+                    ->where('calendar_events.professional_profile_id', Auth::user()->profile->professionalProfile->id)
                     ->get();
             } else {
                 $query = DB::table('calendar_events')
                     ->join('cites', 'calendar_events.id', '=', 'cites.calendar_event_id')
+                    ->join('professional_profiles', 'calendar_events.professional_profile_id' ,'=', 'professional_profiles.id')
                     ->where('calendar_events.start', 'like', '%'.$filter.'%')
+                    ->where('calendar_events.professional_profile_id', Auth::user()->profile->professionalProfile->id)
                     ->get();
             }
         } else if (!empty($filter2)) {
             $query = DB::table('calendar_events')
             ->join('cites', 'calendar_events.id', '=', 'cites.calendar_event_id')
+            ->join('professional_profiles', 'calendar_events.professional_profile_id' ,'=', 'professional_profiles.id')
             ->where('calendar_events.title', 'like', '%'.$filter2.'%')
+            ->where('calendar_events.professional_profile_id', Auth::user()->profile->professionalProfile->id)
             ->get();
         } else {
             $query = DB::table('calendar_events')
             ->join('cites', 'calendar_events.id', '=', 'cites.calendar_event_id')
+            ->join('professional_profiles', 'calendar_events.professional_profile_id' ,'=', 'professional_profiles.id')
+            ->where('calendar_events.professional_profile_id', Auth::user()->profile->professionalProfile->id)
             ->get();
         }
         
@@ -47,7 +55,8 @@ class CiteController extends Controller
         return view('pages.cites')->with([
             'filter' => $filter,
             'filter2' => $filter2,
-            'cites' => $query
+            'cites' => $query,
+            'professional' => Auth::user()->profile->professionalProfile
         ]);
     }
 
@@ -79,23 +88,31 @@ class CiteController extends Controller
             if (!empty($filter2)) {
                 $query = DB::table('calendar_events')
                     ->join('cites', 'calendar_events.id', '=', 'cites.calendar_event_id')
+                    ->join('professional_profiles', 'calendar_events.professional_profile_id' ,'=', 'professional_profiles.id')
                     ->where('calendar_events.start', 'like', '%'.$filter.'%')
                     ->where('calendar_events.title', 'like', '%'.$filter2.'%')
+                    ->where('calendar_events.professional_profile_id', auth()->user()->id)
                     ->get();
             } else {
                 $query = DB::table('calendar_events')
                     ->join('cites', 'calendar_events.id', '=', 'cites.calendar_event_id')
+                    ->join('professional_profiles', 'calendar_events.professional_profile_id' ,'=', 'professional_profiles.id')
                     ->where('calendar_events.start', 'like', '%'.$filter.'%')
+                    ->where('calendar_events.professional_profile_id', auth()->user()->id)
                     ->get();
             }
         } else if (!empty($filter2)) {
             $query = DB::table('calendar_events')
             ->join('cites', 'calendar_events.id', '=', 'cites.calendar_event_id')
+            ->join('professional_profiles', 'calendar_events.professional_profile_id' ,'=', 'professional_profiles.id')
             ->where('calendar_events.title', 'like', '%'.$filter2.'%')
+            ->where('calendar_events.professional_profile_id', auth()->user()->id)
             ->get();
         } else {
             $query = DB::table('calendar_events')
             ->join('cites', 'calendar_events.id', '=', 'cites.calendar_event_id')
+            ->join('professional_profiles', 'calendar_events.professional_profile_id' ,'=', auth()->user()->id)
+            ->where('calendar_events.professional_profile_id', auth()->user()->id)
             ->get();
         }
         

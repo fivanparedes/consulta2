@@ -19,7 +19,7 @@ class CreateCalendarEventsTable extends Migration
             $table->string('title');
             $table->dateTime('start');
             $table->dateTime('end');
-            $table->boolean('approved');
+            $table->integer('approved');
             $table->boolean('confirmed');
             $table->boolean('isVirtual');
             $table->integer('consult_type_id');
@@ -43,11 +43,11 @@ class CreateCalendarEventsTable extends Migration
 
         Schema::create('cites', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->autoIncrement();
-            $table->unsignedBigInteger('calendar_event_id');
-            $table->integer('practice_id');
             $table->boolean('assisted');
             $table->boolean('covered');
             $table->boolean('paid');
+            $table->unsignedBigInteger('calendar_event_id');
+            $table->integer('practice_id');
             $table->foreign('calendar_event_id')
                 ->references('id')->on('calendar_events')
                 ->onUpdate('cascade')->onDelete('cascade');

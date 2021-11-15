@@ -17,6 +17,9 @@ class CreateNomenclaturesTable extends Migration
             $table->id();
             $table->string('code');
             $table->string('description');
+            $table->unsignedBigInteger('specialty_id');
+            $table->foreign('specialty_id')->references('id')->on('specialties')
+                ->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
         });
     }

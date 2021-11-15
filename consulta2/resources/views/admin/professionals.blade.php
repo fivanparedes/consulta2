@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'cites', 'title' => 'Consulta2 | Lista de sesiones y consultas', 'navName' => 'Sesiones programadas', 'activeButton' => 'laravel'])
+@extends('layouts.app', ['activePage' => 'professionals', 'title' => 'Consulta2 | Lista de profesionales', 'navName' => 'Sesiones programadas', 'activeButton' => 'laravel'])
 
 @section('content')
     <div class="content">
@@ -7,10 +7,10 @@
                 <div class="col-md-12">
                     <div class="card strpied-tabled-with-hover">
                         <div class="card-header ">
-                            <h4 class="card-title">Sesiones y consultas</h4>
-                            <p class="card-category">Lista de sesiones pasadas, presentes y futuras.</p>
+                            <h4 class="card-title">Profesionales</h4>
+                            <p class="card-category">Lista de profesionales inscriptos al sistema.</p>
                         </div>
-                        <div class="card-header ">
+                       {{--  <div class="card-header ">
                             <form class="form-inline" method="GET">
                                 
                                     <div class="pl-5 row">
@@ -30,53 +30,36 @@
                                     <i class="nc-icon nc-paper-2"></i>
                                 </a>
                             </form>
-                        </div>
+                        </div> --}}
                         
                         <div class="card-body table-full-width table-responsive">
-                            @if ($professional->status == 0)
-                                <div class="alert alert-info">
-                                        <button type="button" aria-hidden="true" class="close" data-dismiss="alert">
-                                            <i class="nc-icon nc-simple-remove"></i>
-                                        </button>
-                                        <span>
-                                            <b> Información: </b> Para poder recibir turnos, primero debe ser aprobado por el sistema.</span>
-                                    </div>
-                            @endif
-                            @if ($cites->count() == 0)
-                                <p class="ml-5 card-category">No hay sesiones agendadas.</p>
+                            @if ($professionals->count() == 0)
+                                <p class="ml-5 card-category">¡Aún no se inscribieron profesionales al sistema!</p>
                             @else
                                 <table class="table table-hover table-striped">
                                 <thead>
-                                    <th>ID</th>
+                                    <th>DNI</th>
                                     <th>Nombre y apellido</th>
-                                    <th>Fecha y hora</th>
-                                    <th>¿Asistió?</th>
-                                    <th>Modalidad</th>
-                                    <th>¿Confirmó asistencia?</th>
+                                    <th>Ciudad</th>
+                                    <th>Especialidad</th>
+                                    <th>Fecha de registro</th>
+                                    <th>Estado</th>
                                     <th>Más</th>
                                 </thead>
                                 <tbody>
-                                    @foreach ($cites as $cite)
+                                    @foreach ($professionals as $professional)
                                         <tr>
-                                            <td>{{ $cite->id}}</td>
-                                            <td>{{ $cite->title}}</td>
-                                            <td>{{ date('d-m-Y h:m',strtotime($cite->start)) }}</td>
-                                            <td>@if ($cite->assisted)
-                                                Sí.
+                                            <td>{{ $professional->profile->user->dni}}</td>
+                                            <td>{{ $professional->profile->user->name . ' ' . $professional->profile->user->lastname}}</td>
+                                            <td>{{ $professional->profile->city->name }}</td>
+                                            <td>{{ $professional->specialty->displayname }}</td>
+                                            <td>{{ date_create($professional->profile->user->created_at)->format('d-m-Y h:m') }}</td>
+                                            <td>@if ($professional->status == 0)
+                                                <span class="badge badge-secondary">Inhabilitado</span>
                                             @else
-                                                No.
+                                                <span class="badge badge-secondary bg-success">Habilitado</span>
                                             @endif</td>
-                                            <td>@if ($cite->isVirtual)
-                                                Virtual
-                                            @else
-                                                Presencial.
-                                            @endif</td>
-                                            <td>@if ($cite->confirmed)
-                                                Confirmado.
-                                            @else
-                                                Sin confirmar.
-                                            @endif</td>
-                                            <td><a class="nav-link" href="/cite/{{$cite->id}}">
+                                            <td><a class="nav-link" href="/admin/professionals/edit/{{$professional->id}}">
                                                 <i class="nc-icon nc-badge"></i>
                                             </a></td>
                                         </tr>

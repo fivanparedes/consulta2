@@ -4,24 +4,37 @@
     <div class="content">
         <div class="card">
             <div class="card-body">
-                <h2>{{ $professional->name }}  {{ $professional->lastname }}</h2>
-                <h3><span class="badge badge-secondary">{{ $professional->field }} </span> <span class="badge badge-secondary">{{ $professional->specialty }}</span></h3>
+                <h2>{{ $professional->profile->user->name }}  {{ $professional->profile->user->lastname }}</h2>
+                <h3><span class="badge badge-secondary">{{ $professional->field }} </span> <span class="badge badge-secondary">{{ $professional->specialty->name }}</span></h3>
             </div>
         </div>
         <div class="card">
             <div class="card-body">
                 <h4>Reservar fecha</h4>
                 <form  id="reserve-form" action="/event/confirm">
-                    <input type="date" name="date" id="input-day"/>
-                    <select class="form-control" name="consult-type" id="input-consult">
+                    <div class="form-group">
+                        <input type="date" name="date" id="input-day"/>
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control" name="isVirtual" id="input-isVirtual">
+                        <option value="0">Presencial</option>
+                        <option value="1">Virtual</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control" name="consult-type" id="input-consult">
                         @foreach ($consulttypes as $consulttype)
                             <option value="{{ $consulttype->id }}">{{ $consulttype->name }}</option>
                         @endforeach
-                    </select>
-                    <input type="hidden" name="profid" value="{{ $professional->id }}"/>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" name="profid" value="{{ $professional->id }}"/>
                     <div class="form-group" id="hour-group">
                         
                     </div>
+                    </div>
+                    
                     
                     <button onclick="eventclick()" id="submit-button" type="submit">Reservar turno</button>
                 </form>

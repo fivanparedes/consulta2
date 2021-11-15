@@ -45,6 +45,36 @@ class PermissionSeeder extends Seeder
                 'name' => 'LifesheetController@index',
                 'display_name' => 'Lifesheet: view',
                 'description' => 'Can see users lifesheet.'
+            ],
+            [
+                'name' => 'receive-consults',
+                'display_name' => 'Recibir turnos',
+                'description' => 'Si el usuario está habilitado a recibir turnos, aparecerá en la pantalla de búsqueda de profesionales.'
+            ],
+            [
+                'name' => 'view-cites',
+                'display_name' => 'Consultas: ver',
+                'description' => 'Ver lista de consultas, mas no modificarlas'
+            ],
+            [
+                'name' => 'create-cites',
+                'display_name' => 'Consultas: crear',
+                'description' => 'Agendar turnos desde el lado institucional/profesional'
+            ],
+            [
+                'name' => 'modify-cites',
+                'display_name' => 'Consultas: modificar',
+                'description' => 'Modificar información de consultas/sesiones ya creadas'
+            ],
+            [
+                'name' => 'delete-cites',
+                'display_name' => 'Consultas: borrar',
+                'description' => 'Elimina toda la información relacionada a los turnos (no recomendado, mejor cambiarles el estado a Cancelado)'
+            ],
+            [
+                'name' => 'manage-histories',
+                'display_name' => 'Administrar historias médicas',
+                'description' => 'Puede ver, crear y eliminar historias médicas.'
             ]
         ];
 

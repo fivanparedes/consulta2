@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CalendarEvent;
 use App\Models\City;
 use App\Models\Coverage;
 use App\Models\InstitutionProfile;
@@ -9,6 +10,7 @@ use App\Models\Lifesheet;
 use App\Models\PatientProfile;
 use App\Models\ProfessionalProfile;
 use App\Models\Profile;
+use App\Models\Specialty;
 use App\Models\User;
 use DateTime;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -18,6 +20,20 @@ use Illuminate\Support\Facades\Auth;
 class PatientController extends Controller
 {
 
+    public function listEvents() {
+        $usermodel = User::find(auth()->user()->id);
+        if (!$usermodel->isAbleTo('_consulta2_patient_profile_perm')) {
+            return abort(403);
+        }
+        $calendarevents = Auth::user()->profile->patientProfile->calendarEvents()->orderBy('start', 'desc')->get();
+        return view('patients.events')->with([
+            'events' => $calendarevents
+        ]);
+    }
+
+    public function showEvent($id) {
+        $event = CalendarEvent::find($id);
+    }
     public function update(Request $request)
     {
         $user_profile = Profile::where('user_id', auth()->user()->id)->first();
@@ -43,9 +59,11 @@ class PatientController extends Controller
         } else if ($professional_profile != null) {
             $professional_profile->update([
                 'licensePlate' => $request->licensePlate,
-                'field' => $request->field,
-                'specialty' => $request->specialty
+                'field' => $request->field
             ]);
+            $specialty = Specialty::find($request->specialty);
+            $professional_profile->specialty()->associate($specialty);
+            $professional_profile->save();
 
         }
         return back()->withStatus(__('Perfil actualizado correctamente.'));
@@ -69,10 +87,10 @@ class PatientController extends Controller
             $patient = new PatientProfile();
             $lifesheet = new Lifesheet();
             $coverage = Coverage::find(1);
-            $lifesheet->coverage()->associate($coverage);
-            $lifesheet->patientProfile()->associate($patient);
             $patient->profile()->associate($profile);
             $patient->save();
+            $lifesheet->coverage()->associate($coverage);
+            $lifesheet->patientProfile()->associate($patient);
             $lifesheet->save();
         } else if ($user->isAbleTo('_consulta2_professional_profile_perm')) {
             $institution = InstitutionProfile::find(1);

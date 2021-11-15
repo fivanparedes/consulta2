@@ -25,4 +25,8 @@ class Coverage extends Model
     public function practices() {
         return $this->belongsToMany(Practice::class);
     }
+
+    public function professionalProfiles() {
+        return $this->belongsToMany(ProfessionalProfile::class, 'coverage_professionals', 'coverage_id', 'professional_id');
+    }
 }

@@ -14,7 +14,7 @@ class ProfessionalProfile extends Model
     protected $fillable = [
         'licensePlate',
         'field',
-        'specialty'
+        'status'
     ];
 
     public function profile() {
@@ -31,5 +31,17 @@ class ProfessionalProfile extends Model
 
     public function businessHours() {
         return $this->belongsToMany(BusinessHour::class, 'hours_professionals', 'professional_profile_id', 'business_hour_id');
+    }
+
+    public function specialty() {
+        return $this->belongsTo(Specialty::class);
+    }
+
+    public function coverages() {
+        return $this->belongsToMany(Coverage::class, 'coverage_professionals', 'professional_id', 'coverage_id');
+    }
+
+    public function consultTypes() {
+        return $this->hasMany(ConsultType::class);
     }
 }
