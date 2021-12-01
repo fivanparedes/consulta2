@@ -19,4 +19,16 @@ class Nomenclature extends Model
     public function practices() {
         return $this->hasMany(Practice::class);
     }
+
+    public function specialty() {
+        return $this->belongsTo(Specialty::class);
+    }
+
+    public static function boot() {
+        parent::boot();
+        self::deleting(function($nom) {
+            $nom->practices()->delete();
+            $nom->specialty()->dissociate();
+        });
+    }
 }

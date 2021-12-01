@@ -19,4 +19,8 @@ class Specialty extends Model
     public function professionalProfiles() {
         return $this->hasMany(ProfessionalProfile::class);
     }
+
+    public function nomenclatures() {
+        return $this->hasMany(Nomenclature::class);
+    }
 }

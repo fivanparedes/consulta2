@@ -188,11 +188,15 @@ class UsersTableSeeder extends Seeder
             [
                 'name' => 'Primera entrevista',
                 'availability' => '1;2;3;4',
-                'professional_profile_id' => 1
+                'requires_auth' => false,
+                'visible' => true,
+                 'professional_profile_id' => 1
             ],
             [
                 'name' => 'Sesión de terapia',
                 'availability' => '1;2;3;4;5',
+                'requires_auth' => true,
+                'visible' => true,
                 'professional_profile_id' => 1
             ]
         ];

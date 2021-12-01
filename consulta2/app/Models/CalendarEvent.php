@@ -39,4 +39,15 @@ class CalendarEvent extends Model
     public function reminder() {
         return $this->hasMany(Reminder::class);
     }
+
+    public static function boot() {
+        parent::boot();
+        self::deleting(function($event) {
+            $event->cite()->delete();
+            $event->consultType()->dissociate();
+            $event->professionalProfile()->dissociate();
+            $event->patientProfiles()->detach();
+            $event->reminder()->delete();
+        });
+    }
 }

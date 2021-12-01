@@ -1,0 +1,1 @@
+<p>Señor/a paciente {{ $event->title }} le informamos que el profesional canceló el turno para el día {{ $event->start }}.</p>

@@ -25,7 +25,7 @@
 <div class="card">
         <div class="card-body">
           <h4 class="card-title">{{ $professional->profile->user->name . ' ' . $professional->profile->user->lastname}}</h4>
-          <h5 class="card-subtitle">{{$professional->specialty->name . ' ' . $professional->field}}</h5>
+          <h5 class="card-subtitle">{{$professional->specialty->displayname . ' ' . $professional->field}}</h5>
           <p class="card-text">@if ($professional->institution_id == null)
             Independiente.
         @else

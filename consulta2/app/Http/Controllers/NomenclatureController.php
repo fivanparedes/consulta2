@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Nomenclature;
+use App\Models\Specialty;
 use Illuminate\Http\Request;
 
 class NomenclatureController extends Controller
@@ -13,7 +15,8 @@ class NomenclatureController extends Controller
      */
     public function index()
     {
-        //
+        $nomenclatures = Nomenclature::all();
+        return view('nomenclatures.index')->with(['nomenclatures' => $nomenclatures]);
     }
 
     /**
@@ -23,7 +26,7 @@ class NomenclatureController extends Controller
      */
     public function create()
     {
-        //
+        return view('nomenclatures.create');
     }
 
     /**
@@ -34,7 +37,14 @@ class NomenclatureController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $nomenclature = new Nomenclature();
+        $nomenclature->code = $request->input('code');
+        $nomenclature->description = strtoupper($request->input('description'));
+        
+        $specialty = Specialty::find($request->input('specialty'));
+        $nomenclature->specialty()->associate($specialty);
+        $nomenclature->save();
+        return redirect('/nomenclatures');
     }
 
     /**
@@ -56,7 +66,8 @@ class NomenclatureController extends Controller
      */
     public function edit($id)
     {
-        //
+        $nomenclature = Nomenclature::find(base64_decode(base64_decode($id)));
+        return view('nomenclatures.edit')->with(['nomenclature' => $nomenclature]);
     }
 
     /**
@@ -68,7 +79,17 @@ class NomenclatureController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $nomenclature = Nomenclature::find($id);
+        $nomenclature->code = $request->input('code');
+        $nomenclature->description = strtoupper($request->input('description'));
+        
+        $specialty = Specialty::find($request->input('specialty'));
+        if ($nomenclature->specialty != $specialty) {
+            $nomenclature->specialty()->dissociate($nomenclature->specialty);
+        }
+        $nomenclature->specialty()->associate($specialty);
+        $nomenclature->save();
+        return redirect('/nomenclatures');
     }
 
     /**
@@ -79,6 +100,8 @@ class NomenclatureController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $nomenclature = Nomenclature::find($id);
+        $nomenclature->destroy($id);
+        return redirect('/nomenclatures');
     }
 }

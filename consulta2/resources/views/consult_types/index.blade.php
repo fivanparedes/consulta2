@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'cites', 'title' => 'Consulta2 | Lista de sesiones y consultas', 'navName' => 'Sesiones programadas', 'activeButton' => 'laravel'])
+@extends('layouts.app', ['activePage' => 'consult_types', 'title' => 'Consulta2 | Configuración de horarios', 'navName' => 'Configuración', 'activeButton' => 'laravel'])
 
 @section('content')
     <div class="content">
@@ -6,11 +6,18 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="card strpied-tabled-with-hover">
-                        <div class="card-header ">
-                            <h4 class="card-title">Sesiones y consultas</h4>
-                            <p class="card-category">Lista de sesiones pasadas, presentes y futuras.</p>
-                        </div>
-                        <div class="card-header ">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col col-md-12 left">
+                                    <h4 class="card-title">Horarios de consulta</h4>
+                                    <p class="card-category">Agrupamiento de prácticas de acuerdo a fecha y horario</p>
+                                </div>
+                                <div class="col col-md-12 right">
+                                    <a class="text-light right btn btn-primary" href="{{ route('consult_types.create') }}">+ Agregar tipo de consulta</a>
+                                </div>
+                            </div>
+                            </div>
+                        {{-- <div class="card-header ">
                             <form class="form-inline" method="GET">
                                 
                                     <div class="pl-5 row">
@@ -30,7 +37,7 @@
                                     <i class="nc-icon nc-paper-2"></i>
                                 </a>
                             </form>
-                        </div>
+                        </div> --}}
                         
                         <div class="card-body table-full-width table-responsive">
                             @if ($professional->status == 0)
@@ -42,41 +49,37 @@
                                             <b> Información: </b> Para poder recibir turnos, primero debe ser aprobado por el sistema.</span>
                                     </div>
                             @endif
-                            @if ($cites->count() == 0)
-                                <p class="ml-5 card-category">No hay sesiones agendadas.</p>
+                            @if ($types->count() == 0)
+                                <p class="ml-5 card-category">No hay horarios configurados. ¡Pruebe a añadir uno!</p>
                             @else
                                 <table class="table table-hover table-striped">
                                 <thead>
                                     <th>ID</th>
-                                    <th>Nombre y apellido</th>
-                                    <th>Fecha y hora</th>
-                                    <th>¿Asistió?</th>
-                                    <th>Modalidad</th>
-                                    <th>¿Confirmó asistencia?</th>
-                                    <th>Más</th>
+                                    <th>Nombre</th>
+                                    <th>Días por semana</th>
+                                    <th>Cant. prácticas</th>
+                                    <th>Visible</th>
+                                    <th>¿Requiere autorización?</th>
+                                    <th>Editar</th>
                                 </thead>
                                 <tbody>
-                                    @foreach ($cites as $cite)
+                                    @foreach ($types as $type)
                                         <tr>
-                                            <td>{{ $cite->id}}</td>
-                                            <td>{{ $cite->title}}</td>
-                                            <td>{{ date('d-m-Y h:m',strtotime($cite->start)) }}</td>
-                                            <td>@if ($cite->assisted)
+                                            <td>{{ $type->id}}</td>
+                                            <td>{{ $type->name}}</td>
+                                            <td>{{ count(explode(';', $type->availability)) }}</td>
+                                            <td>{{ count($type->practices) }}</td>
+                                            <td>@if ($type->visible)
+                                                Visible
+                                            @else
+                                                Oculto
+                                            @endif</td>
+                                            <td>@if ($type->requires_auth)
                                                 Sí.
                                             @else
                                                 No.
                                             @endif</td>
-                                            <td>@if ($cite->isVirtual)
-                                                Virtual
-                                            @else
-                                                Presencial.
-                                            @endif</td>
-                                            <td>@if ($cite->confirmed)
-                                                Confirmado.
-                                            @else
-                                                Sin confirmar.
-                                            @endif</td>
-                                            <td><a class="nav-link" href="/cite/{{$cite->cite->id}}">
+                                            <td><a class="nav-link" href="/consult_types/{{base64_encode(base64_encode($type->id))}}/edit">
                                                 <i class="nc-icon nc-badge"></i>
                                             </a></td>
                                         </tr>

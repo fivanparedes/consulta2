@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BusinessHours;
+use Illuminate\Support\Facades\Auth;
 use App\Models\ConsultType;
 use App\Models\Permission;
 use App\Models\ProfessionalProfile;
@@ -46,6 +47,7 @@ class ProfessionalController extends Controller
     }
 
     public function show(Request $request) {
+        $covered = false;
         $_prof = Profile::where('user_id', $request->id)->first();
 
         $_professional = ProfessionalProfile::find($request->id);
@@ -53,14 +55,23 @@ class ProfessionalController extends Controller
         if (!$_professional->profile->user->isAbleTo('receive-consults')) {
             return abort(403);
         }
+
+        $patient = Auth::user()->profile->patientProfile;
         
-        $_consults = ConsultType::all();
+        $_consults = $_professional->consultTypes->where('visible', true);
 
         $_workingHours = $_professional->businessHours()->get();
+        if ($patient->lifesheet->coverage->id != 1) {
+            if ($_professional->coverages->contains($patient->lifesheet->coverage)) {
+                $covered = true;
+            }
+        }
 
             return view('professionals.show')
                 ->with([
                     'professional' => $_professional,
+                    'patient' => $patient,
+                    'covered' => $covered,
                     'workingHours' => $_workingHours,
                     'consulttypes' => $_consults
         ]);

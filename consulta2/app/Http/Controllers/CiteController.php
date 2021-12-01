@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\CalendarEvent;
 use App\Models\Cite;
+use App\Models\Practice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class CiteController extends Controller
 {
@@ -55,7 +57,7 @@ class CiteController extends Controller
         return view('pages.cites')->with([
             'filter' => $filter,
             'filter2' => $filter2,
-            'cites' => $query,
+            'cites' => Auth::user()->profile->professionalProfile->calendarEvents,
             'professional' => Auth::user()->profile->professionalProfile
         ]);
     }
@@ -137,7 +139,7 @@ class CiteController extends Controller
     public function show(Request $request)
     {
         $cite = Cite::find($request->id);
-        $calendarEvent = CalendarEvent::find($cite->calendar_event_id);
+        $calendarEvent = $cite->calendarEvent;
         return view('pages.showcite')->with([
             'cite' => $cite,
             'calendarEvent' => $calendarEvent]);
@@ -149,10 +151,10 @@ class CiteController extends Controller
      * @param  \App\Models\Cite  $Cite
      * @return \Illuminate\Http\Response
      */
-    public function edit(Cite $cite)
+    public function edit(Request $request)
     {
-        //$cite = Cite::find($cite->id);
-        $calendarEvent = CalendarEvent::find($cite->calendar_event_id);
+        $cite = Cite::find($request->id);
+        $calendarEvent = $cite->calendarEvent;
         return view('pages.showcite')->with([
             'cite' => $cite,
             'calendarEvent' => $calendarEvent]);
@@ -165,21 +167,42 @@ class CiteController extends Controller
      * @param  \App\Models\Cite  $Cite
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Cite $cite)
+    public function update(Request $request)
     {
-        $citeobj = Cite::find($request->id);
+        $cite = Cite::find($request->id);
         
-        $citeobj->update([
-            'assisted' => $request->assisted,
-            'isVirtual' => $request->isVirtual
-        ]);
+        $practice = Practice::find($request->input('practice'));
+
+        $calendarEvent = $cite->calendarEvent;
         $cite->update([
             'assisted' => $request->input('assisted'),
             'isVirtual' => $request->input('isVirtual')
         ]);
-
+        if ($cite->practice != $practice) {
+            $cite->practice()->dissociate();
+            $cite->practice()->associate($practice);
+        }
+        
+        $calendarEvent->update([
+            'approved' => $request->input('approved')
+        ]);
+        $patient = $cite->calendarEvent->patientProfiles->first();
         $cite->save();
-        $citeobj->save();
+        $calendarEvent->save();
+        /* if ($request->input('approved') != 0) {
+            $data = array(
+                'fullname' => $patient->profile->user->name . ' ' . $patient->profile->user->lastname,
+                'email' => $patient->profile->user->email
+            );
+            Mail::send('external.autoremind', [
+                            'event' => $cite->calendarEvent,
+                            'reminder' => $calendarEvent->reminder,
+                            'patient' => $patient
+                        ], function ($message) use ($data) {
+                            $message->to($data['email'], $data['fullname'])->subject('Consulta2 | Recordatorio de turno para el día ');
+                            $message->from('sistema@consulta2.com', 'Consulta2');
+                        });
+        } */
         return back()->withStatus(__('Datos de sesión actualizados.'));
     }
 

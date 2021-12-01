@@ -13,7 +13,9 @@ class ConsultType extends Model
 
     protected $fillable = [
         'name',
-        'availability'
+        'availability',
+        'visible',
+        'requires_auth'
     ];
 
     public function practices() {
@@ -30,6 +32,16 @@ class ConsultType extends Model
 
     public function professionalProfile() {
         return $this->belongsTo(ProfessionalProfile::class);
+    }
+
+    public static function boot() {
+        parent::boot();
+        self::deleting(function($consult) {
+            $consult->practices()->detach();
+            $consult->calendarEvent()->delete();
+            $consult->businessHours()->detach();
+            $consult->professionalProfile()->dissociate();
+        });
     }
 
 }

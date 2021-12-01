@@ -61,36 +61,42 @@ class PracticesSeeder extends Seeder {
                 'description' => 'Primera entrevista que se hace al paciente.',
                 'maxtime' => 60,
                 'nomenclature_id' => 1,
+                'coverage_id' => 1
             ],
             [
                 'name' => 'Psicoterapia Individual',
                 'description' => 'Sesión de terapia de una sola persona',
                 'maxtime' => 40,
                 'nomenclature_id' => 2,
+                'coverage_id' => 1
             ],
             [
                 'name' => 'Psicoterapia Grupal',
                 'description' => 'Sesión de terapia de hasta 6 personas',
                 'maxtime' => 60,
                 'nomenclature_id' => 3,
+                'coverage_id' => 1
             ],
             [
                 'name' => 'Psicoterapia de Pareja o Familia',
                 'description' => 'Sesión de terapia de 2 a 6 personas',
                 'maxtime' => 60,
                 'nomenclature_id' => 3,
+                'coverage_id' => 2
             ],
             [
                 'name' => 'Pruebas Psicométricas',
                 'description' => 'Evaluación de conocimientos, aptitudes psíquicas, comportamientos, rasgos de personalidad y capacidades del individuo',
                 'maxtime' => 40,
                 'nomenclature_id' => 4,
+                'coverage_id' => 1
             ],
             [
                 'name' => 'Psicodiagnóstico',
                 'description' => 'Diagnóstico de enfermedades, síndromes o alteraciones mentales',
                 'maxtime' => 60,
                 'nomenclature_id' => 4,
+                'coverage_id' => 2
             ]
         ];
 
@@ -99,19 +105,37 @@ class PracticesSeeder extends Seeder {
                 'price' => 602.19,
                 'copayment' => 0.00,
                 'practice_id' => 1,
-                'coverage_id' => 3
+                'coverage_id' => 2
             ],
             [
                 'price' => 567.31,
                 'copayment' => 0.00,
                 'practice_id' => 2,
-                'coverage_id' => 3
+                'coverage_id' => 2
+            ],
+            [
+                'price' => 550.48,
+                'copayment' => 0.00,
+                'practice_id' => 3,
+                'coverage_id' => 2
             ],
             [
                 'price' => 550.48,
                 'copayment' => 0.00,
                 'practice_id' => 4,
-                'coverage_id' => 3
+                'coverage_id' => 2
+            ],
+            [
+                'price' => 550.48,
+                'copayment' => 0.00,
+                'practice_id' => 5,
+                'coverage_id' => 2
+            ],
+            [
+                'price' => 550.48,
+                'copayment' => 0.00,
+                'practice_id' => 6,
+                'coverage_id' => 2
             ]
         ];
 
@@ -168,6 +192,7 @@ class PracticesSeeder extends Seeder {
                 'description' => $value['description'],
                 'maxtime' => $value['maxtime'],
                 'nomenclature_id' => $value['nomenclature_id'],
+                'coverage_id' => $value['coverage_id']
             ]);
         }
 

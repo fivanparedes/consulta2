@@ -17,6 +17,8 @@ class CreatePracticesTable extends Migration
             $table->integer('id')->autoIncrement();
             $table->string('name');
             $table->string('availability');
+            $table->boolean('visible');
+            $table->boolean('requires_auth');
             $table->unsignedBigInteger('professional_profile_id');
             $table->foreign('professional_profile_id')->references('id')->on('professional_profiles')
                 ->onUpdate('cascade')->onDelete('cascade');
@@ -28,7 +30,10 @@ class CreatePracticesTable extends Migration
             $table->integer('maxtime');
             $table->unsignedBigInteger('nomenclature_id');
             $table->integer('consult_type_id');
+            $table->unsignedBigInteger('coverage_id');
             $table->foreign('nomenclature_id')->references('id')->on('nomenclatures')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('coverage_id')->references('id')->on('coverages')
                 ->onUpdate('cascade')->onDelete('cascade');
             $table->string('description');
             $table->timestamps();
@@ -54,5 +59,6 @@ class CreatePracticesTable extends Migration
     {
         Schema::dropIfExists('practices');
         Schema::dropIfExists('consult_types');
+        Schema::dropIfExists('consult_type_practice');
     }
 }

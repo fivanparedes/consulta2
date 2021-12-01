@@ -42,7 +42,7 @@ class CreateCalendarEventsTable extends Migration
         });
 
         Schema::create('cites', function (Blueprint $table) {
-            $table->unsignedBigInteger('id')->autoIncrement();
+            $table->id();
             $table->boolean('assisted');
             $table->boolean('covered');
             $table->boolean('paid');

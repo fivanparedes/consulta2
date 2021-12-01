@@ -1,0 +1,1 @@
+<p>Turno cancelado correctamente. Puede cerrar esta pestaña.</p>

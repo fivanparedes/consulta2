@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Laratrust\Checkers\Role;
 
 class HomeController extends Controller
 {
@@ -23,6 +25,14 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('dashboard');
+        $user = Auth::user();
+        if ($user->hasRole('Patient')) {
+            return redirect('/professionals/list');
+        } elseif ($user->hasRole('Professional')) {
+            return redirect('/cite');
+        } elseif ($user->hasRole('Admin')) {
+            return redirect('/admin/professionals');
+        }
+        
     }
 }

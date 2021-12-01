@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\MedicalHistoryController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\ReminderController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Session;
@@ -58,6 +59,14 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/event/confirm', [EventController::class, 'confirm']);
 	Route::post('/event/store', [EventController::class, 'store']);
 
+	Route::get('/external/event/cancel/{id}', [EventController::class, 'externalCancel']);
+	Route::delete('/external/event/delete/{id}', [EventController::class, 'externalDelete']);
+	Route::get('/reminder/confirm/{id}', [ReminderController::class, 'confirm']);
+
+	Route::resource('/consult_types', 'App\Http\Controllers\ConsultTypeController');
+	Route::resource('/practices', 'App\Http\Controllers\PracticeController');
+	Route::resource('/nomenclatures', 'App\Http\Controllers\NomenclatureController');
+
 	/**
 	 * Controlador de citas (sesiones de consultorio)
 	 */
@@ -85,6 +94,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::patch('lifesheet/update', ['as' => 'lifesheet.update', 'uses' => 'App\Http\Controllers\LifesheetController@update']);
 	Route::get('/profile/events', ['as' => 'profile.events', 'uses' => 'App\Http\Controllers\PatientController@listEvents']);
 	Route::get('/profile/events/{id}', [PatientController::class, 'showEvent']);
+	Route::delete('/profile/events/delete/{id}', ['as' => 'profile.events.delete', 'uses' => 'App\Http\Controllers\EventController@delete']);
 	Route::get('/profile/attendees', ['as' => 'profile.attendees', 'uses' => 'App\Http\Controllers\UserController@listAtendees']);
 	
 	/**

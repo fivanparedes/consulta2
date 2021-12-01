@@ -23,7 +23,11 @@ class Coverage extends Model
     }
 
     public function practices() {
-        return $this->belongsToMany(Practice::class);
+        return $this->hasMany(Practice::class);
+    }
+
+    public function prices() {
+        return $this->hasMany(Price::class);
     }
 
     public function professionalProfiles() {

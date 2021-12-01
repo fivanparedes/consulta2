@@ -17,8 +17,8 @@ class Practice extends Model
         'maxtime'
     ];
 
-    public function coverages() {
-        return $this->belongsToMany(Coverage::class);
+    public function coverage() {
+        return $this->belongsTo(Coverage::class);
     }
 
     public function cites() {
@@ -31,5 +31,20 @@ class Practice extends Model
 
     public function consultTypes() {
         return $this->belongsToMany(ConsultType::class);
+    }
+
+    public function price() {
+        return $this->hasOne(Price::class);
+    }
+
+    public static function boot() {
+        parent::boot();
+        self::deleting(function ($practice){
+            $practice->cites()->delete();
+            $practice->coverage()->dissociate();
+            $practice->nomenclature()->dissociate();
+            $practice->consultTypes()->detach();
+            $practice->price()->delete();
+        });
     }
 }

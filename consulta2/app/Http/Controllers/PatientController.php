@@ -33,6 +33,9 @@ class PatientController extends Controller
 
     public function showEvent($id) {
         $event = CalendarEvent::find($id);
+        $user = Auth::user();
+        $patient = $user->profile->patientProfile;
+        return view('patients.show_event')->with(['event' => $event, 'patient' => $patient]);
     }
     public function update(Request $request)
     {
