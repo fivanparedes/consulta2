@@ -5,3 +5,4 @@ Consulta2 is an information system for reserving medical sessions and queries. R
 * Laravel 8+
 * Light Bootstrap Panel by Creative Tim.
 * Visual Paradigm Community Edition for UML Diagrams.
+* Laratrust framework by Santigarcor
