@@ -85,7 +85,7 @@ class NomenclatureController extends Controller
         
         $specialty = Specialty::find($request->input('specialty'));
         if ($nomenclature->specialty != $specialty) {
-            $nomenclature->specialty()->dissociate($nomenclature->specialty);
+            $nomenclature->specialty()->dissociate();
         }
         $nomenclature->specialty()->associate($specialty);
         $nomenclature->save();
