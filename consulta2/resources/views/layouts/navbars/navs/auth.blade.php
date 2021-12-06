@@ -105,7 +105,7 @@
                         @csrf
                         <a class="text-danger" href="{{ route('logout') }}"
                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            {{ __('Log out') }} </a>
+                            {{ __('Cerrar sesión') }} </a>
                     </form>
                 </li>
             </ul>
