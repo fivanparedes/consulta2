@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Http\Requests\UserRequest;
 use App\Models\CalendarEvent;
-use App\Models\PatientProfile;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -30,11 +29,35 @@ class UserController extends Controller
         foreach ($events as $event) {
             if ($event->patientProfiles->count() > 0) {
                 foreach ($event->patientProfiles as $profile) {
-                   $patients->push($profile);
+                    if (!$patients->contains($profile)) {
+                        $patients->push($profile);
+                    }
+                   
                 }
                 
             }
         }
         return view('professionals.users')->with(['patients' => $patients]);
+    }
+
+    public function searchByDni(Request $request) {
+        if ($request->ajax()) {
+            $user = User::where('dni', $request->dni)->first();
+            if (isset($user)) {
+                return response()->json([
+                    'status' => 'success',
+                    'fullname' => $user->name . ' ' . $user->lastname,
+                    'dni' => $user->dni,
+                    'address' => $user->profile->address,
+                    'phone' => $user->profile->phone,
+                    'coverage' => $user->profile->patientProfile->lifesheet->coverage->name
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error'
+                ]);
+            }
+        }
+        
     }
 }

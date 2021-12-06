@@ -32,7 +32,7 @@ class PatientProfile extends Model
         return $this->hasOne(Lifesheet::class);
     }
     
-    public function medicalHistory() {
-        return $this->hasOne(MedicalHistory::class);
+    public function medicalHistories() {
+        return $this->hasMany(MedicalHistory::class);
     }
 }

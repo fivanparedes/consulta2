@@ -23,7 +23,7 @@ Tip 2: you can also add an image using data-image tag
             @if (Auth::user()->isAbleTo('_consulta2_patient_profile_perm'))
                 <li class="nav-item @if ($activePage == 'patient_events') active @endif">
                     <a class="nav-link" href="{{ route('profile.events') }}">
-                        <i class="nc-icon nc-calendar"></i>
+                        <i class="nc-icon nc-notes"></i>
                         <p>{{ __('Mis turnos') }}</p>
                     </a>
                 </li>
@@ -76,7 +76,7 @@ Tip 2: you can also add an image using data-image tag
             @if (Auth::user()->hasRole('Professional'))
                 <li class="nav-item @if ($activePage == 'attendees') active @endif">
                     <a class="nav-link" href="{{ route('profile.attendees') }}">
-                        <i class="bi bi-people-fill"></i>
+                        <i class="nc-icon nc-single-02"></i>
                         <p>{{ __('Pacientes') }}</p>
                     </a>
                 </li>
@@ -98,7 +98,7 @@ Tip 2: you can also add an image using data-image tag
                 </li>
             @endif
             @if (Auth::user()->hasRole('Admin'))
-                <li class="nav-item @if ($activePage == 'dashboard') active @endif">
+                <li class="nav-item @if ($activePage == 'roles_permissions') active @endif">
                     <a class="nav-link" href="{{ route('laratrust.roles-assignment.index') }}">
                         <i class="nc-icon nc-chart-pie-35"></i>
                         <p>{{ __('Roles y Permisos') }}</p>
@@ -123,6 +123,12 @@ Tip 2: you can also add an image using data-image tag
                     <a class="nav-link" href="{{ route('nomenclatures.index') }}">
                         <i class="nc-icon nc-chart-pie-35"></i>
                         <p>{{ __('Nomenclador') }}</p>
+                    </a>
+                </li>
+                <li class="nav-item @if ($activePage == 'coverages') active @endif">
+                    <a class="nav-link" href="{{ route('coverages.index') }}">
+                        <i class="nc-icon nc-chart-pie-35"></i>
+                        <p>{{ __('Obras sociales') }}</p>
                     </a>
                 </li>
 

@@ -189,12 +189,12 @@ class CiteController extends Controller
         $patient = $cite->calendarEvent->patientProfiles->first();
         $cite->save();
         $calendarEvent->save();
-        /* if ($request->input('approved') != 0) {
+        if ($request->input('approved') != 0) {
             $data = array(
                 'fullname' => $patient->profile->user->name . ' ' . $patient->profile->user->lastname,
                 'email' => $patient->profile->user->email
             );
-            Mail::send('external.autoremind', [
+            Mail::send('external.approved', [
                             'event' => $cite->calendarEvent,
                             'reminder' => $calendarEvent->reminder,
                             'patient' => $patient
@@ -202,7 +202,7 @@ class CiteController extends Controller
                             $message->to($data['email'], $data['fullname'])->subject('Consulta2 | Recordatorio de turno para el día ');
                             $message->from('sistema@consulta2.com', 'Consulta2');
                         });
-        } */
+        }
         return back()->withStatus(__('Datos de sesión actualizados.'));
     }
 

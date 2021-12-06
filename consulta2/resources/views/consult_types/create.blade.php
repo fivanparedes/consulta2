@@ -77,12 +77,22 @@
                         <label class="form-check-label" for="av-sunday"><strong>Domingo</strong></label>
                     </div>
                     <hr>
-                    @foreach (\App\Models\BusinessHour::all() as $hour)
-                        <div class="form-check-inline">
-                        <input type="checkbox" class="form-check-input" name="business_hours[]" id="bhour-{{ $hour->id }}" value="{{ $hour->id }}" >
-                        <label class="form-check-label" for="bhour-{{ $hour->id }}"><strong>{{ $hour->time }}</strong></label>
+                    <div class="form-group" id="hour-checks">
+                        <select name="hour-criteria" id="hour-criteria" onchange="retrieveAvailableHours(this.value)" class="form-control">
+                            <option value="0">Seleccione horas disponibles</option>
+                            <option value="1">Cada 1 hora</option>
+                            <option value="2">Cada 30 minutos</option>
+                            <option value="3">Cada 20 minutos</option>
+                            <option value="4">Cada 10 minutos</option>
+                            <option value="5">Cada 5 minutos</option>
+                            <option value="6">Todas las horas disponibles</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <div id="hour-choices">
+
                         </div>
-                    @endforeach
+                    </div>
                         <hr>
                     <div class="form-group">
                     <div class="form-check-inline">
@@ -107,6 +117,33 @@
         </div>
     </div>
     <script>
+        function retrieveAvailableHours(value) {
+            if (value != 0) {
+                var headers = {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+                $('#hour-choices').empty();
+                $.ajax({
+                    type: 'GET',
+                    url: '/getAvailableHours',
+                    dataType: 'json',
+                    headers: headers,
+                    data: {
+                        choice: value
+                    },
+                    success: function(response) {
+                        console.log(JSON.stringify(response));
+                        if (response.status == 'success') {
+                            let data = response.data;
+                            for (let i = 0; i < data.length; i++) {
+                                $('#hour-choices').append(
+                                '<div class="form-check-inline"><input type="checkbox" class="form-check-input" name="business_hours[]" id="bhour-'+data[i].time+'" value="'+data[i].time+'" ><label class="form-check-label" for="bhour-'+data[i].time+'"><strong>'+data[i].time+'</strong></label></div>');
+                            }
+                        }
+                    }
+                });
+            }
+        }
         $('#input-practice').change(function() {
             if ($('#input-practice option:selected').val() == 0) {
                 $('#add-btn').attr('disabled', true);

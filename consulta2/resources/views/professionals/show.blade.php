@@ -11,7 +11,12 @@ perfil', 'activeButton' => 'laravel'])
                 @if ($covered)
                     <strong class="text-primary">¡Este profesional atiende con tu obra social!</strong>
                 @else
-                    <strong class="text-dark">Este profesional no atiende con tu obra social.</strong>
+                    @if (Auth::user()->profile->patientProfile->lifesheet->coverage->id == 1)
+                        <strong class="text-dark">Atención particular.</strong>
+                    @else
+                        <strong class="text-dark">Este profesional no atiende con tu obra social.</strong>
+                    @endif
+
                 @endif
             </div>
         </div>

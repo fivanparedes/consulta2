@@ -45,6 +45,7 @@ class CreateCalendarEventsTable extends Migration
             $table->id();
             $table->boolean('assisted');
             $table->boolean('covered');
+            $table->string('resume');
             $table->boolean('paid');
             $table->unsignedBigInteger('calendar_event_id');
             $table->integer('practice_id');

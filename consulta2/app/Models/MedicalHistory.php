@@ -22,4 +22,8 @@ class MedicalHistory extends Model
     public function patientProfile() {
         return $this->belongsTo(PatientProfile::class);
     }
+
+    public function professionalProfile() {
+        return $this->belongsTo(ProfessionalProfile::class);
+    }
 }

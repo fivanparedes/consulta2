@@ -1,1 +1,1 @@
-<p>Señor/a paciente {{ $event->title }} le informamos que el profesional canceló el turno para el día {{ $event->start }}.</p>
+<p>Señor/a paciente {{ $event->title }} le informamos que el profesional {{ $user->name . ' '. $user->lastname}} canceló el turno para el día {{ date_create($event->start)->format('d/m/Y h:m') }}.</p>

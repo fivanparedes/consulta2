@@ -64,8 +64,10 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/reminder/confirm/{id}', [ReminderController::class, 'confirm']);
 
 	Route::resource('/consult_types', 'App\Http\Controllers\ConsultTypeController');
+	Route::get('/getAvailableHours', 'App\Http\Controllers\ConsultTypeController@getCategorizedHours');
 	Route::resource('/practices', 'App\Http\Controllers\PracticeController');
 	Route::resource('/nomenclatures', 'App\Http\Controllers\NomenclatureController');
+	Route::resource('/coverages', 'App\Http\Controllers\CoverageController');
 
 	/**
 	 * Controlador de citas (sesiones de consultorio)
@@ -96,6 +98,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/profile/events/{id}', [PatientController::class, 'showEvent']);
 	Route::delete('/profile/events/delete/{id}', ['as' => 'profile.events.delete', 'uses' => 'App\Http\Controllers\EventController@delete']);
 	Route::get('/profile/attendees', ['as' => 'profile.attendees', 'uses' => 'App\Http\Controllers\UserController@listAtendees']);
+	Route::get('/users/searchByDni', 'App\Http\Controllers\UserController@searchByDni');
 	
 	/**
 	 * Historias médicas (ultra sensible)

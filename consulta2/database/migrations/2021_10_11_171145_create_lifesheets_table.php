@@ -63,10 +63,11 @@ class CreateLifesheetsTable extends Migration
             $table->unsignedBigInteger('patient_profile_id');
             $table->foreign('patient_profile_id')->references('id')->on('patient_profiles')
                 ->onUpdate('cascade')->onDelete('cascade');
+            $table->unsignedBigInteger('professional_profile_id');
+            $table->foreign('professional_profile_id')->references('id')->on('professional_profiles')
+                ->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
         });
-
-        
     }
 
     /**

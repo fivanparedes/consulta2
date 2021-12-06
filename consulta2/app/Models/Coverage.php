@@ -33,4 +33,20 @@ class Coverage extends Model
     public function professionalProfiles() {
         return $this->belongsToMany(ProfessionalProfile::class, 'coverage_professionals', 'coverage_id', 'professional_id');
     }
+
+    public function city() {
+        return $this->belongsTo(City::class);
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+        self::deleting(function ($cov) {
+            $cov->practices()->delete();
+            $cov->lifesheet()->delete();
+            $cov->prices()->delete();
+            $cov->professionalProfiles()->detach();
+            $cov->city()->dissociate();
+        });
+    }
 }

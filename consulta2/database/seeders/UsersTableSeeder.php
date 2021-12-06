@@ -147,7 +147,8 @@ class UsersTableSeeder extends Seeder
             'visitreason' => encrypt('Estrés por el trabajo'),
             'diagnosis' => encrypt('Va progresando con el paso del tiempo'),
             'clinical_history' => encrypt('Historia médica...'),
-            'patient_profile_id' => $patient->id
+            'patient_profile_id' => $patient->id,
+            'professional_profile_id' => 1
         ]);
 
         $role_patient = Role::where('name', 'Patient')->first();
@@ -162,25 +163,70 @@ class UsersTableSeeder extends Seeder
                 'time' => '08:00'
             ],
             [
+                'time' => '08:30'
+            ],
+            [
+                'time' => '08:45'
+            ],
+            [
                 'time' => '09:00'
+            ],
+            [
+                'time' => '09:30'
+            ],
+            [
+                'time' => '09:45'
             ],
             [
                 'time' => '10:00'
             ],
             [
+                'time' => '10:30'
+            ],
+            [
+                'time' => '10:45'
+            ],
+            [
                 'time' => '11:00'
+            ],
+            [
+                'time' => '11:30'
+            ],
+            [
+                'time' => '11:45'
             ],
             [
                 'time' => '16:00'
             ],
             [
+                'time' => '16:30'
+            ],
+            [
+                'time' => '16:45'
+            ],
+            [
                 'time' => '17:00'
+            ],
+            [
+                'time' => '17:30'
+            ],
+            [
+                'time' => '17:45'
             ],
             [
                 'time' => '18:00'
             ],
             [
+                'time' => '18:30'
+            ],
+            [
                 'time' => '19:00'
+            ],
+            [
+                'time' => '19:30'
+            ],
+            [
+                'time' => '19:45'
             ],
         ];
 

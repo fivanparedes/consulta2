@@ -128,6 +128,15 @@
                                             </select>
                                             @include('alerts.feedback', ['field' => 'specialty'])
                                         </div>
+                                        <div class="form-group{{ $errors->has('coverages') ? ' has-danger' : '' }}">
+                                            <label class="form-control-label" for="input-coverages"><i class="w3-xxlarge fa fa-envelope-o"></i>{{ __('Obras sociales aceptadas') }}</label>
+                                            <select multiple name="coverages[]" id="input-coverages" class="form-control{{ $errors->has('coverages') ? ' is-invalid' : ''}}">
+                                                @foreach (\App\Models\Coverage::all() as $coverage)
+                                                    <option value="{{ $coverage->id }}" @if($professional_profile->coverages->contains($coverage)) selected @endif >{{ $coverage->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            @include('alerts.feedback', ['field' => 'coverages[]'])
+                                        </div>
                                     </div>
                                     @endif 
                                     <div class="text-center">

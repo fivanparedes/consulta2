@@ -75,6 +75,7 @@ class EventController extends Controller
                         $copayment = $practice->price->copayment;
                         return response()->json([
                             "content" => $arr,
+                            "covered" => 1,
                             "requiresAuth" => $consult->requires_auth,
                             "practice" => $practice->id,
                             "price" => $practice->price->price,
@@ -156,6 +157,9 @@ class EventController extends Controller
         $_professional = ProfessionalProfile::find($request->input('profid'));
         $_consult_type = ConsultType::find($request->input('consult-type'));
         $practice = $_consult_type->practices->where('coverage_id', Auth::user()->profile->patientProfile->lifesheet->coverage_id)->first();
+        if (!isset($practice)) {
+            $practice = $_consult_type->practices->where('coverage_id', 1)->first();
+        }
         return view('events.confirm')->with([
             'professional' => $_professional,
             'selectedDate' => $selectedDate,
@@ -170,16 +174,28 @@ class EventController extends Controller
     public function store(Request $request)
     {
         $user = User::find(Auth::user()->id);
-        if (!$user->isAbleTo('_consulta2_patient_profile_perm')) {
-            return abort(403);
+        if ($user->hasRole('Professional')) {
+            $user = User::where('dni', $request->input('dni'))->first();
+            $_practice = Practice::find($request->input('practice'));
+        } else {
+            if (!$user->isAbleTo('_consulta2_patient_profile_perm')) {
+                return abort(403);
+            }
         }
+        
 
         try {
             DB::beginTransaction();
             $selectedDate = $request->input('date');
-            $_consult_type = ConsultType::find($request->input('consult-type'));
 
-            $_practice = $_consult_type->practices->first();
+            $_consult_type = null;
+            if (!isset($_practice)) {
+                $_consult_type = ConsultType::find($request->input('consult-type'));
+                $_practice = $_consult_type->practices->where('coverage_id', $user->profile->patientProfile->lifesheet->coverage_id)->first();
+            } else {
+                $_consult_type = ConsultType::where('name', $request->input('consult-type'))->first();
+            }
+            
             $currentDate = strtotime($selectedDate);
             $futureDate = $currentDate + (60 * $_practice->maxtime);
             $formatDate = date("Y-m-d H:i:s", $futureDate);
@@ -191,7 +207,7 @@ class EventController extends Controller
                 'confirmed' => false,
                 'isVirtual' => boolval($request->input('isVirtual')),
             ]);
-            $_patient = PatientProfile::where('profile_id', Auth::user()->profile->id)->first();
+            $_patient = PatientProfile::where('profile_id', $user->profile->id)->first();
 
 
             $_event->consultType()->associate($_consult_type);
@@ -216,24 +232,39 @@ class EventController extends Controller
             $_cite->save();
 
             $_cite->save();
-            Mail::send('external.created', [
-                'user' => $user,
-                'event' => $_event
-            ], function ($message) {
-                $message->to(Auth::user()->email, Auth::user()->name . ' ' . Auth::user()->lastname)->subject('Consulta2 | Turno agendado exitosamente');
-                $message->from('sistema@consulta2.com', 'Consulta2');
-            });
 
-            $reminder = new Reminder();
-            $reminder->calendarEvent()->associate($_event);
-            $reminder->user()->associate(Auth::user());
-            $reminder->save();
+            if ($_consult_type->requires_auth != 0) {
+                Mail::send('external.created', [
+                    'user' => $user,
+                    'event' => $_event
+                ], function ($message) use ($user){
+                    $message->to($user->email, $user->name . ' ' . $user->lastname)->subject('Consulta2 | Turno pendiente de aprobación');
+                    $message->from('sistema@consulta2.com', 'Consulta2');
+                });
+                $reminder = new Reminder();
+                $reminder->calendarEvent()->associate($_event);
+                $reminder->user()->associate($user);
+                $reminder->save();
+            } else {
+                Mail::send('external.created', [
+                    'user' => $user,
+                    'event' => $_event
+                ], function ($message) use ($user) {
+                    $message->to($user->email, $user->name . ' ' . $user->lastname)->subject('Consulta2 | Turno agendado exitosamente');
+                    $message->from('sistema@consulta2.com', 'Consulta2');
+                });
+            }
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
+            throw $th;
         }
-
-        return redirect('/professionals/list')->with(['justregistered' => true]);
+        if (Auth::user()->hasRole('Patient')) {
+            return redirect('/professionals/list')->with(['justregistered' => true]);
+        } else {
+            return back()->withStatus('Turno registrado.');
+        }
+        
     }
 
     public function delete(Request $request)

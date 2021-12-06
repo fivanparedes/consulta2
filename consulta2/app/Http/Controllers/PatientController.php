@@ -64,6 +64,8 @@ class PatientController extends Controller
                 'licensePlate' => $request->licensePlate,
                 'field' => $request->field
             ]);
+            $professional_profile->coverages()->detach();
+            $professional_profile->coverages()->attach($request->coverages);
             $specialty = Specialty::find($request->specialty);
             $professional_profile->specialty()->associate($specialty);
             $professional_profile->save();

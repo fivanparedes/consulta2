@@ -44,4 +44,8 @@ class ProfessionalProfile extends Model
     public function consultTypes() {
         return $this->hasMany(ConsultType::class);
     }
+
+    public function medicalHistories() {
+        return $this->hasMany(MedicalHistory::class);
+    }
 }

@@ -42,7 +42,7 @@ class sendReminder extends Command
         $reminders = Reminder::where('sent', null)->get();
         foreach ($reminders as $reminder) {
             $startdate = date_create($reminder->calendarEvent->start);
-            $remindate = date_sub($startdate,date_interval_create_from_date_string("40 days"));
+            $remindate = date_sub($startdate,date_interval_create_from_date_string("1 days"));
             if (date_create('now') >= $remindate) {
                 foreach ($reminder->calendarEvent->patientProfiles as $patient) {
                     try {

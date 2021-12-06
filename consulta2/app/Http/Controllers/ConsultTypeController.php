@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BusinessHour;
 use App\Models\ConsultType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -69,7 +70,7 @@ class ConsultTypeController extends Controller
         $consulttype->availability = $av;
         $consulttype->visible = $request->input('visible') == 'on' ? true : false;
         $consulttype->requires_auth = $request->input('requires_auth') == 'on' ? true : false;
-        
+
 
         $consulttype->professionalProfile()->associate($profile);
         $consulttype->save();
@@ -88,6 +89,43 @@ class ConsultTypeController extends Controller
     public function show($id)
     {
         //
+    }
+
+    public function getCategorizedHours(Request $request)
+    {
+        if ($request->ajax()) {
+            $list = null;
+            switch ($request->choice) {
+                case '1': //Cada 1 hora
+                    $list = BusinessHour::where('time', 'like', '%:00:00')->get(['time'])->all();
+                    break;
+                case '2': //Cada media hora
+                    $list = BusinessHour::where('time', 'like', '%:30%')->orWhere('time', 'like', '%:00:00')->get(['time'])->all();
+                    break;
+                case '3': //Cada 20 minutos
+                    $list = BusinessHour::where('time', 'like', '%:00:00')->orWhere('time', 'like', '%:20:00')
+                        ->orWhere('time', 'like', '%:40:00')->get(['time'])->all();
+                    break;
+                case '4': //Cada 10 minutos
+                    $list = BusinessHour::where('time', 'like', '%:_0:00%')->get(['time'])->all();
+                    break;
+                case '5': //Cada 5 minutos
+                    $list = BusinessHour::where('time', 'like', '%:_5:00')->orWhere('time', 'like', '%:_0:00')->get(['time'])->all();
+                    break;
+                case '6': //Todas
+                    $list = BusinessHour::all();
+                    break;
+                default:
+                    return response()->json([
+                        'status' => 'error'
+                    ]);
+                    break;
+            }
+            return response()->json([
+                'status' => 'success',
+                'data' => $list
+            ]);
+        }
     }
 
     /**
@@ -150,8 +188,10 @@ class ConsultTypeController extends Controller
         $consulttype->availability = $av;
         $consulttype->visible = $request->input('visible') == 'on' ? true : false;
         $consulttype->requires_auth = $request->input('requires_auth') == 'on' ? true : false;
-        $consulttype->practices()->sync($request->selected_practices);
-        $consulttype->businessHours()->sync($request->business_hours);
+        $consulttype->practices()->detach();
+        $consulttype->practices()->attach($request->selected_practices);
+        $consulttype->businessHours()->detach();
+        $consulttype->businessHours()->attach($request->business_hours);
         $consulttype->save();
         return redirect('/consult_types');
     }
