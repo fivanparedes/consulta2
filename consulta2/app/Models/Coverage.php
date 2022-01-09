@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Akaunting\Sortable\Traits\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Coverage extends Model
 {
     use HasFactory;
+    use Sortable;
 
     protected $table = 'coverages';
 
@@ -16,6 +18,15 @@ class Coverage extends Model
         'address',
         'phone',
         'supported'
+    ];
+
+    public $sortable = [
+        'id',
+        'name',
+        'address',
+        'phone',
+        'supported',
+        'city'
     ];
 
     public function lifesheet() {

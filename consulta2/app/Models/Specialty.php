@@ -2,16 +2,24 @@
 
 namespace App\Models;
 
+use Akaunting\Sortable\Traits\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Specialty extends Model
 {
     use HasFactory;
+    use Sortable;
 
     protected $table = 'specialties';
 
     protected $fillable = [
+        'name',
+        'displayname'
+    ];
+
+    public $sortable = [
+        'id',
         'name',
         'displayname'
     ];

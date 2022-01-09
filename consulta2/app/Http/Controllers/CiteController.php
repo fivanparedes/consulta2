@@ -19,46 +19,40 @@ class CiteController extends Controller
      */
     public function index(Request $request)
     {
-        $filter = $request->query('filter');
-        $filter2 = $request->query('filter2');
-        if (!empty($filter)) {
-            if (!empty($filter2)) {
-                $query = DB::table('calendar_events')
-                    ->join('cites', 'calendar_events.id', '=', 'cites.calendar_event_id')
-                    ->join('professional_profiles', 'calendar_events.professional_profile_id' ,'=', 'professional_profiles.id')
-                    ->where('calendar_events.start', 'like', '%'.$filter.'%')
-                    ->where('calendar_events.title', 'like', '%'.$filter2.'%')
-                    ->where('calendar_events.professional_profile_id', Auth::user()->profile->professionalProfile->id)
-                    ->get();
-            } else {
-                $query = DB::table('calendar_events')
-                    ->join('cites', 'calendar_events.id', '=', 'cites.calendar_event_id')
-                    ->join('professional_profiles', 'calendar_events.professional_profile_id' ,'=', 'professional_profiles.id')
-                    ->where('calendar_events.start', 'like', '%'.$filter.'%')
-                    ->where('calendar_events.professional_profile_id', Auth::user()->profile->professionalProfile->id)
-                    ->get();
-            }
-        } else if (!empty($filter2)) {
-            $query = DB::table('calendar_events')
-            ->join('cites', 'calendar_events.id', '=', 'cites.calendar_event_id')
-            ->join('professional_profiles', 'calendar_events.professional_profile_id' ,'=', 'professional_profiles.id')
-            ->where('calendar_events.title', 'like', '%'.$filter2.'%')
-            ->where('calendar_events.professional_profile_id', Auth::user()->profile->professionalProfile->id)
-            ->get();
-        } else {
-            $query = DB::table('calendar_events')
-            ->join('cites', 'calendar_events.id', '=', 'cites.calendar_event_id')
-            ->join('professional_profiles', 'calendar_events.professional_profile_id' ,'=', 'professional_profiles.id')
-            ->where('calendar_events.professional_profile_id', Auth::user()->profile->professionalProfile->id)
-            ->get();
+        $cites = CalendarEvent::where('id', '>', 0)->where('professional_profile_id', Auth::user()->id);
+        if ($request->has('filter1') && $request->filter1 != "") {
+            $today = date_create('now');
+            $cites = $cites->where('start', $request->filter1, $today);
         }
-        
+        if ($request->has('filter2') && $request->filter2 != "") {
+            $name = $this->sec->clean($request->filter2);
+            $cites = $cites->where('title', 'like', '%' . $name . '%');
+        }
+        if ($request->has('filter3') && $request->filter3 != "") {
+            $from = date_create($request->filter3);
+            $cites = $cites->where('start', '>=', $from);
+        }
+        if ($request->has('filter4') && $request->filter4 != "") {
+            $to = date_create($request->filter4);
+            $cites = $cites->where('start', '<=', $to);
+        }
+        if ($request->has('filter5') && $request->filter5 != "") {
+            $cites = $cites->where('isVirtual', $request->filter5);
+        }
+        if ($request->has('filter6') && $request->filter6 != "") {
+            $cites = $cites->where('assisted', $request->filter6);
+        }
+        $cites = $cites->sortable()->paginate(10);
         //dd($query);
         return view('pages.cites')->with([
-            'filter' => $filter,
-            'filter2' => $filter2,
-            'cites' => Auth::user()->profile->professionalProfile->calendarEvents,
-            'professional' => Auth::user()->profile->professionalProfile
+            'cites' => $cites,
+            'professional' => Auth::user()->profile->professionalProfile,
+            'filter1' => $request->input('filter1') != "" ? $request->input('filter1') : null,
+            'filter2' => $request->input('filter2') != "" ? $request->input('filter2') : null,
+            'filter3' => $request->input('filter3') != "" ? $request->input('filter3') : null,
+            'filter4' => $request->input('filter4') != "" ? $request->input('filter4') : null,
+            'filter5' => $request->input('filter5') != "" ? $request->input('filter5') : null,
+            'filter6' => $request->input('filter6') != "" ? $request->input('filter6') : null,
         ]);
     }
 

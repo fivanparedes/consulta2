@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Akaunting\Sortable\Traits\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class CalendarEvent extends Model
 {
     use HasFactory;
+    use Sortable;
 
     protected $table = 'calendar_events';
 
@@ -18,6 +20,17 @@ class CalendarEvent extends Model
         'approved',
         'confirmed',
         'isVirtual'
+    ];
+
+    public $sortable = [
+        'id',
+        'title',
+        'start',
+        'approved',
+        'confirmed',
+        'isVirtual',
+        'cite',
+        'consultType',
     ];
 
     public function patientProfiles() {

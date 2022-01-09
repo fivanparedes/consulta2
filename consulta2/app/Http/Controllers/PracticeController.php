@@ -6,25 +6,56 @@ use App\Models\Coverage;
 use App\Models\Nomenclature;
 use App\Models\Practice;
 use App\Models\Price;
+use GrahamCampbell\SecurityCore\Security;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laratrust;
 
 class PracticeController extends Controller
 {
+    private $sec;
+    public function __construct()
+    {
+        $this->sec = Security::create(config('security.evil.tags'), "\0");
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $admin = Auth::user();
         if (!$admin->hasRole('Admin')) {
             return abort(403);
         }
-        $practices = Practice::all();
-        return view('practices.index')->with(['practices' => $practices]);
+        $practices = Practice::where('id', '>', 0);
+        if ($request->has('filter1') && $request->filter1 != "") {
+            $name = $this->sec->clean($request->filter1);
+            $practices = $practices->where('name', 'like', '%' . $name . '%');
+        }
+        if ($request->has('filter3') && $request->filter3 != "") {
+            $time = $this->sec->clean($request->filter3);
+            $practices = $practices->where('maxtime', $request->filter2, $time);
+        }
+        if ($request->has('filter4') && $request->filter4 != "") {
+            $os = $this->sec->clean($request->filter4);
+            $coverages = Coverage::where('name','like', '%' . $os . '%')->get(['id'])->toArray();
+            $practices = $practices->whereIn('coverage_id', $coverages);
+        }
+        if ($request->has('filter6') && $request->filter6 != "") {
+            $pr = $this->sec->clean($request->filter6);
+            $prices = Price::where('price', $request->filter5 ,$pr)->get(['id'])->toArray();
+            $practices = $practices->whereIn('price_id', $prices);
+        }
+        $practices = $practices->sortable()->paginate(10);
+        return view('practices.index')->with(['practices' => $practices,
+            'filter1' => $request->input('filter1') != "" ? $request->input('filter1') : null,
+            'filter2' => $request->input('filter2') != "" ? $request->input('filter2') : null,
+            'filter3' => $request->input('filter3') != "" ? $request->input('filter3') : null,
+            'filter4' => $request->input('filter4') != "" ? $request->input('filter4') : null,
+            'filter5' => $request->input('filter5') != "" ? $request->input('filter5') : null,
+            'filter6' => $request->input('filter6') != "" ? $request->input('filter6') : null,]);
     }
 
     /**

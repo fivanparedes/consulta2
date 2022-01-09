@@ -35,7 +35,7 @@ perfil', 'activeButton' => 'laravel'])
                                         <tr>
                                             <td>{{ $event->professionalProfile->profile->user->name . ' ' . $event->professionalProfile->profile->user->lastname }}
                                             </td>
-                                            <td>{{ date('d-m-Y h:m', strtotime($event->start)) }}</td>
+                                            <td>{{ date('d-m-Y h:i', strtotime($event->start)) }}</td>
                                             <td>{{ $event->professionalProfile->specialty->displayname }}</td>
                                             <td>
                                                 @if ($event->isVirtual)

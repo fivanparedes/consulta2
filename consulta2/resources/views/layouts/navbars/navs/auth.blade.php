@@ -31,10 +31,10 @@
                                 @foreach (Auth::user()->reminders as $reminder)
                                     @if ($reminder->answered != null)
                                         <a class="dropdown-item"
-                                            href="/profile/events/{{ $reminder->calendarEvent->id }}">{{ $reminder->calendarEvent->consultType->name . ' ' . date_create($reminder->calendarEvent->start)->format('d/m/Y h:m') }}</a>
+                                            href="/profile/events/{{ $reminder->calendarEvent->id }}">{{ $reminder->calendarEvent->consultType->name . ' ' . date_create($reminder->calendarEvent->start)->format('d/m/Y h:i') }}</a>
                                     @else
                                         <a class="dropdown-item font-weight-bold"
-                                            href="/profile/events/{{ $reminder->calendarEvent->id }}">{{ $reminder->calendarEvent->consultType->name . ' ' . date_create($reminder->calendarEvent->start)->format('d/m/Y h:m') }}</a>
+                                            href="/profile/events/{{ $reminder->calendarEvent->id }}">{{ $reminder->calendarEvent->consultType->name . ' ' . date_create($reminder->calendarEvent->start)->format('d/m/Y h:i') }}</a>
                                     @endif
 
                                 @endforeach
@@ -59,10 +59,10 @@
                                 @foreach (Auth::user()->profile->professionalProfile->calendarEvents as $calendarEvent)
                                     @if ($calendarEvent->approved != 0)
                                         <a class="dropdown-item"
-                                            href="/cite/{{ $calendarEvent->cite->id }}">{{ $calendarEvent->consultType->name . ' ' . date_create($calendarEvent->start)->format('d/m/Y h:m') }}</a>
+                                            href="/cite/{{ $calendarEvent->cite->id }}">{{ $calendarEvent->consultType->name . ' ' . date_create($calendarEvent->start)->format('d/m/Y h:i') }}</a>
                                     @else
                                         <a class="dropdown-item font-weight-bold"
-                                            href="/cite/{{ $calendarEvent->cite->id }}">{{ $calendarEvent->consultType->name . ' ' . date_create($calendarEvent->start)->format('d/m/Y h:m') }}</a>
+                                            href="/cite/{{ $calendarEvent->cite->id }}">{{ $calendarEvent->consultType->name . ' ' . date_create($calendarEvent->start)->format('d/m/Y h:i') }}</a>
                                     @endif
 
                                 @endforeach

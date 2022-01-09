@@ -19,6 +19,7 @@ class CreatePracticesTable extends Migration
             $table->string('availability');
             $table->boolean('visible');
             $table->boolean('requires_auth');
+            $table->integer('allowed_modes');
             $table->unsignedBigInteger('professional_profile_id');
             $table->foreign('professional_profile_id')->references('id')->on('professional_profiles')
                 ->onUpdate('cascade')->onDelete('cascade');

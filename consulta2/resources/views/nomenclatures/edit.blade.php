@@ -11,6 +11,7 @@
             </div>
             <form id="create-form" class="form-horizontal" action="{{ url('/nomenclatures/'.$nomenclature->id) }}" method="post">
                 @csrf
+                @method('patch')
                 <div class="card" id="card-one">
                     <div class="card-body">
                         <div class="form-group">

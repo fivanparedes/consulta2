@@ -4,20 +4,53 @@ namespace App\Http\Controllers;
 
 use App\Models\City;
 use App\Models\Coverage;
+use GrahamCampbell\SecurityCore\Security;
 use Illuminate\Http\Request;
 use phpDocumentor\Reflection\DocBlock\Tags\Covers;
 
 class CoverageController extends Controller
 {
+    private $sec;
+
+    public function __construct()
+    {
+        $this->sec = Security::create(["\/", "\\", "\(", "\)", "\;"], "\0");
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $coverages = Coverage::all();
-        return view('coverages.index')->with(['coverages' => $coverages]);
+        $coverages = Coverage::where('id', '>', 0);
+        if ($request->has('filter1') && $request->filter1 != "") {
+            $name = $this->sec->clean($request->filter1);
+            $coverages = $coverages->where('name', 'like', '%'.$name.'%');
+        }
+        if ($request->has('filter2') && $request->filter2 != "") {
+            $dir = $this->sec->clean($request->filter2);
+            $coverages = $coverages->where('address', 'like', '%' . $dir . '%');
+            
+        }
+        if ($request->has('filter3') && $request->filter3 != "") {
+            $tel = $this->sec->clean($request->filter3);
+            $coverages = $coverages->where('phone', 'like', '%' . $tel . '%');
+        }
+        if ($request->has('filter4') && $request->filter4 != "") {
+            $city = $this->sec->clean($request->filter4);
+            $cities = City::where('name', 'like', '%' . $city . '%')->get(['id'])->toArray();
+            $coverages = $coverages->whereIn('city_id', $cities);
+        }
+
+        $coverages = $coverages->sortable()->paginate(10);
+        return view('coverages.index')->with([
+            'coverages' => $coverages,
+            'filter1' => $request->input('filter1') != "" ? $request->input('filter1') : null,
+            'filter2' => $request->input('filter2') != "" ? $request->input('filter2') : null,
+            'filter3' => $request->input('filter3') != "" ? $request->input('filter3') : null,
+            'filter4' => $request->input('filter4') != "" ? $request->input('filter4') : null,
+        ]);
     }
 
     /**

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\MedicalHistoryController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\ProfessionalController;
 use App\Http\Controllers\ReminderController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Artisan;
@@ -110,5 +111,6 @@ Route::group(['middleware' => 'auth'], function () {
 	 * Perfiles profesionales (publicos)
 	 */
 	Route::get('professionals/list/', ['as' => 'professional.index', 'uses' => 'App\Http\Controllers\ProfessionalController@index']);
+	Route::get('professionals/getFilteredList', [ProfessionalController::class, 'getFilteredProfessionals']);
 	Route::get('professional/show/{id}', ['as' => 'professional.show', 'uses' => 'App\Http\Controllers\ProfessionalController@show']);
 });

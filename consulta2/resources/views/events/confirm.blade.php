@@ -18,7 +18,7 @@
                                 <strong>Área:</strong>
                                 <p> {{ $professional->field }}</p>
                                 <strong>Fecha y hora: </strong>
-                                <p> {{ date_create($selectedDate)->format('d/m/Y h:m') }}</p>
+                                <p> {{ $selectedDate }}</p>
                                 <input type="hidden" name="date" value="{{ $selectedDate }}">
                                 <strong>Tipo de consulta:</strong>
                                 <p> {{ $consult_type->name }}</p>

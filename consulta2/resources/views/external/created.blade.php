@@ -5,7 +5,7 @@
     <div class="card-body">
         <h2>Datos del turno</h2>
         <ul>
-            <li>Fecha y hora: {{ date_create($event->start)->format('d-m-Y h:m') }}</li>
+            <li>Fecha y hora: {{ date_create($event->start)->format('d-m-Y h:i') }}</li>
             <li>Tipo de consulta: {{ $event->consultType->name }}</li>
             <li>Prestador/a: {{ $event->professionalProfile->profile->user->name . ' ' . $event->professionalProfile->profile->user->lastname}}</li>
             <li>Rubro: {{ $event->professionalProfile->specialty->displayname }}</li>

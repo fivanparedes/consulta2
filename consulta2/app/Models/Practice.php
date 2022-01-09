@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Akaunting\Sortable\Traits\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Practice extends Model
 {
     use HasFactory;
+    use Sortable;
 
     protected $table = 'practices';
 
@@ -17,6 +19,15 @@ class Practice extends Model
         'maxtime'
     ];
 
+    public $sortable = [
+        'id',
+        'name',
+        'description',
+        'maxtime',
+        'coverage',
+        'nomenclature',
+        'price',
+    ];
     public function coverage() {
         return $this->belongsTo(Coverage::class);
     }

@@ -20,27 +20,46 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- <div class="card-header ">
-                            <form class="form-inline" method="GET">
-                                
-                                    <div class="pl-5 row">
-                                        <p class="pt-1">Filtro</p>
-                                        <div class="col w-50" style="float: left;">
-                                            <input type="date" class="form-control ml-4" id="filter" name="filter" placeholder="Día" value="{{$filter}}">
+                        <div class="card-header table">
+                            <form class="form-inline" action="{{ url('/nomenclatures') }}" method="GET">
+                                <div class="row ml-4">
+                                    <p class="pt-1 ">Filtro</p>
+                                    <div class="col" style="width: 10%;">
+                                        <div class="">
+                                            <input type="text" class="form-control" id="filter1" name="filter1" style="width: 97%;"
+                                                placeholder="Código" value="{{ isset($filter1) ? $filter1 : '' }}">
                                         </div>
-                                        <div class="col w-50" style="float:right;">
-                                            <input type="text" class="form-control ml-4" id="filter2" name="filter2" placeholder="Nombre y/o apellido" value="{{$filter2}}">
-                                        </div>
-                                        
                                     </div>
-                                  
-                                
-                                <button type="submit" class="btn btn-default mb-2 ml-5 ">Filtrar</button>
-                                <a class="nav-link" href="/cite/pdf/{{$filter}}/{{$filter2}}" title="Generar PDF">
-                                    <i class="nc-icon nc-paper-2"></i>
-                                </a>
+                                    <div class="col" style="width: 10%;">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" id="filter2" name="filter2" style="width: 97%;"
+                                                placeholder="Descripción" value="{{ isset($filter2) ? $filter2 : '' }}">
+                                        </div>
+                                    </div>
+                                    <div class="col" style="width: 10%;">
+                                        <div class="">
+                                            <input type="text" class="form-control" id="filter3" name="filter3" style="width: 97%;"
+                                                placeholder="Especialidad" value="{{ isset($filter3) ? $filter3 : '' }}">
+                                        </div>
+                                    </div>
+                                    <div class="col" style="width: 10%;">
+                                        <div class="">
+                                            <button type="submit"
+                                                class="btn bg-primary mb-2 ml-5 text-light">Filtrar</button>
+                                            <a class="nav-link" href="/nomenclatures" title="Generar PDF">
+                                                <i class="nc-icon nc-paper-2"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col" style="width: 10%;">
+                                        <div class="">
+                                            <a href="/nomenclatures" class="btn bg-danger"><i
+                                                    class="fa fa-trash"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
                             </form>
-                        </div> --}}
+                        </div>
 
                         <div class="card-body table-full-width table-responsive">
                             @if ($nomenclatures->count() == 0)
@@ -48,10 +67,10 @@
                             @else
                                 <table class="table table-hover table-striped">
                                     <thead>
-                                        <th>ID</th>
-                                        <th>Código</th>
-                                        <th>Descripción</th>
-                                        <th>Especialidad</th>
+                                        <th>@sortablelink('id')</th>
+                                        <th>@sortablelink('code', 'Código')</th>
+                                        <th>@sortablelink('description', 'Descripción')</th>
+                                        <th>@sortablelink('specialty.displayname', trans('Especialidad'))</th>
                                         <th>Editar</th>
                                     </thead>
                                     <tbody>
@@ -70,6 +89,7 @@
 
                                     </tbody>
                                 </table>
+                                {!! $nomenclatures->appends('nomenclatures')->links() !!}
                             @endif
 
                         </div>

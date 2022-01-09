@@ -20,27 +20,52 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- <div class="card-header ">
-                            <form class="form-inline" method="GET">
-                                
-                                    <div class="pl-5 row">
-                                        <p class="pt-1">Filtro</p>
-                                        <div class="col w-50" style="float: left;">
-                                            <input type="date" class="form-control ml-4" id="filter" name="filter" placeholder="Día" value="{{$filter}}">
+                        <div class="card-header table">
+                            <form class="form-inline" action="{{ url('/coverages') }}" method="GET">
+                                <div class="row ml-4">
+                                    <p class="pt-1 ">Filtro</p>
+                                    <div class="col" style="width: 10%;">
+                                        <div class="">
+                                            <input type="text" class="form-control" id="filter1" name="filter1" style="width: 97%;"
+                                                placeholder="Nombre" value="{{ isset($filter1) ? $filter1 : '' }}">
                                         </div>
-                                        <div class="col w-50" style="float:right;">
-                                            <input type="text" class="form-control ml-4" id="filter2" name="filter2" placeholder="Nombre y/o apellido" value="{{$filter2}}">
-                                        </div>
-                                        
                                     </div>
-                                  
-                                
-                                <button type="submit" class="btn btn-default mb-2 ml-5 ">Filtrar</button>
-                                <a class="nav-link" href="/cite/pdf/{{$filter}}/{{$filter2}}" title="Generar PDF">
-                                    <i class="nc-icon nc-paper-2"></i>
-                                </a>
+                                    <div class="col" style="width: 10%;">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" id="filter2" name="filter2" style="width: 97%;"
+                                                placeholder="Dirección" value="{{ isset($filter2) ? $filter2 : '' }}">
+                                        </div>
+                                    </div>
+                                    <div class="col" style="width: 10%;">
+                                        <div class="">
+                                            <input type="text" class="form-control" id="filter3" name="filter3" style="width: 97%;"
+                                                placeholder="Teléfono" value="{{ isset($filter3) ? $filter3 : '' }}">
+                                        </div>
+                                    </div>
+                                    <div class="col" style="width: 10%;">
+                                        <div class="">
+                                            <input type="text" class="form-control" id="filter4" name="filter4" style="width: 97%;"
+                                                placeholder="Ciudad" value="{{ isset($filter4) ? $filter4 : '' }}">
+                                        </div>
+                                    </div>
+                                    <div class="col" style="width: 10%;">
+                                        <div class="">
+                                            <button type="submit"
+                                                class="btn bg-primary mb-2 ml-5 text-light">Filtrar</button>
+                                            <a class="nav-link" href="/coverages" title="Generar PDF">
+                                                <i class="nc-icon nc-paper-2"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col" style="width: 10%;">
+                                        <div class="">
+                                            <a href="/coverages" class="btn bg-danger"><i
+                                                    class="fa fa-trash"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
                             </form>
-                        </div> --}}
+                        </div>
 
                         <div class="card-body table-full-width table-responsive">
                             @if ($coverages->count() == 0)
@@ -48,10 +73,11 @@
                             @else
                                 <table class="table table-hover table-striped">
                                     <thead>
-                                        <th>ID</th>
-                                        <th>Nombre</th>
-                                        <th>Dirección</th>
-                                        <th>Teléfono</th>
+                                        <th>@sortablelink('id', 'ID')</th>
+                                        <th>@sortablelink('name', 'Nombre')</th>
+                                        <th>@sortablelink('address', 'Dirección')</th>
+                                        <th>@sortablelink('phone', 'Teléfono')</th>
+                                        <th>@sortablelink('city.name', 'Ciudad')</th>
                                         <th>Editar</th>
                                     </thead>
                                     <tbody>
@@ -61,6 +87,7 @@
                                                 <td>{{ $coverage->name }}</td>
                                                 <td>{{ $coverage->address }}</td>
                                                 <td>{{ $coverage->phone }}</td>
+                                                <td>{{ $coverage->city->name }}</td>
                                                 <td><a class="nav-link"
                                                         href="/coverages/{{ base64_encode(base64_encode($coverage->id)) }}/edit">
                                                         <i class="nc-icon nc-badge"></i>
@@ -70,8 +97,9 @@
 
                                     </tbody>
                                 </table>
+                                {!! $coverages->appends('coverages')->links() !!}
                             @endif
-
+                                
                         </div>
                     </div>
                 </div>

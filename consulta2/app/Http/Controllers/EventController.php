@@ -12,6 +12,7 @@ use App\Models\Practice;
 use App\Models\ProfessionalProfile;
 use App\Models\Reminder;
 use App\Models\User;
+use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -63,7 +64,7 @@ class EventController extends Controller
                     $days = explode(";", $consult->availability);
                     if (!$dayturns->contains('start', $datestring) && in_array($date->format('N'), $days)) {
                         if ($consult->businessHours->contains($hour)) {
-                            array_push($arr, $hour->time);
+                            array_push($arr, substr($hour->time, 0, 2) .'.'.substr($hour->time,3,2));
                         }
                     }
                 }
@@ -153,7 +154,9 @@ class EventController extends Controller
 
     public function confirm(Request $request)
     {
-        $selectedDate = $request->input('date') . ' ' . $request->input('time');
+        $selectedDate = new DateTime($request->date);
+        $hour = explode('.', $request->time);
+        $selectedDate->setTime($hour[0], $hour[1], 0, 0);
         $_professional = ProfessionalProfile::find($request->input('profid'));
         $_consult_type = ConsultType::find($request->input('consult-type'));
         $practice = $_consult_type->practices->where('coverage_id', Auth::user()->profile->patientProfile->lifesheet->coverage_id)->first();
@@ -162,7 +165,7 @@ class EventController extends Controller
         }
         return view('events.confirm')->with([
             'professional' => $_professional,
-            'selectedDate' => $selectedDate,
+            'selectedDate' => $selectedDate->format('d/m/Y H:i'),
             'consult_type' => $_consult_type,
             'isVirtual' => $request->input('isVirtual'),
             'practice' => $practice

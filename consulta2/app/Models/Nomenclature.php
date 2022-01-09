@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Akaunting\Sortable\Traits\Sortable;
 
 class Nomenclature extends Model
 {
     use HasFactory;
+    use Sortable;
 
     protected $table = 'nomenclatures';
 
@@ -16,6 +18,12 @@ class Nomenclature extends Model
         'description'
     ];
 
+    public $sortable = [
+        'id',
+        'code',
+        'description',
+        'specialty'
+    ];
     public function practices() {
         return $this->hasMany(Practice::class);
     }

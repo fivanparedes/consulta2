@@ -3,32 +3,123 @@
 namespace App\Http\Controllers;
 
 use App\Models\BusinessHours;
+use App\Models\City;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ConsultType;
 use App\Models\Permission;
 use App\Models\ProfessionalProfile;
 use App\Models\Profile;
+use App\Models\Province;
+use App\Models\Specialty;
+use App\Models\User;
+use GrahamCampbell\SecurityCore\Security;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ProfessionalController extends Controller
 {
-    public function index() {
+    private $sec;
+    public function __construct()
+    {
+        $this->sec = Security::create(["\/", "\\", "\(", "\)", "\;"], "\0");
+    }
+
+    public function index()
+    {
         $_professionals = ProfessionalProfile::where('status', '<>', 0)->get();
         return view('professionals.index')->with(['professionals' => $_professionals]);
     }
 
-    public function adminList() {
-        $professionals = ProfessionalProfile::all();
-        return view('admin.professionals')->with(['professionals' => $professionals]);
+    public function getFilteredProfessionals(Request $request) {
+        if ($request->ajax()) {
+            $list = ProfessionalProfile::where('status', '<>', 0);
+            if ($request->specialty != 0) {
+                $list = $list->where('specialty_id', $request->specialty);
+            }
+            if ($request->location != "all") {
+                if ($request->location == "city") {
+                    $profs = Profile::where('city_id', Auth::user()->profile->city->id)->get(['id'])->toArray();
+                    $list = $list->whereIn('profile_id', $profs);
+                } elseif ($request->location == "province") {
+                    $cities = City::where('province_id', Auth::user()->profile->city->province->id)->get(['id'])->toArray();
+                    $profs = Profile::whereIn('city_id', $cities)->get(['id'])->toArray();
+                    $list = $list->whereIn('profile_id',$profs);
+                }
+            }
+            $list = $list->get();
+            $collection = array();
+            
+            foreach ($list as $item) {
+                $coverages = array();
+                foreach ($item->coverages as $coverage) {
+                    array_push($coverages, $coverage->name);
+                }
+                $obj = [
+                    'id' => $item->id,
+                    'fullname' => $item->profile->user->name . ' ' . $item->profile->user->lastname,
+                    'specialty' => $item->specialty->displayname . ' (' . $item->field . ')',
+                    'institution' => $item->institution->id != 1 ? 'Lugar de consulta: ' . $item->institution->name : 'Independiente / Consultorio propio',
+                    'coverages' => implode(" / ", $coverages),
+                
+                ];
+                array_push($collection, $obj);
+            }
+            return response()->json(['status' => 'success', 'content' => $collection]);
+        }
     }
 
-    public function edit(Request $request) {
+    public function adminList(Request $request)
+    {
+        $professionals = ProfessionalProfile::where('id', '>=', 1);
+        
+        if ($request->has('filter1') && $request->filter1 != "") {
+            $dni = $this->sec->clean($request->filter1);
+            $users = User::where('dni','like', '%' . $dni . '%')->get(['id'])->toArray();
+            $profiles = Profile::whereIn('user_id', $users)->get(['id'])->toArray();
+            $professionals = $professionals->whereIn('profile_id', $profiles);
+        }
+        if ($request->has('filter2') && $request->filter2 != "") {
+            $lastname = $this->sec->clean($request->filter2);
+            $users = User::where('lastname', 'like', '%' . $lastname . '%')->get(['id'])->toArray();
+            $profiles = Profile::whereIn('user_id', $users)->get(['id'])->toArray();
+            $professionals = $professionals->whereIn('profile_id', $profiles);
+        }
+        if ($request->has('filter3') && $request->filter3 != "") {
+            $name = $this->sec->clean($request->filter3);
+            $users = User::where('name', 'like', '%' . $name . '%')->get(['id'])->toArray();
+            $profiles = Profile::whereIn('user_id', $users)->get(['id'])->toArray();
+            $professionals = $professionals->whereIn('profile_id', $profiles);
+        }
+        if ($request->has('filter4') && $request->filter4 != "") {
+            $spec = $this->sec->clean($request->filter4);
+            $specs = Specialty::where('displayname', 'like', '%' . $spec . '%')->get(['id'])->toArray();
+            $professionals = $professionals->whereIn('specialty_id', $specs);
+        }
+        if ($request->filter5 != "") {
+            $stat = $this->sec->clean($request->filter5);
+            $professionals = $professionals->where('status', $stat);
+        }
+        
+        $professionals = $professionals->sortable()->paginate(10);
+        return view('admin.professionals')->with([
+            'professionals' => $professionals,
+            'filter1' => $request->input('filter1') != "" ? $request->input('filter1') : null,
+            'filter2' => $request->input('filter2') != "" ? $request->input('filter2') : null,
+            'filter3' => $request->input('filter3') != "" ? $request->input('filter3') : null,
+            'filter4' => $request->input('filter4') != "" ? $request->input('filter4') : null,
+            'filter5' => $request->input('filter5') != "" ? $request->input('filter5') : null,
+        ]);
+    }
+
+    public function edit(Request $request)
+    {
         $professional = ProfessionalProfile::find($request->id);
         return view('admin.professionals_edit')->with(['professional' => $professional]);
     }
 
-    public function save(Request $request) {
+    public function save(Request $request)
+    {
         $professional = ProfessionalProfile::find($request->id);
         $professional->update([
             'status' => $request->input('status')
@@ -41,12 +132,13 @@ class ProfessionalController extends Controller
             $professional->profile->user->detachPermission($turnperm);
             $professional->save();
         }
-        
+
 
         return redirect('/admin/professionals');
     }
 
-    public function show(Request $request) {
+    public function show(Request $request)
+    {
         $covered = false;
         $_prof = Profile::where('user_id', $request->id)->first();
 
@@ -57,7 +149,7 @@ class ProfessionalController extends Controller
         }
 
         $patient = Auth::user()->profile->patientProfile;
-        
+
         $_consults = $_professional->consultTypes->where('visible', true);
 
         $_workingHours = $_professional->businessHours()->get();
@@ -67,14 +159,13 @@ class ProfessionalController extends Controller
             }
         }
 
-            return view('professionals.show')
-                ->with([
-                    'professional' => $_professional,
-                    'patient' => $patient,
-                    'covered' => $covered,
-                    'workingHours' => $_workingHours,
-                    'consulttypes' => $_consults
-        ]);
-        
+        return view('professionals.show')
+            ->with([
+                'professional' => $_professional,
+                'patient' => $patient,
+                'covered' => $covered,
+                'workingHours' => $_workingHours,
+                'consulttypes' => $_consults
+            ]);
     }
 }

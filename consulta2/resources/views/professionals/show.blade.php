@@ -27,16 +27,19 @@ perfil', 'activeButton' => 'laravel'])
                     <div class="form-group">
                         <label class="form-label" for="input-day">Elegir fecha:</label>
                         <input class="datepicker form-control" type="date" name="date" id="input-day"
+                            value="{{ date('Y-m-d', strtotime(now() . '+1 days')) }}"
                             min="{{ date('Y-m-d', strtotime(now() . '+ 1 days')) }}"
                             max="{{ date('Y-m-d', strtotime(now() . ' + 15 days')) }}" />
                     </div>
                     <div class="form-group">
+                        <label for="input-isVirtual"></label>
                         <select class="form-control" name="isVirtual" id="input-isVirtual">
                             <option value="0">Presencial</option>
                             <option value="1">Virtual</option>
                         </select>
                     </div>
                     <div class="form-group">
+                        <label for="input-consult">Tipo de consulta:</label>
                         <select class="form-control" name="consult-type" id="input-consult">
                             @foreach ($consulttypes as $consulttype)
                                 <option value="{{ $consulttype->id }}">{{ $consulttype->name }}</option>
@@ -66,6 +69,7 @@ perfil', 'activeButton' => 'laravel'])
     <script>
         $(document).ready(function() {
             $('#submit-button').prop("disabled", true);
+            toggleBusinessHours();
 
         });
 
@@ -101,8 +105,8 @@ perfil', 'activeButton' => 'laravel'])
                             $('#submit-button').prop("disabled", true);
                             for (var i = 0; i < data.length; i++) {
                                 $("#hour-group").append(
-                                    '<span class="btn btn-primary"><input type="radio" name="time" class="input-time" value="' +
-                                    data[i] + '" onchange="allowButton()"><p>' + data[i] + '</p></span>'
+                                    '<label class="btn bg-primary text-light"><input type="radio" name="time" class="hour-button" value="' +
+                                    data[i] + '" onchange="allowButton()"><p>' + data[i].substring(0,5) + '</p></label>'
                                 );
 
                             }
