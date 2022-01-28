@@ -16,6 +16,8 @@ use GrahamCampbell\SecurityCore\Security;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class ProfessionalController extends Controller
 {
@@ -23,12 +25,6 @@ class ProfessionalController extends Controller
     public function __construct()
     {
         $this->sec = Security::create(["\/", "\\", "\(", "\)", "\;"], "\0");
-    }
-
-    public function index()
-    {
-        $_professionals = ProfessionalProfile::where('status', '<>', 0)->get();
-        return view('professionals.index')->with(['professionals' => $_professionals]);
     }
 
     public function getFilteredProfessionals(Request $request) {
@@ -69,9 +65,58 @@ class ProfessionalController extends Controller
         }
     }
 
-    public function adminList(Request $request)
+    public function create(Request $request) {
+        $user = User::find(auth()->user()->id);
+
+        return view('admin.professionals_create');
+    }
+
+    public function store(Request $request)
     {
+        $user = User::find(auth()->user()->id);
+
+        $patuser = new User();
+        $patuser->name = $request->user_name;
+        $patuser->lastname = $request->user_lastname;
+        $patuser->dni = $request->user_dni;
+        $patuser->email = $request->email;
+        $patuser->password = Hash::make($request->user_dni);
+        $patuser->save();
+        $patuser->attachRole('Professional');
+
+        $patprofile = new Profile();
+        $patprofile->bornDate = date_create($request->bornDate);
+        $patprofile->gender = $request->gender;
+        $patprofile->phone = $request->phone;
+        $patprofile->address = $request->address;
+        $patprofile->city_id = $request->city;
+        $patprofile->user_id = $patuser->id;
+        $patprofile->save();
+
+        $patientProfile = new ProfessionalProfile();
+        $patientProfile->licensePlate = $request->licensePlate;
+        $patientProfile->status = 1;
+        $patientProfile->field = $request->field;
+        $patientProfile->specialty_id = $request->specialty;
+        $patientProfile->institution_id = $user->hasPermission('institution-profile') ? $user->institutionProfile->id : 1;
+        $patientProfile->profile_id = $patprofile->id;
+        $patientProfile->save();
+
+        return redirect('/manage/professionals');
+    }
+    public function index(Request $request)
+    {
+
+        $user = User::find(auth()->user()->id);
+        if ($user->isAbleTo('patient-profile')) {
+            $_professionals = ProfessionalProfile::where('status', '<>', 0)->get();
+            return view('professionals.index')->with(['professionals' => $_professionals]);
+        }
         $professionals = ProfessionalProfile::where('id', '>=', 1);
+        if ($user->isAbleTo('institution-profile')) {
+            $professionals = $professionals->where('institution_id', $user->institutionProfile->id);
+        }
+        
         
         if ($request->has('filter1') && $request->filter1 != "") {
             $dni = $this->sec->clean($request->filter1);
@@ -112,6 +157,59 @@ class ProfessionalController extends Controller
         ]);
     }
 
+    public function createPDF(Request $request) {
+        $user = User::find(auth()->user()->id);
+        if ($user->isAbleTo('patient-profile')) {
+            $_professionals = ProfessionalProfile::where('status', '<>', 0)->get();
+            $pdf = PDF::loadView('professionals.pdf',['professionals' => $_professionals]);
+            return $pdf->download('profesionales.pdf');
+        }
+        $professionals = ProfessionalProfile::where('id', '>=', 1);
+        if ($user->isAbleTo('institution-profile')) {
+            $professionals = $professionals->where('institution_id', $user->institutionProfile->id);
+        }
+
+
+        if ($request->has('filter1') && $request->filter1 != "") {
+            $dni = $this->sec->clean($request->filter1);
+            $users = User::where('dni', 'like', '%' . $dni . '%')->get(['id'])->toArray();
+            $profiles = Profile::whereIn('user_id', $users)->get(['id'])->toArray();
+            $professionals = $professionals->whereIn('profile_id', $profiles);
+        }
+        if ($request->has('filter2') && $request->filter2 != "") {
+            $lastname = $this->sec->clean($request->filter2);
+            $users = User::where('lastname', 'like', '%' . $lastname . '%')->get(['id'])->toArray();
+            $profiles = Profile::whereIn('user_id', $users)->get(['id'])->toArray();
+            $professionals = $professionals->whereIn('profile_id', $profiles);
+        }
+        if ($request->has('filter3') && $request->filter3 != "") {
+            $name = $this->sec->clean($request->filter3);
+            $users = User::where('name', 'like', '%' . $name . '%')->get(['id'])->toArray();
+            $profiles = Profile::whereIn('user_id', $users)->get(['id'])->toArray();
+            $professionals = $professionals->whereIn('profile_id', $profiles);
+        }
+        if ($request->has('filter4') && $request->filter4 != "") {
+            $spec = $this->sec->clean($request->filter4);
+            $specs = Specialty::where('displayname', 'like', '%' . $spec . '%')->get(['id'])->toArray();
+            $professionals = $professionals->whereIn('specialty_id', $specs);
+        }
+        if ($request->filter5 != "") {
+            $stat = $this->sec->clean($request->filter5);
+            $professionals = $professionals->where('status', $stat);
+        }
+
+        $professionals = $professionals->sortable()->paginate(10);
+        $pdf = PDF::loadView('professionals.pdf',[
+            'professionals' => $professionals,
+            'filter1' => $request->input('filter1') != "" ? $request->input('filter1') : null,
+            'filter2' => $request->input('filter2') != "" ? $request->input('filter2') : null,
+            'filter3' => $request->input('filter3') != "" ? $request->input('filter3') : null,
+            'filter4' => $request->input('filter4') != "" ? $request->input('filter4') : null,
+            'filter5' => $request->input('filter5') != "" ? $request->input('filter5') : null,
+        ]);
+        return $pdf->download('profesionales.pdf');
+    }
+
     public function edit(Request $request)
     {
         $professional = ProfessionalProfile::find($request->id);
@@ -134,7 +232,7 @@ class ProfessionalController extends Controller
         }
 
 
-        return redirect('/admin/professionals');
+        return redirect('/manage/professionals');
     }
 
     public function show(Request $request)

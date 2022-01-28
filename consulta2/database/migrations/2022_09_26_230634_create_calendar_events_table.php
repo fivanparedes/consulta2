@@ -49,11 +49,15 @@ class CreateCalendarEventsTable extends Migration
             $table->boolean('paid');
             $table->unsignedBigInteger('calendar_event_id');
             $table->integer('practice_id');
+            $table->unsignedBigInteger('medical_history_id');
             $table->foreign('calendar_event_id')
                 ->references('id')->on('calendar_events')
                 ->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('practice_id')
                 ->references('id')->on('practices')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('medical_history_id')
+                ->references('id')->on('medical_histories')
                 ->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
         });

@@ -40,4 +40,8 @@ class Cite extends Model
     public function practice() {
         return $this->belongsTo(Practice::class);
     }
+
+    public function medicalHistory() {
+        return $this->belongsTo(MedicalHistory::class);
+    }
 }

@@ -88,6 +88,7 @@ class PracticeController extends Controller
         $practice->name = $request->input('name');
         $practice->maxtime = $request->input('maxtime');
         $practice->description = $request->input('description');
+        $practice->allowed_modes = $request->input('allowed_modes');
         
         $coverage = Coverage::find($request->input('coverage'));
         $practice->coverage()->associate($coverage);
@@ -148,6 +149,7 @@ class PracticeController extends Controller
         $practice->name = $request->input('name');
         $practice->maxtime = $request->input('maxtime');
         $practice->description = $request->input('description');
+        $practice->allowed_modes = $request->input('allowed_modes');
         
         $coverage = Coverage::find($request->input('coverage'));
         if ($practice->coverage != $coverage) {

@@ -62,6 +62,34 @@
                             <input type="number" class="form-control" id="input-copayment" name="copayment"
                                 value="{{ $practice->price->copayment }}">
                         </div>
+                        <div class="form-group">
+                                    <p>Modalidades aceptadas</p>
+                                    <div class="form-check-inline">
+                                        <input type="radio" class="form-check-input" name="allowed_modes"
+                                            id="allowed_modes0" value="0" @if ($practice->allowed_modes == 0)
+                                                checked
+                                            @endif>
+                                        <label class="form-check-label"
+                                            for="allowed_modes0"><strong>Presencial</strong></label>
+
+                                    </div>
+                                    <div class="form-check-inline">
+                                        <input type="radio" class="form-check-input" name="allowed_modes" @if ($practice->allowed_modes == 1)
+                                                checked
+                                            @endif
+                                            id="allowed_modes1" value="1">
+                                        <label class="form-check-label"
+                                            for="allowed_modes1"><strong>Virtual</strong></label>
+                                    </div>
+                                    <div class="form-check-inline">
+                                        <input type="radio" class="form-check-input" name="allowed_modes" @if ($practice->allowed_modes == 2)
+                                                checked
+                                            @endif
+                                            id="allowed_modes2" checked>
+                                        <label class="form-check-label" for="allowed_modes2"><strong>Ambos</strong></label>
+                                    </div>
+
+                                </div>
                     </div>
                     <hr>
                     <div class="form-group text-center">

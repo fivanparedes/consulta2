@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Akaunting\Sortable\Traits\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PatientProfile extends Model
 {
     use HasFactory;
+    use Sortable;
 
     protected $table = 'patient_profiles';
 
@@ -18,6 +20,16 @@ class PatientProfile extends Model
         'civilState',
         'scholarity',
         'occupation'
+    ];
+
+    public $sortable = [
+        'bornPlace',
+        'familyGroup',
+        'familyPhone',
+        'civilState',
+        'scholarity',
+        'occupation',
+        'coverage'
     ];
 
     public function profile() {

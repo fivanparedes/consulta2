@@ -12,12 +12,21 @@
                             <p class="card-category">Lista de sesiones pasadas, presentes y futuras.</p>
                         </div>
                         @if (Auth::user()->isAbleTo('receive-consults'))
-                            <hr>
-                            <div style="margin-top: 10px; margin-bottom: 10px;">
+                        <div class="row mt-2">
+                            <div class="col ml-5">
                                 <button type="button" class="btn bg-primary text-light" data-toggle="modal"
                                     data-target="#addModal">+ Agendar manualmente</button>
                             </div>
-                            <hr>
+                            <div class="col">
+                                <button type="button" class="btn bg-danger text-light" data-toggle="modal"
+                                    data-target="#cancelModal">Cancelar los turnos de hoy</button>
+                            </div>
+                            <div class="col">
+                                <button type="button" class="btn bg-danger text-light" data-toggle="modal"
+                                    data-target="#programCancelModal">Suspender atención...</button>
+                            </div>
+                        </div>
+                                
                         @endif
 
                         <div class="card-header table">
@@ -104,7 +113,7 @@
                                         <div class="">
                                             <button type="submit"
                                                 class="btn bg-primary mb-2 ml-5 text-light">Filtrar</button>
-                                            <a class="nav-link" href="/cite" title="Generar PDF">
+                                            <a class="nav-link" href="/cite/pdf?filter1={{ $filter1 }}&filter2={{ $filter2 }}&filter3={{ $filter3 }}&filter4={{ $filter4 }}&filter5={{ $filter5 }}&filter6={{ $filter6 }}" title="Generar PDF">
                                                 <i class="nc-icon nc-paper-2"></i>
                                             </a>
                                         </div>
@@ -119,7 +128,8 @@
                         </div>
 
                         <div class="card-body table-full-width table-responsive">
-                            @if ($professional->status == 0)
+                            @if (isset($professional))
+                                @if ($professional->status == 0)
                                 <div class="alert alert-info">
                                     <button type="button" aria-hidden="true" class="close" data-dismiss="alert">
                                         <i class="nc-icon nc-simple-remove"></i>
@@ -129,6 +139,8 @@
                                         sistema.</span>
                                 </div>
                             @endif
+                            @endif
+                            
                             @if ($cites->count() == 0)
                                 <p class="ml-5 card-category">No hay sesiones agendadas.</p>
                             @else
@@ -191,7 +203,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Cancelar turno</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Agendar turno manualmente</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -214,7 +226,8 @@
                         <div class="form-group">
                             <input type="hidden" value="1" name="consult-type">
                             <label for="practice">Tipo de atención:</label>
-                            <select class="form-control" name="practice" id="input-practice" onchange="setConsultId()">
+                            @if (isset($professional))
+                                <select class="form-control" name="practice" id="input-practice" onchange="setConsultId()">
                                 @foreach ($professional->consultTypes as $consult)
                                     <optgroup label="{{ $consult->name }}">
                                         @foreach ($consult->practices as $practice)
@@ -224,6 +237,8 @@
                                     </optgroup>
                                 @endforeach
                             </select>
+                            @endif
+                            
 
                             <input name="profid" type="hidden" value="{{ Auth::user()->id }}">
 
@@ -236,6 +251,87 @@
                         <button type="submit" class="btn bg-primary text-light">Agendar turno</button>
 
 
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Cancelar turnos de hoy</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="post" action="/event/massCancel">
+                    @csrf
+                    @method('post')
+                    <div class="modal-body">
+                        <p>Se le enviará a cada paciente un aviso de que su turno queda cancelado, y podrán elegir cuando reubicar dichas consultas pendientes.</p>
+                        <p>¿Realmente desea dar por cancelados todos los turnos del día de hoy?</p>
+                        <div class="form-group">
+                            <label for="concept">Motivo</label>
+                            <input class="form-control" type="text" name="concept" id="concept" placeholder="Ej: 'Vacaciones', 'Emergencia', etc. ">
+                        </div>
+                        <div class="form-group">
+                            <label for="from">Suspender atención desde</label>
+                            <input type="date" name="from" id="from" class="form-control" value="{{ date('Y-m-d', strtotime(now())) }}" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="to">Suspender atención hasta</label>
+                            <input type="date" name="to" id="to" class="form-control" value="{{ date('Y-m-d', strtotime(now())) }}" disabled>
+                        </div>
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No, volver
+                            atrás.</button>
+
+                        <button type="submit" class="btn bg-danger text-light">Sí, cancelar los turnos.</button>
+                    </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="programCancelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Cancelar turnos de hoy</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="post" action="/event/massCancel">
+                    @csrf
+                    @method('post')
+                    <div class="modal-body">
+                        <p>Se le enviará a cada paciente un aviso de que su turno queda cancelado, y podrán elegir cuando reubicar dichas consultas pendientes.</p>
+                        <div class="form-group">
+                            <label for="concept">Motivo</label>
+                            <input class="form-control" type="text" name="concept" id="concept" placeholder="Ej: 'Vacaciones', 'Emergencia', etc. ">
+                        </div>
+                        <div class="form-group">
+                            <label for="from">Suspender atención desde</label>
+                            <input type="date" name="from" id="from" class="form-control" min="{{ date('Y-m-d', strtotime(now())) }}" value="{{ date('Y-m-d', strtotime(now())) }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="to">Suspender atención hasta</label>
+                            <input type="date" name="to" id="to" class="form-control" min="{{ date('Y-m-d', strtotime(now())) }}" value="{{ date('Y-m-d', strtotime(now())) }}" required>
+                        </div>
+                        <p>¿Realmente desea dar por cancelados todos los turnos de los días señalados?</p>
+                        </div>
+                        
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No, volver
+                            atrás.</button>
+
+                        <button type="submit" class="btn bg-danger text-light">Sí, cancelar los turnos.</button>
+                    </div>
                     </div>
                 </form>
             </div>

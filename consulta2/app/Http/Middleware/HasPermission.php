@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Permission;
-use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\Route;
 
 class HasPermission
 {
@@ -29,7 +29,7 @@ class HasPermission
                             ->where('user_id',auth()->id())
                             ->first();
 
-            $controllerAction = class_basename(Route::currentRouteAction());
+            $controllerAction = class_basename(get_class(Route::current()->controller));
     
             $permission = false;
             $permission_id_id = 0;

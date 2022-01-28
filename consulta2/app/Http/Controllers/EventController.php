@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Laratrust;
+use App\Models\NonWorkableDay;
 
 class EventController extends Controller
 {
@@ -53,35 +54,44 @@ class EventController extends Controller
     {
         if ($request->ajax()) {
             try {
+
+                //Find the appropiate consult type
                 $professional = ProfessionalProfile::find($request->input('profid'));
                 $hours = $professional->businessHours;
                 $consult = ConsultType::find($request->consultid);
                 $arr = array();
-                $dayturns = CalendarEvent::where('start', 'like', '%' . $request->currentdate . '%')->get();
+
+                //Find the availability of hours given a date
+                $dayturns = CalendarEvent::where('professional_profile_id', $professional->id)->where('start', 'like', '%' . $request->currentdate . '%')->get();
+                $nonworkabledays = NonWorkableDay::where('professional_profile_id', $professional->id)
+                    ->where('from', '<=', $request->currentdate)->where('to', '>=', $request->currentdate)->get();
                 foreach ($hours as $hour) {
                     $datestring = $request->currentdate . ' ' . $hour->time;
                     $date = date_create($datestring);
-                    $days = explode(";", $consult->availability);
-                    if (!$dayturns->contains('start', $datestring) && in_array($date->format('N'), $days)) {
-                        if ($consult->businessHours->contains($hour)) {
-                            array_push($arr, substr($hour->time, 0, 2) .'.'.substr($hour->time,3,2));
+                    $days = explode(";", $consult->availability);       //Availability of days stored in db
+                    if (!$dayturns->contains('start', $datestring) && $nonworkabledays->count() == 0 && in_array($date->format('N'), $days)) {    //Check if business hour is in available day, and it's not in event
+                        if ($consult->businessHours->contains($hour)) {     //if day available and not in event, check if exists in consult type.
+                            array_push($arr, $hour->time);
                         }
                     }
                 }
 
+                //Extract the practice matching with the coverage of the patient
                 $copayment = 0;
                 $practices = $consult->practices;
                 foreach ($practices as $practice) {
-                    if (Auth::user()->profile->patientProfile->lifesheet->coverage == $practice->coverage) {
+                    //check if user has available coverage and it's not particular (id 1)
+                    if ((Auth::user()->profile->patientProfile->lifesheet->coverage == $practice->coverage) && ($practice->coverage_id != 1)) {
                         $copayment = $practice->price->copayment;
                         return response()->json([
                             "content" => $arr,
                             "covered" => 1,
                             "requiresAuth" => $consult->requires_auth,
                             "practice" => $practice->id,
-                            "price" => $practice->price->price,
-                            "copayment" => $copayment
+                            "allowed_modes" => $practice->allowed_modes,
+                            "price" => $copayment,
                         ]);
+                        break;
                     }
                 }
 
@@ -92,10 +102,18 @@ class EventController extends Controller
                         "datestring" => $datestring
                     ]);
                 } else {
+                    $particular = $consult->practices->where('coverage_id', 1)->first();
+                    if ($particular == null) {
+                        $particular = $consult->practices->first();
+                    }
+
                     return response()->json([
                         "content" => $arr,
+                        "covered" => 0,
                         "requiresAuth" => $consult->requires_auth,
-                        "price" => $copayment
+                        "practice" => $particular->id,
+                        "allowed_modes" => $particular->allowed_modes,
+                        "price" => $particular->price->price
                     ]);
                 }
             } catch (\Throwable $th) {
@@ -155,14 +173,11 @@ class EventController extends Controller
     public function confirm(Request $request)
     {
         $selectedDate = new DateTime($request->date);
-        $hour = explode('.', $request->time);
+        $hour = explode(':', $request->time);
         $selectedDate->setTime($hour[0], $hour[1], 0, 0);
         $_professional = ProfessionalProfile::find($request->input('profid'));
         $_consult_type = ConsultType::find($request->input('consult-type'));
-        $practice = $_consult_type->practices->where('coverage_id', Auth::user()->profile->patientProfile->lifesheet->coverage_id)->first();
-        if (!isset($practice)) {
-            $practice = $_consult_type->practices->where('coverage_id', 1)->first();
-        }
+        $practice = Practice::find($request->practice);
         return view('events.confirm')->with([
             'professional' => $_professional,
             'selectedDate' => $selectedDate->format('d/m/Y H:i'),
@@ -177,11 +192,12 @@ class EventController extends Controller
     public function store(Request $request)
     {
         $user = User::find(Auth::user()->id);
+        $_practice = Practice::find($request->input('practice-id'));
         if ($user->hasRole('Professional')) {
             $user = User::where('dni', $request->input('dni'))->first();
-            $_practice = Practice::find($request->input('practice'));
+            
         } else {
-            if (!$user->isAbleTo('_consulta2_patient_profile_perm')) {
+            if (!$user->isAbleTo('patient-profile')) {
                 return abort(403);
             }
         }
@@ -190,14 +206,8 @@ class EventController extends Controller
         try {
             DB::beginTransaction();
             $selectedDate = $request->input('date');
-
-            $_consult_type = null;
-            if (!isset($_practice)) {
-                $_consult_type = ConsultType::find($request->input('consult-type'));
-                $_practice = $_consult_type->practices->where('coverage_id', $user->profile->patientProfile->lifesheet->coverage_id)->first();
-            } else {
-                $_consult_type = ConsultType::where('name', $request->input('consult-type'))->first();
-            }
+            $_practice = Practice::find($request->input('practice-id'));
+            $_consult_type = ConsultType::find($request->input('consult-type'));
             
             $currentDate = strtotime($selectedDate);
             $futureDate = $currentDate + (60 * $_practice->maxtime);
@@ -262,12 +272,57 @@ class EventController extends Controller
             DB::rollBack();
             throw $th;
         }
-        if (Auth::user()->hasRole('Patient')) {
+        if ($user->hasRole('Patient')) {
             return redirect('/professionals/list')->with(['justregistered' => true]);
         } else {
             return back()->withStatus('Turno registrado.');
         }
         
+    }
+
+    public function massCancel(Request $request) {
+        $user = User::find(auth()->user()->id);
+        if (!$user->hasRole('Professional')) {
+            return abort(404);
+        }
+        try {
+            DB::beginTransaction();
+            $user = User::find(auth()->user()->id);
+            $events = CalendarEvent::where('professional_profile_id', $user->profile->professionalProfile->id)
+                ->where('start', '>=', date_create($request->from))->orWhere('start', '<=', date_create($request->input('to')))->get();
+            if ($events->count() > 0) {
+                foreach ($events as $event) {
+                    $patients = $event->patientProfiles;
+                    $event->delete();
+                    foreach ($patients as $patient) {
+                        $data = array(
+                            'email' => $patient->profile->user->email,
+                            'fullname' => $patient->profile->user->name . ' ' . $patient->profile->user->lastname
+                        );
+
+                        Mail::send('external.prof_deleted', [
+                            'user' => $user,
+                            'event' => $event
+                        ], function ($message) use ($data) {
+                            $message->to($data['email'], $data['fullname'])->subject('Consulta2 | Turno cancelado');
+                            $message->from('sistema@consulta2.com', 'Consulta2');
+                        });
+                    }
+                }
+            }
+            $non = new NonWorkableDay();
+            $non->concept = $request->concept != "" ? $request->concept : "Dado de baja por medio de panel de sesiones y consultas.";
+            $non->from = $request->from;
+            $non->to = $request->to;
+            $non->professional_profile_id = $user->profile->professionalProfile->id;
+            $non->save();
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return back()->withErrors('Error al dar de baja los turnos.');
+        }
+        
+        return back();
     }
 
     public function delete(Request $request)

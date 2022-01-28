@@ -12,7 +12,7 @@ Tip 2: you can also add an image using data-image tag
         </div>
 
         <ul class="nav">
-            @if (Auth::user()->hasRole('Patient'))
+            @if (Auth::user()->isAbleTo('patient-profile'))
                 <li class="nav-item @if ($activePage == 'professional_index') active @endif">
                     <a class="nav-link" href="{{ route('professional.index') }}">
                         <i class="nc-icon nc-paper-2"></i>
@@ -20,7 +20,7 @@ Tip 2: you can also add an image using data-image tag
                     </a>
                 </li>
             @endif
-            @if (Auth::user()->isAbleTo('_consulta2_patient_profile_perm'))
+            @if (Auth::user()->isAbleTo('patient-profile'))
                 <li class="nav-item @if ($activePage == 'patient_events') active @endif">
                     <a class="nav-link" href="{{ route('profile.events') }}">
                         <i class="nc-icon nc-notes"></i>
@@ -52,7 +52,7 @@ Tip 2: you can also add an image using data-image tag
                                 <p>{{ __('Perfil') }}</p>
                             </a>
                         </li>
-                        @if (Auth::user()->isAbleTo('_consulta2_patient_profile_perm'))
+                        @if (Auth::user()->isAbleTo('patient-profile'))
                             <li class="nav-item @if ($activePage == 'user-management') active @endif">
                                 <a class="nav-link" href="{{ route('profile.lifesheet') }}">
                                     <i class="nc-icon nc-circle-09"></i>
@@ -65,7 +65,15 @@ Tip 2: you can also add an image using data-image tag
                     </ul>
                 </div>
             </li>
-            @if (Auth::user()->hasRole('Professional'))
+            @if (Auth::user()->isAbleTo('patient-profile'))
+                <li class="nav-item @if ($activePage == 'medical_histories') active @endif">
+                                <a class="nav-link" href="{{ url('/medical_history') }}">
+                                    <i class="nc-icon nc-circle-09"></i>
+                                    <p>{{ __('Mi historia clínica') }}</p>
+                                </a>
+                            </li>
+            @endif
+            @if ((Auth::user()->isAbleTo('professional-profile') || Auth::user()->isAbleTo('institution-profile') || Auth::user()->isAbleTo('admin-profile'))  && Auth::user()->isAbleTo('CiteController@index'))
                 <li class="nav-item @if ($activePage == 'cites') active @endif">
                     <a class="nav-link" href="{{ route('cite.index') }}">
                         <i class="nc-icon nc-notes"></i>
@@ -73,15 +81,7 @@ Tip 2: you can also add an image using data-image tag
                     </a>
                 </li>
             @endif
-            @if (Auth::user()->hasRole('Professional'))
-                <li class="nav-item @if ($activePage == 'attendees') active @endif">
-                    <a class="nav-link" href="{{ route('profile.attendees') }}">
-                        <i class="nc-icon nc-single-02"></i>
-                        <p>{{ __('Pacientes') }}</p>
-                    </a>
-                </li>
-            @endif
-            @if (Auth::user()->hasRole('Professional'))
+            @if (Auth::user()->isAbleTo('professional-profile'))
                 <li class="nav-item @if ($activePage == 'consult_types') active @endif">
                     <a class="nav-link" href="{{ route('consult_types.index') }}">
                         <i class="nc-icon nc-chart-pie-35"></i>
@@ -89,7 +89,16 @@ Tip 2: you can also add an image using data-image tag
                     </a>
                 </li>
             @endif
-            @if (Auth::user()->hasRole('Professional'))
+            @if (Auth::user()->isAbleTo('professional-profile') || Auth::user()->isAbleTo('institution-profile') )
+                <li class="nav-item @if ($activePage == 'non_workable_days') active @endif">
+                    <a class="nav-link" href="{{ route('non_workable_days.index') }}">
+                        <i class="nc-icon nc-single-02"></i>
+                        <p>{{ __('Días no laborables') }}</p>
+                    </a>
+                </li>
+                
+            @endif
+            @if (Auth::user()->isAbleTo('professional-profile') || Auth::user()->isAbleTo('institution-profile'))
                 <li class="nav-item @if ($activePage == 'dashboard') active @endif">
                     <a class="nav-link" href="{{ route('dashboard') }}">
                         <i class="nc-icon nc-chart-pie-35"></i>
@@ -97,7 +106,7 @@ Tip 2: you can also add an image using data-image tag
                     </a>
                 </li>
             @endif
-            @if (Auth::user()->hasRole('Admin'))
+            @if (Auth::user()->isAbleTo('admin-profile') || Auth::user()->isAbleTo('institution-profile'))
                 <li class="nav-item @if ($activePage == 'roles_permissions') active @endif">
                     <a class="nav-link" href="{{ route('laratrust.roles-assignment.index') }}">
                         <i class="nc-icon nc-chart-pie-35"></i>
@@ -106,7 +115,22 @@ Tip 2: you can also add an image using data-image tag
                 </li>
             @endif
 
-            @if (Auth::user()->hasRole('Admin'))
+             @if (Auth::user()->isAbleTo('admin-profile') || Auth::user()->isAbleTo('institution-profile') || Auth::user()->isAbleTo('professional-profile'))
+             <li class="nav-item @if ($activePage == 'patients') active @endif">
+                    <a class="nav-link" href="{{ route('patients.index') }}">
+                        <i class="nc-icon nc-single-02"></i>
+                        <p>{{ __('Pacientes') }}</p>
+                    </a>
+                </li>
+                <li class="nav-item @if ($activePage == 'institutions') active @endif">
+                    <a class="nav-link" href="{{ route('institutions.index') }}">
+                        <i class="nc-icon nc-chart-pie-35"></i>
+                        <p>{{ __('Instituciones') }}</p>
+                    </a>
+                </li>
+            @endif
+
+            @if (Auth::user()->isAbleTo('admin-profile') || Auth::user()->isAbleTo('institution-profile'))
                 <li class="nav-item @if ($activePage == 'professionals') active @endif">
                     <a class="nav-link" href="{{ route('admin.professionals') }}">
                         <i class="nc-icon nc-chart-pie-35"></i>

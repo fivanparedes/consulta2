@@ -11,6 +11,7 @@
                                 <div class="col col-md-12 left">
                                     <h4 class="card-title">Prácticas profesionales</h4>
                                     <p class="card-category">Listado de prácticas por obra social</p>
+                                    <p>Sugerencia: crear una práctica para atención particular por cada operación a realizarse.</p>
                                 </div>
                                 <div class="col col-md-12 right">
                                     <a class="text-light right btn btn-primary" href="{{ route('practices.create') }}">+ Agregar práctica</a>

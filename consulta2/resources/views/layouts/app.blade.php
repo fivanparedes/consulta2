@@ -30,8 +30,6 @@
     <!-- CSS Files -->
     <link href="{{ asset('light-bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('light-bootstrap/css/light-bootstrap-dashboard.css?v=2.0.0') }} " rel="stylesheet" />
-    <!-- CSS Just for demo purpose, don't include it in your project -->
-    <link href="{{ asset('light-bootstrap/css/demo.css') }}" rel="stylesheet" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -47,17 +45,28 @@
 </head>
 
 <body>
-    <div class="wrapper @if (!auth()->check() ||
-    request()->route()->getName() == '') wrapper-full-page @endif">
+    <div
+        class="wrapper @if (!auth()->check() ||
+    request()->route()->getName() == '') 
+        @if ($activePage != 'medical_histories')
+            wrapper-full-page
+        @endif  
+    @endif">
 
         @if (auth()->check() &&
     request()->route()->getName() != '')
             @include('layouts.navbars.sidebar')
             @include('pages/sidebarstyle')
+        @elseif ($activePage == 'medical_histories')
+                @include('layouts.navbars.sidebar')
+                @include('pages/sidebarstyle')
         @endif
 
-        <div class="@if (auth()->check() &&
-    request()->route()->getName() != '') main-panel @endif">
+        <div class="@if ((auth()->check() &&
+    request()->route()->getName() != '')) main-panel 
+    @elseif ($activePage == 'medical_histories')
+            main-panel
+    @endif">
             @include('layouts.navbars.navbar')
             @yield('content')
             @include('layouts.footer.nav')

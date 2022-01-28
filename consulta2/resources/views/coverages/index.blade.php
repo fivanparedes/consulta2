@@ -52,7 +52,7 @@
                                         <div class="">
                                             <button type="submit"
                                                 class="btn bg-primary mb-2 ml-5 text-light">Filtrar</button>
-                                            <a class="nav-link" href="/coverages" title="Generar PDF">
+                                            <a class="nav-link" href="/coverages/pdf?filter1={{ $filter1 }}&filter2={{ $filter2 }}&filter3={{ $filter3 }}&filter4={{ $filter4 }}" title="Generar PDF">
                                                 <i class="nc-icon nc-paper-2"></i>
                                             </a>
                                         </div>

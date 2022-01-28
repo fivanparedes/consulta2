@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Akaunting\Sortable\Traits\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class InstitutionProfile extends Model
 {
     use HasFactory;
+    use Sortable;
 
     protected $table = 'institution_profiles';
 
@@ -18,8 +20,16 @@ class InstitutionProfile extends Model
         'phone'
     ];
 
+    public $sortable = [
+        'id',
+        'name',
+        'description',
+        'address',
+        'phone'
+    ];
+
     public function professionalProfiles() {
-        return $this->hasMany(ProfessionalProfile::class);
+        return $this->hasMany(ProfessionalProfile::class, 'institution_id');
     }
 
     public function user() {

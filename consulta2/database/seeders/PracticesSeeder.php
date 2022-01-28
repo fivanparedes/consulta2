@@ -8,6 +8,7 @@ use App\Models\Nomenclature;
 use App\Models\Practice;
 use App\Models\Price;
 use App\Models\Specialty;
+
 use Illuminate\Database\Seeder;
 class PracticesSeeder extends Seeder {
     public function run() {
@@ -29,10 +30,87 @@ class PracticesSeeder extends Seeder {
                 'address' => 'Bolívar 2152. Posadas, Misiones.',
                 'phone' => '+543764448673',
                 'city_id' => 1
-            ]
+            ],
+            [
+                'name' => 'Galeno',
+                'address' => 'Vuelta de Obligado 2225 CABA',
+                'phone' => '0-810-999',
+                'city_id' => 1
+            ],
+            [
+                'name' => 'Poder Judicial de la Nación',
+                'address' => '',
+                'phone' => '',
+                'city_id' => 1
+            ],
+            [
+                'name' => 'IOSFA (IOSE - DIBA - DIBPFA)',
+                'address' => '',
+                'phone' => '',
+                'city_id' => 1
+            ],
+            [
+                'name' => 'MEDIFE',
+                'address' => '',
+                'phone' => '',
+                'city_id' => 1
+            ],
+            [
+                'name' => 'Swiss Medical',
+                'address' => '',
+                'phone' => '',
+                'city_id' => 1
+            ],
+            [
+                'name' => 'APTM (Tabacaleros y Mutual)',
+                'address' => '',
+                'phone' => '',
+                'city_id' => 1
+            ],
+            [
+                'name' => 'Jerárquicos Salud',
+                'address' => '',
+                'phone' => '',
+                'city_id' => 1
+            ],
+            [
+                'name' => 'IPS',
+                'address' => '',
+                'phone' => '',
+                'city_id' => 1
+            ],
+            [
+                'name' => 'Prevención Salud S.A',
+                'address' => '',
+                'phone' => '',
+                'city_id' => 1
+            ],
+            [
+                'name' => 'SANCOR Salud',
+                'address' => '',
+                'phone' => '',
+                'city_id' => 1
+            ],
+            [
+                'name' => 'OSDOP',
+                'address' => '',
+                'phone' => '',
+                'city_id' => 1
+            ],
+            [
+                'name' => 'SMAUNAM',
+                'address' => '',
+                'phone' => '',
+                'city_id' => 1
+            ],
         ];
 
         $nomenclatures = [
+            [
+                'code' => '00000',
+                'description' => 'SIN NOMENCLATURA - PRACTICA CUALQUIERA',
+                'specialty_id' => 1
+            ],
             [
                 'code' => '00001',
                 'description' => 'PRIMERA ENTREVISTA',
@@ -50,16 +128,30 @@ class PracticesSeeder extends Seeder {
             ],
             [
                 'code' => '00004',
-                'description' => 'PRUEBAS PSICOMETRICAS',
+                'description' => 'PSICODIAGNÓSTICO',
+                'specialty_id' => 1
+            ],
+            [
+                'code' => '00005',
+                'description' => 'PSICOPROFILAXIS',
+                'specialty_id' => 1
+            ],
+            [
+                'code' => '00006',
+                'description' => 'ORIENTACIÓN',
                 'specialty_id' => 1
             ]
         ];
 
         $practices = [
+            /**
+             * Practicas galeno
+             */
             [
                 'name' => 'Primera entrevista',
                 'description' => 'Primera entrevista que se hace al paciente.',
                 'maxtime' => 60,
+                'allowed_modes' => 2,
                 'nomenclature_id' => 1,
                 'coverage_id' => 1
             ],
@@ -67,6 +159,7 @@ class PracticesSeeder extends Seeder {
                 'name' => 'Psicoterapia Individual',
                 'description' => 'Sesión de terapia de una sola persona',
                 'maxtime' => 40,
+                'allowed_modes' => 2,
                 'nomenclature_id' => 2,
                 'coverage_id' => 1
             ],
@@ -74,6 +167,7 @@ class PracticesSeeder extends Seeder {
                 'name' => 'Psicoterapia Grupal',
                 'description' => 'Sesión de terapia de hasta 6 personas',
                 'maxtime' => 60,
+                'allowed_modes' => 2,
                 'nomenclature_id' => 3,
                 'coverage_id' => 1
             ],
@@ -81,6 +175,7 @@ class PracticesSeeder extends Seeder {
                 'name' => 'Psicoterapia de Pareja o Familia',
                 'description' => 'Sesión de terapia de 2 a 6 personas',
                 'maxtime' => 60,
+                'allowed_modes' => 2,
                 'nomenclature_id' => 3,
                 'coverage_id' => 2
             ],
@@ -88,6 +183,7 @@ class PracticesSeeder extends Seeder {
                 'name' => 'Pruebas Psicométricas',
                 'description' => 'Evaluación de conocimientos, aptitudes psíquicas, comportamientos, rasgos de personalidad y capacidades del individuo',
                 'maxtime' => 40,
+                'allowed_modes' => 2,
                 'nomenclature_id' => 4,
                 'coverage_id' => 1
             ],
@@ -95,9 +191,11 @@ class PracticesSeeder extends Seeder {
                 'name' => 'Psicodiagnóstico',
                 'description' => 'Diagnóstico de enfermedades, síndromes o alteraciones mentales',
                 'maxtime' => 60,
+                'allowed_modes' => 2,
                 'nomenclature_id' => 4,
                 'coverage_id' => 2
-            ]
+            ],
+            
         ];
 
         $prices = [
@@ -191,6 +289,7 @@ class PracticesSeeder extends Seeder {
                 'name' => $value['name'],
                 'description' => $value['description'],
                 'maxtime' => $value['maxtime'],
+                'allowed_modes' => $value['allowed_modes'],
                 'nomenclature_id' => $value['nomenclature_id'],
                 'coverage_id' => $value['coverage_id']
             ]);

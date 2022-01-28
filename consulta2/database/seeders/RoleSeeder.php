@@ -21,17 +21,22 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'Admin',
                 'display_name' => 'Admin',
-                'description' => 'Can access all features!'
+                'description' => 'Todo lo puede'
+            ],
+            [
+                'name' => 'Institution',
+                'display_name' => 'Institución',
+                'description' => 'Persona que puede asociar profesionales y controlar flujo de agendamiento.'
             ],
             [
                 'name' => 'Patient',
-                'display_name' => 'Patient',
-                'description' => 'Can reserve turns.'
+                'display_name' => 'Paciente',
+                'description' => 'Puede reservar turnos.'
             ],
             [
                 'name' => 'Professional',
-                'display_name' => 'Professional',
-                'description' => 'Can access user histories and turns.'
+                'display_name' => 'Prestador',
+                'description' => 'Puede gestionar su agenda e historias médicas.'
             ]
         ];
         foreach ($roles as $key => $value) {

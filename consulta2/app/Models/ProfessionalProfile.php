@@ -54,7 +54,7 @@ class ProfessionalProfile extends Model
     }
 
     public function institution() {
-        return $this->belongsTo(InstitutionProfile::class);
+        return $this->belongsTo(InstitutionProfile::class, 'institution_id', 'institution_id');
     }
 
     public function businessHours() {
@@ -75,5 +75,9 @@ class ProfessionalProfile extends Model
 
     public function medicalHistories() {
         return $this->hasMany(MedicalHistory::class);
+    }
+
+    public function nonWorkableDays() {
+        return $this->hasMany(NonWorkableDay::class);
     }
 }

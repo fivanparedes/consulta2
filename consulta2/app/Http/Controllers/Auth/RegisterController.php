@@ -76,10 +76,10 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password'])
         ]);
         if ($data['type'] == 0) {
-            $_perm = Permission::where('name', '_consulta2_patient_profile_perm')->first();
+            $_perm = Permission::where('name', 'patient-profile')->first();
             $_user->attachPermission($_perm);
         } else {
-            $_perm = Permission::where('name', '_consulta2_professional_profile_perm')->first();
+            $_perm = Permission::where('name', 'professional-profile')->first();
             $_user->attachPermission($_perm);
         }
         $_user->save();

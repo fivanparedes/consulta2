@@ -8,11 +8,21 @@
                 <div class="col-md-12">
                     <div class="card strpied-tabled-with-hover">
                         <div class="card-header ">
-                            <h4 class="card-title">Profesionales</h4>
-                            <p class="card-category">Lista de profesionales inscriptos al sistema.</p>
+                            <div class="row">
+                                <div class="col">
+                                    <h4 class="card-title">Profesionales</h4>
+                                    <p class="card-category">Lista de profesionales inscriptos al sistema.</p>
+                                </div>
+                                <div class="col">
+                                    @if (Auth::user()->hasPermission('ProfessionalController@create'))
+                                        <a class="btn bg-primary text-light" href="{{ url('/manage/professionals/create') }}">+ Adherir nuevo profesional</a>
+                                    @endif
+                                </div>
+                            </div>
+                            
                         </div>
                         <div class="card-header table">
-                            <form class="form-inline" action="{{ url('/admin/professionals') }}" method="GET">
+                            <form class="form-inline" action="{{ url('/manage/professionals') }}" method="GET">
 
                                 <div class="row ml-4">
                                     <p class="pt-1 ">Filtro</p>
@@ -58,14 +68,14 @@
                                         <div class="">
                                             <button type="submit"
                                                 class="btn bg-primary mb-2 ml-5 text-light">Filtrar</button>
-                                            <a class="nav-link" href="/admin/professionals/" title="Generar PDF">
+                                            <a class="nav-link" href="/manage/professionals/pdf" title="Generar PDF">
                                                 <i class="nc-icon nc-paper-2"></i>
                                             </a>
                                         </div>
                                     </div>
                                     <div class="col" style="width: 10%;">
                                         <div class="">
-                                            <a href="/admin/professionals/" class="btn bg-danger"><i
+                                            <a href="/manage/professionals" class="btn bg-danger"><i
                                                     class="fa fa-trash"></i></a>
                                         </div>
                                     </div>
@@ -114,7 +124,7 @@
                                                     @endif
                                                 </td>
                                                 <td><a class="nav-link"
-                                                        href="/admin/professionals/edit/{{ $professional->id }}">
+                                                        href="/manage/professionals/edit/{{ $professional->id }}">
                                                         <i class="nc-icon nc-badge"></i>
                                                     </a></td>
                                             </tr>

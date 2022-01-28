@@ -17,18 +17,18 @@ class ProfileController extends Controller
     // TODO: Use ROLE instead of PROFILE 
     public function info() {
         $user = User::find(auth()->user()->id);
-        if ($user->isAbleTo('_consulta2_patient_profile_perm')) {
+        if ($user->isAbleTo('patient-profile')) {
             $user_profile = Profile::where('user_id', '=', auth()->user()->id)->first();
             $patient_profile = PatientProfile::where('profile_id', $user_profile->id)->first();
             return view('profile.infoedit')->with([
                 'user_profile' => $user_profile,
                 'patient_profile' => $patient_profile]);
-        } else if ($user->isAbleTo('_consulta2_institution_profile_perm')) {
+        } else if ($user->isAbleTo('institution-profile')) {
             $institution_profile = InstitutionProfile::where('user_id', auth()->user()->id)->first();
             return view('profile.instedit')->with([
                 'institution' => $institution_profile
             ]);
-        } else if ($user->isAbleTo('_consulta2_professional_profile_perm')) {
+        } else if ($user->isAbleTo('professional-profile')) {
             $user_profile = Profile::where('user_id', '=', auth()->user()->id)->first();
             $professional_profile = ProfessionalProfile::where('profile_id', $user_profile->id)->first();
             return view('profile.infoedit')->with([

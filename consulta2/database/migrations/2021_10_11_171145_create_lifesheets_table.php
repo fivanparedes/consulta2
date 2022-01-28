@@ -55,11 +55,11 @@ class CreateLifesheetsTable extends Migration
 
         Schema::create('medical_histories', function (Blueprint $table) {
             $table->id();
-            $table->string('indate');
-            $table->string('psicological_history');
-            $table->string('visitreason');
-            $table->string('diagnosis');
-            $table->string('clinical_history')->nullable();
+            $table->date('indate');
+            $table->string('psicological_history')->nullable()->default('** Sin datos **');
+            $table->string('visitreason')->nullable()->default('** Sin datos **');
+            $table->string('diagnosis')->nullable()->default('** Sin datos **');
+            $table->string('clinical_history')->nullable()->default('** Sin datos **');
             $table->unsignedBigInteger('patient_profile_id');
             $table->foreign('patient_profile_id')->references('id')->on('patient_profiles')
                 ->onUpdate('cascade')->onDelete('cascade');

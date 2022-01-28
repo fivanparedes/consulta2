@@ -8,6 +8,7 @@ use App\Models\ConsultType;
 use App\Models\Coverage;
 use App\Models\Lifesheet;
 use App\Models\MedicalHistory;
+use App\Models\NonWorkableDay;
 use App\Models\PatientProfile;
 use App\Models\Permission;
 use App\Models\ProfessionalProfile;
@@ -64,6 +65,7 @@ class UsersTableSeeder extends Seeder
             'description' => 'Centro de salud dedicado a la atención psicológica y fonoaudiológica.',
             'phone' => 3764123456,
             'address' => 'Calle Wallaby 42 Sydney',
+            'active' => true,
             'city_id' => 1
         ]);
 
@@ -153,7 +155,7 @@ class UsersTableSeeder extends Seeder
 
         $role_patient = Role::where('name', 'Patient')->first();
         $user_patient->attachRole($role_patient);
-        $perm_patient = Permission::where('name', '_consulta2_patient_profile_perm')->first();
+        $perm_patient = Permission::where('name', 'patient-profile')->first();
         $user_patient->attachPermission($perm_patient);
         $user_patient->save();
 
@@ -230,6 +232,21 @@ class UsersTableSeeder extends Seeder
             ],
         ];
 
+        $nonworkabledays = [
+            [
+                'concept' => 'Cumple',
+                'from' => '2022-01-29',
+                'to' => '2022-01-29',
+                'professional_profile_id' => 1
+            ],
+            [
+                'concept' => 'Vacaciones',
+                'from' => '2022-02-01',
+                'to' => '2022-02-28',
+                'professional_profile_id' => 1
+            ],
+        ];
+
         $consult_types = [
             [
                 'name' => 'Primera entrevista',
@@ -263,8 +280,17 @@ class UsersTableSeeder extends Seeder
             ]);
         }
 
-        $_perm = Permission::where('name', '_consulta2_institution_profile_perm')->first();
-        $_perm2 = Permission::where('name', '_consulta2_professional_profile_perm')->first();
+        foreach ($nonworkabledays as $key => $value) {
+            $nonw = NonWorkableDay::create([
+                'concept' => $value['concept'],
+                'from' => $value['from'],
+                'to' => $value['to'],
+                'professional_profile_id' => $value['professional_profile_id']
+            ]);
+        }
+
+        $_perm = Permission::where('name', 'institution-profile')->first();
+        $_perm2 = Permission::where('name', 'professional-profile')->first();
         $_role = Role::where('name', 'Admin')->first();
         $_role2 = Role::where('name', 'Professional')->first();
         $_admin = User::find(1);

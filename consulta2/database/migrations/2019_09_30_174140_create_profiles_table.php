@@ -38,6 +38,7 @@ class CreateProfilesTable extends Migration
             $table->string('description');
             $table->string('address');
             $table->string('phone');
+            $table->boolean('active');
             $table->foreign('user_id')->references('id')->on('users')
                 ->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('city_id')->references('id')->on('cities')
