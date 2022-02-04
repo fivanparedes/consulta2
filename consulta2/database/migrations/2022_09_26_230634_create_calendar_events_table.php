@@ -47,6 +47,9 @@ class CreateCalendarEventsTable extends Migration
             $table->boolean('covered');
             $table->string('resume');
             $table->boolean('paid');
+            $table->unsignedBigInteger('treatment_id')->nullable();
+            $table->foreign('treatment_id')->references('id')->on('treatments')
+                ->onUpdate('cascade')->onDelete('cascade');
             $table->unsignedBigInteger('calendar_event_id');
             $table->integer('practice_id');
             $table->unsignedBigInteger('medical_history_id');

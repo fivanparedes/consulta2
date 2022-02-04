@@ -54,6 +54,7 @@ class CoverageController extends Controller
         ]);
     }
 
+
     public function createPDF(Request $request) {
         $coverages = Coverage::where('id', '>', 0);
         if ($request->has('filter1') && $request->filter1 != "") {
@@ -74,7 +75,7 @@ class CoverageController extends Controller
             $coverages = $coverages->whereIn('city_id', $cities);
         }
 
-        $coverages = $coverages->all();
+        $coverages = $coverages->get();
         $pdf = PDF::loadView('coverages.pdf',[
             'coverages' => $coverages,
             'filter1' => $request->input('filter1') != "" ? $request->input('filter1') : null,

@@ -8,6 +8,7 @@ use App\Http\Controllers\MedicalHistoryController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProfessionalController;
 use App\Http\Controllers\ReminderController;
+use App\Http\Controllers\StatisticsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Session;
@@ -50,6 +51,8 @@ Route::group(['middleware' => 'auth'], function () {
 	/**
 	 * Admin & Institution common routes
 	 */
+	Route::get('/audits', ['as' => 'admin.audits', 'uses' => 'App\Http\Controllers\AuditController@index']);
+	Route::get('/audits/{id}', ['as' => 'admin.audits.show', 'uses' => 'App\Http\Controllers\AuditController@show']);
 	Route::get('/manage/professionals', ['as' => 'admin.professionals', 'uses' => 'App\Http\Controllers\ProfessionalController@index']);
 	Route::get('/manage/professionals/pdf', ['as' => 'admin.professionals.pdf', 'uses' => 'App\Http\Controllers\ProfessionalController@createPDF']);
 	Route::get('/manage/professionals/create', ['as' => 'admin.professionals.create', 'uses' => 'App\Http\Controllers\ProfessionalController@create']);
@@ -92,7 +95,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/cite/pdf', ['as' => 'cite.pdf', 'uses' => 'App\Http\Controllers\CiteController@createPDF']);
 	Route::patch('/cite/update/{id}', ['as' => 'cite.update', 'uses' => 'App\Http\Controllers\CiteController@update']);
 	
-	
+	Route::resource('/treatments','App\Http\Controllers\TreatmentController', ['except' => ['show']]);
 	/**
 	 * Perfiles de usuario
 	 */
@@ -100,6 +103,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('profile', ['as' => 'profile.edit', 'uses' => 'App\Http\Controllers\ProfileController@edit']);
 	Route::patch('profile', ['as' => 'profile.update', 'uses' => 'App\Http\Controllers\ProfileController@update']);
 	Route::get('profile/info', ['as' => 'profile.infoedit', 'uses' => 'App\Http\Controllers\ProfileController@info']);
+	Route::post('profile/pfp', 'App\Http\Controllers\UserController@updatePfp');
 	Route::get('/profile/create', [PatientController::class, 'create']);
 	Route::patch('profile/info/update', ['as' => 'generalinfo.update', 'uses' => 'App\Http\Controllers\PatientController@update']);
 	Route::patch('profile/password', ['as' => 'profile.password', 'uses' => 'App\Http\Controllers\ProfileController@password']);
@@ -132,6 +136,9 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/medical_history/locatePatient', 'App\Http\Controllers\MedicalHistoryController@locatePatient');
 	Route::get('/medical_history/{id}', 'App\Http\Controllers\MedicalHistoryController@show');
 	Route::get('/medical_history/{id}/pdf', 'App\Http\Controllers\MedicalHistoryController@createPDF');
+	Route::post('/medical_history/document', 'App\Http\Controllers\MedicalHistoryController@attachDocument');
+	Route::get('/medical_history/document/{id}', 'App\Http\Controllers\MedicalHistoryController@download');
+	Route::delete('/medical_history/document/{id}', 'App\Http\Controllers\MedicalHistoryController@detachDocument');
 	/**
 	 * Perfiles profesionales (publicos)
 	 */
@@ -142,5 +149,13 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('institutions/list', ['as' => 'institution.list', 'uses' => 'App\Http\Controllers\InstitutionController@list']);
 	Route::get('institutions/getFilteredList', [InstitutionController::class, 'getFilteredInstitutions']);
 	Route::get('institution/{id}/getFilteredList', [InstitutionController::class, 'getFilteredList']);
+
+	/**
+	 * Estadística
+	 */
+	Route::get('/statistics/loadCoverageComparison', [StatisticsController::class, 'loadCoverageComparison']);
+	Route::get('/statistics/loadAgeRange', [StatisticsController::class, 'loadAgeRange']);
+	Route::get('/statistics', [StatisticsController::class, 'index']);
+	Route::get('/statistics/pdf', [StatisticsController::class, 'createPDF']);
 
 });

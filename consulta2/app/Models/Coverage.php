@@ -5,11 +5,13 @@ namespace App\Models;
 use Akaunting\Sortable\Traits\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Coverage extends Model
+class Coverage extends Model implements Auditable
 {
     use HasFactory;
     use Sortable;
+    use \OwenIt\Auditing\Auditable;
 
     protected $table = 'coverages';
 
@@ -18,6 +20,11 @@ class Coverage extends Model
         'address',
         'phone',
         'supported'
+    ];
+    protected $auditInclude = [
+        'name',
+        'address',
+        'phone'
     ];
 
     public $sortable = [

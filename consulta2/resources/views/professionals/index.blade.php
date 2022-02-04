@@ -84,7 +84,7 @@
                                 for (var i = 0; i < content.length; i++) {
                                     
                                     $('#listbody').append(
-                                        '<div class="row"><div class="col-md-12"><div class="card"><div class="card-body"><h4 class="card-title font-weight-bold">'+content[i].fullname+'</h4> <h5 class = "card-subtitle" ><span class = "badge badge-primary" >'+content[i].specialty+'</span> </h5> <p class = "card-text" >'+content[i].institution+'</p><p class="card-text"><strong>Cobertura médica: </strong>'+content[i].coverages+'</p> <a href = "/professional/show/'+content[i].id+'"class = "btn btn-primary" > Reservar turno</a> </div> </div> </div> </div>');
+                                        '<div class="row"><div class="col-md-12"><div class="card"><div class="card-body"><div class="row"><div class="col left"><img src="'+content[i].pfp+'" /></div></div><h4 class="card-title font-weight-bold">'+content[i].fullname+'</h4> <h5 class = "card-subtitle" ><span class = "badge badge-primary" >'+content[i].specialty+'</span> </h5> <p class = "card-text" >'+content[i].institution+'</p><p class="card-text"><strong>Cobertura médica: </strong>'+content[i].coverages+'</p> <a href = "/professional/show/'+content[i].id+'"class = "btn btn-primary" > Reservar turno</a> </div> </div> </div> </div>');
                 
                                 }
                             } else {

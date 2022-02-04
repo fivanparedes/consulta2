@@ -81,6 +81,14 @@ Tip 2: you can also add an image using data-image tag
                     </a>
                 </li>
             @endif
+            @if (Auth::user()->isAbleTo('professional-profile') || Auth::user()->isAbleTo('institution-profile'))
+                <li class="nav-item @if ($activePage == 'treatments') active @endif">
+                    <a class="nav-link" href="{{ route('treatments.index') }}">
+                        <i class="nc-icon nc-notes"></i>
+                        <p>{{ __('Tratamientos') }}</p>
+                    </a>
+                </li>
+            @endif
             @if (Auth::user()->isAbleTo('professional-profile'))
                 <li class="nav-item @if ($activePage == 'consult_types') active @endif">
                     <a class="nav-link" href="{{ route('consult_types.index') }}">
@@ -100,7 +108,7 @@ Tip 2: you can also add an image using data-image tag
             @endif
             @if (Auth::user()->isAbleTo('professional-profile') || Auth::user()->isAbleTo('institution-profile'))
                 <li class="nav-item @if ($activePage == 'dashboard') active @endif">
-                    <a class="nav-link" href="{{ route('dashboard') }}">
+                    <a class="nav-link" href="{{ url('/statistics') }}">
                         <i class="nc-icon nc-chart-pie-35"></i>
                         <p>{{ __('Estadísticas') }}</p>
                     </a>
@@ -111,6 +119,12 @@ Tip 2: you can also add an image using data-image tag
                     <a class="nav-link" href="{{ route('laratrust.roles-assignment.index') }}">
                         <i class="nc-icon nc-chart-pie-35"></i>
                         <p>{{ __('Roles y Permisos') }}</p>
+                    </a>
+                </li>
+                <li class="nav-item @if ($activePage == 'audits') active @endif">
+                    <a class="nav-link" href="{{ route('admin.audits') }}">
+                        <i class="nc-icon nc-chart-pie-35"></i>
+                        <p>{{ __('Auditoría') }}</p>
                     </a>
                 </li>
             @endif

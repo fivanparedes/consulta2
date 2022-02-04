@@ -22,6 +22,23 @@ class UserController extends Controller
         return view('users.index', ['users' => $model->paginate(15)]);
     }
 
+    public function updatePfp(Request $request) {
+        $validatedData = $request->validate([
+            'image' => 'required|nullable|mimes:jpg,png,jpeg,gif,svg|max:10240'
+        ]);
+
+        $user = User::find(auth()->user()->id);
+        $path = $request->file('image')->store('public/images');
+        $user->pfp = $path;
+
+        $user->save();
+
+        return redirect('profile')->with('status', 'Foto de perfil actualizada');
+    }
+
+
+    
+
     public function listAtendees()
     {
         $patients = new Collection;

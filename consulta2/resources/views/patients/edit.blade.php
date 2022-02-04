@@ -23,7 +23,7 @@
                                         $medical_history = \App\Models\MedicalHistory::where('professional_profile_id', Auth::user()->profile->professionalProfile->id)->where('patient_profile_id', $patient->id)->first();
                                     @endphp    
                                 <a class="btn btn-primary text-light"
-                                        href="{{ url('/medical_history/' . encrypt($medical_history->id)) }}">Editar historia
+                                        href="{{ url('/medical_history/' . encrypt($medical_history->id)) }}">Historia
                                         clínica</a>
                                 @else
                                     <form action="{{ url('/medical_history/create') }}" method="get">

@@ -5,15 +5,24 @@ namespace App\Models;
 use Akaunting\Sortable\Traits\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Auditable as AuditingAuditable;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ProfessionalProfile extends Model
+class ProfessionalProfile extends Model implements Auditable
 {
     use HasFactory;
     use Sortable;
+    use AuditingAuditable;
     
     protected $table = 'professional_profiles';
     
     protected $fillable = [
+        'licensePlate',
+        'field',
+        'status'
+    ];
+
+    protected $auditInclude = [
         'licensePlate',
         'field',
         'status'

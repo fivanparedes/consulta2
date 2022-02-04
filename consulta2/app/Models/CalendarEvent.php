@@ -5,11 +5,13 @@ namespace App\Models;
 use Akaunting\Sortable\Traits\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class CalendarEvent extends Model
+class CalendarEvent extends Model implements Auditable
 {
     use HasFactory;
     use Sortable;
+    use \OwenIt\Auditing\Auditable;
 
     protected $table = 'calendar_events';
 
@@ -31,6 +33,15 @@ class CalendarEvent extends Model
         'isVirtual',
         'cite',
         'consultType',
+    ];
+
+    protected $auditInclude = [
+        'id',
+        'title',
+        'start',
+        'approved',
+        'confirmed',
+        'isVirtual',
     ];
 
     public function patientProfiles() {

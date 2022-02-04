@@ -5,15 +5,24 @@ namespace App\Models;
 use Akaunting\Sortable\Traits\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class InstitutionProfile extends Model
+class InstitutionProfile extends Model implements Auditable
 {
     use HasFactory;
     use Sortable;
+    use \OwenIt\Auditing\Auditable;
 
     protected $table = 'institution_profiles';
 
     protected $fillable = [
+        'name',
+        'description',
+        'address',
+        'phone'
+    ];
+
+    protected $auditInclude = [
         'name',
         'description',
         'address',

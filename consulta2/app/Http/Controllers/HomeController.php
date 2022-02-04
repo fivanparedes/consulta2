@@ -30,9 +30,9 @@ class HomeController extends Controller
         if ($user->hasRole('Patient')) {
             return view('patients.welcome');
         } elseif ($user->hasRole('Professional')) {
-            return redirect('/cite');
+            return view('pages.statistics');
         } elseif ($user->hasRole('Institution')){
-            return redirect('/manage/professionals');
+            return view('pages.statistics');
         } elseif ($user->hasRole('Admin')) {
             return redirect('/manage/professionals');
         }

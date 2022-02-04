@@ -54,8 +54,9 @@ class ProfessionalController extends Controller
                 $obj = [
                     'id' => $item->id,
                     'fullname' => $item->profile->user->name . ' ' . $item->profile->user->lastname,
+                    'pfp' => $item->profile->user->pfp != '' ? asset('/storage/images/' . explode('/', $item->profile->user->pfp)[2]) : asset('light-bootstrap/img/default-avatar.png'),
                     'specialty' => $item->specialty->displayname . ' (' . $item->field . ')',
-                    'institution' => $item->institution->id != 1 ? 'Lugar de consulta: ' . $item->institution->name : 'Independiente / Consultorio propio',
+                    'institution' => $item->institution_id != 1 ? 'Lugar de consulta: ' . $item->institution->name : 'Independiente / Consultorio propio',
                     'coverages' => implode(" / ", $coverages),
                 
                 ];

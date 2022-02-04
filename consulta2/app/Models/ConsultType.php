@@ -4,14 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ConsultType extends Model
+class ConsultType extends Model implements Auditable
 {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
 
     protected $table = 'consult_types';
 
     protected $fillable = [
+        'name',
+        'availability',
+        'visible',
+        'requires_auth'
+    ];
+
+    protected $auditInclude = [
         'name',
         'availability',
         'visible',

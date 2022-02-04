@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Document;
 use App\Models\MedicalHistory;
 use App\Models\PatientProfile;
 use App\Models\ProfessionalProfile;
@@ -10,6 +11,10 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Crypt;
 use Barryvdh\DomPDF\Facade as PDF;
+use Illuminate\Support\Facades\Storage;
+use SoareCostin\FileVault\Facades\FileVault;
+use Illuminate\Support\Str;
+use Throwable;
 
 class MedicalHistoryController extends Controller
 {
@@ -67,7 +72,7 @@ class MedicalHistoryController extends Controller
         $medical_history = MedicalHistory::find($id);
         $user = $medical_history->patientProfile->profile->user;
 
-        $psicological_history = Crypt::decryptString($medical_history->psicological_history);
+        $psicological_history = $medical_history->psicological_history;
         $visitreason = Crypt::decryptString($medical_history->visitreason);
         if ($user->id == auth()->user()->id) {
             return view('medical_histories.show')->with([
@@ -95,12 +100,45 @@ class MedicalHistoryController extends Controller
         }
     }
 
+    public function edit(Request $request) {
+        $id = decrypt($request->id);
+        $medical_history = MedicalHistory::find($id);
+        $user = $medical_history->patientProfile->profile->user;
+
+        $psicological_history = $medical_history->psicological_history;
+        $visitreason = Crypt::decryptString($medical_history->visitreason);
+        if ($user->id == auth()->user()->id) {
+            return view('medical_histories.edit')->with([
+                'medical_history' => $medical_history,
+                'psicological_history' => $psicological_history,
+                'visitreason' => $visitreason
+            ]);
+        } else {
+            if (auth()->user()->id == $medical_history->professionalProfile->profile->user->id) {
+                return view('medical_histories.edit')->with([
+                    'medical_history' => $medical_history,
+                    'psicological_history' => $psicological_history,
+                    'visitreason' => $visitreason
+                ]);
+            } else {
+                if (auth()->user()->id == $medical_history->institutionProfile->user->id) {
+                    return view('medical_histories.edit')->with([
+                        'medical_history' => $medical_history,
+                        'psicological_history' => $psicological_history,
+                        'visitreason' => $visitreason
+                    ]);
+                }
+            }
+            return abort(404);
+        }
+    }
+
     public function createPDF(Request $request) {
         $id = decrypt($request->id);
         $medical_history = MedicalHistory::find($id);
         $user = $medical_history->patientProfile->profile->user;
 
-        $psicological_history = Crypt::decryptString($medical_history->psicological_history);
+        $psicological_history = $medical_history->psicological_history;
         $visitreason = Crypt::decryptString($medical_history->visitreason);
         if ($user->id == auth()->user()->id) {
 
@@ -162,5 +200,51 @@ class MedicalHistoryController extends Controller
                 return response()->json(['status' => 0]);
             }
         }
+    }
+
+    public function attachDocument(Request $request) {
+        $request->validate([
+            'document' => 'required|mimes:pdf,doc,docx,odt|max:10240'
+        ]);
+
+        if ($request->hasFile('document') && $request->file('document')->isValid()) {
+            try {
+                $path = Storage::putFile('files/histories/' . decrypt($request->medical_history_id), $request->file('document'));
+                FileVault::encrypt($path);
+                $document = new Document();
+                $document->name = $request->file('document')->getClientOriginalName();
+                $document->path = $path;
+                $document->medical_history_id = decrypt($request->medical_history_id);
+                $document->save();
+            } catch (\Throwable $th) {
+                return back()->withErrors('error', $th->getMessage());
+            }
+        }
+
+        return back();
+    }
+
+    public function download($id)
+    {
+        try {
+            $document = Document::find($id);
+            if (!Storage::has($document->path . '.enc')) {
+                abort(404);
+            }
+            $arr = explode('/', $document->path);
+            return response()->streamDownload(function () use ($document) {
+                FileVault::streamDecrypt($document->path.'.enc');
+            }, $document->name);
+        } catch (Throwable $th) {
+            dd($th->getMessage());
+        }
+        
+    }
+
+    public function detachDocument($id) {
+        $document = Document::find($id);
+        Document::destroy($id);
+        Storage::delete($document->path);
+        return back();
     }
 }

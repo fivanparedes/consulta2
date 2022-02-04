@@ -5,15 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Akaunting\Sortable\Traits\Sortable;
+use OwenIt\Auditing\Auditable as AuditingAuditable;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Nomenclature extends Model
+class Nomenclature extends Model implements Auditable
 {
     use HasFactory;
     use Sortable;
+    use AuditingAuditable;
 
     protected $table = 'nomenclatures';
 
     protected $fillable = [
+        'code',
+        'description'
+    ];
+
+    protected $auditInclude = [
         'code',
         'description'
     ];
