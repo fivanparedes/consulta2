@@ -75,6 +75,9 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/external/event/cancel/{id}', [EventController::class, 'externalCancel']);
 	Route::delete('/external/event/delete/{id}', [EventController::class, 'externalDelete']);
 	Route::get('/reminder/confirm/{id}', [ReminderController::class, 'confirm']);
+	Route::get('/reminder/willpay/{id}', [ReminderController::class, 'willPay']);
+	Route::get('/reminder/treatment/cancel/{id}', [ReminderController::class, 'cancelTreatment']);
+	Route::get('/reminder/treatment/mistake/{id}', [ReminderController::class, 'mistake']);
 
 	Route::resource('/consult_types', 'App\Http\Controllers\ConsultTypeController');
 	Route::get('/getAvailableHours', 'App\Http\Controllers\ConsultTypeController@getCategorizedHours');
@@ -83,7 +86,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::resource('/coverages', 'App\Http\Controllers\CoverageController', ['except' => 'createPDF']);
 	Route::get('/coverages/pdf', 'App\Http\Controllers\CoverageController@createPDF');
 	Route::resource('/non_workable_days', 'App\Http\Controllers\NonWorkableDayController');
-	Route::resource('/institutions', 'App\Http\Controllers\InstitutionController');
+	Route::resource('/institutions', 'App\Http\Controllers\InstitutionController', ['except' => 'show']);
 	Route::get('/institutions/pdf', 'App\Http\Controllers\InstitutionController@createPDF');
 
 	/**
@@ -149,6 +152,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('institutions/list', ['as' => 'institution.list', 'uses' => 'App\Http\Controllers\InstitutionController@list']);
 	Route::get('institutions/getFilteredList', [InstitutionController::class, 'getFilteredInstitutions']);
 	Route::get('institution/{id}/getFilteredList', [InstitutionController::class, 'getFilteredList']);
+	Route::get('institution/show/{id}', [InstitutionController::class, 'show']);
 
 	/**
 	 * Estadística

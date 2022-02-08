@@ -3,6 +3,8 @@
 namespace App\Console;
 
 use App\Console\Commands\absoluteClear;
+use App\Console\Commands\autoAssignOverTreatment;
+use App\Console\Commands\debtResume;
 use App\Console\Commands\sendReminder;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -16,7 +18,9 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         absoluteClear::class,
-        sendReminder::class
+        sendReminder::class,
+        autoAssignOverTreatment::class,
+        debtResume::class,
     ];
 
     /**

@@ -99,8 +99,9 @@ class InstitutionController extends Controller
     public function show($id)
     {
         $user = User::find(auth()->user()->id);
+        $institution = InstitutionProfile::find($id);
         if ($user->hasRole('Patient')) {
-
+            return view('institutions.show')->with(['institution' => $institution]);
         }
     }
 
@@ -167,7 +168,7 @@ class InstitutionController extends Controller
     public function list(Request $request) {
         $user = User::find(auth()->user()->id);
         if (!$user->hasRole('Patient')) {
-            abort(404);
+            return abort(404);
         }
         return view('institutions.list');
     }

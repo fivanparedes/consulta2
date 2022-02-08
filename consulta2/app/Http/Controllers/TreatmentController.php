@@ -57,9 +57,33 @@ class TreatmentController extends Controller
     public function store(Request $request)
     {
         $treatment = new Treatment();
+        $preferred_days = "";
+        if ($request->has('av-monday')) {
+            $preferred_days = $preferred_days."1";
+        }
+        if ($request->has('av-tuesday')) {
+            $preferred_days = $preferred_days . ";2";
+        }
+        if ($request->has('av-wednesday')) {
+            $preferred_days = $preferred_days . ";3";
+        }
+        if ($request->has('av-thursday')) {
+            $preferred_days = $preferred_days . ";4";
+        }
+        if ($request->has('av-friday')) {
+            $preferred_days = $preferred_days . ";5";
+        }
+        if ($request->has('av-tuesday')) {
+            $preferred_days = $preferred_days . ";6";
+        }
+        if ($request->has('av-tuesday')) {
+            $preferred_days = $preferred_days . ";7";
+        }
         $treatment->name = $request->name;
         $treatment->description = $request->description;
         $treatment->times_per_month = $request->times_per_month;
+        $treatment->preferred_days = $preferred_days;
+        $treatment->preferred_hour = $request->preferred_hour;
         $treatment->start = date_create($request->start);
         $treatment->end = date_create($request->end);
         $treatment->medical_history_id = $request->medical_history_id;
@@ -88,8 +112,9 @@ class TreatmentController extends Controller
     {
         $user = User::find(auth()->user()->id);
         $treatment = Treatment::find(base64_decode(base64_decode($id)));
+        $preferred_days = explode(';', $treatment->preferred_days);
         if ($user->isAbleTo('professional-profile')) {
-            return view('treatments.edit')->with(['treatment' => $treatment, 'medical_histories' => $user->profile->professionalProfile->medicalHistories]);
+            return view('treatments.edit')->with(['treatment' => $treatment, 'medical_histories' => $user->profile->professionalProfile->medicalHistories, 'preferred_days' => $preferred_days]);
         }
     }
 

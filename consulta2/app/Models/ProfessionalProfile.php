@@ -89,4 +89,9 @@ class ProfessionalProfile extends Model implements Auditable
     public function nonWorkableDays() {
         return $this->hasMany(NonWorkableDay::class);
     }
+
+    public function getFullName()
+    {
+        return (string)$this->profile->user->lastname . ' ' . $this->profile->user->name;
+    }
 }

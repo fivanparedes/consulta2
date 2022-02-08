@@ -30,16 +30,10 @@
                             <input type="text" name="name" id="input-name" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label for="input-description">Práctica que se realizará en el tratamiento</label>
+                            <label for="input-description">Actividad que se realizará en el tratamiento</label>
                             <select name="description" id="input-description" class="form-control">
-                                <option value="0">Seleccione una práctica de la lista</option>
-                                @foreach ($medical_history->professionalProfile->coverages as $coverage)
-                                    <optgroup label="{{ $coverage->name }}">
-                                        @foreach ($coverage->practices as $practice)
-                                            <option value="{{ $practice->name }}">{{ $practice->name }}
-                                            </option>
-                                        @endforeach
-                                    </optgroup>
+                                @foreach ($medical_history->professionalProfile->consultTypes as $consultType)
+                                    <option value="{{ $consultType->name }}">{{ $consultType->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -47,6 +41,55 @@
                             <label for="input-times_per_month">Veces a las que asistirá al consultorio (por mes)</label>
                             <input type="number" name="times_per_month" id="input-times_per_month" class="form-control"
                                 required>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="row">
+                                        <div class="col form-check-inline">
+                                            <input type="checkbox" class="form-check-input" name="av-monday" id="av-monday" value="1">
+                                            <label class="form-check-label" for="av-monday"><strong>Lunes</strong></label>
+                                        </div>
+                                        <div class="col form-check-inline">
+                                            <input type="checkbox" class="form-check-input" name="av-tuesday" value="2"
+                                                id="av-tuesday">
+                                            <label class="form-check-label" for="av-tuesday"><strong>Martes</strong></label>
+                                        </div>
+                                        <div class="col form-check-inline">
+                                            <input type="checkbox" class="form-check-input" name="av-wednesday" value="3"
+                                                id="av-wednesday">
+                                            <label class="form-check-label"
+                                                for="av-wednesday"><strong>Miércoles</strong></label>
+                                        </div>
+                                        <div class="col form-check-inline">
+                                            <input type="checkbox" class="form-check-input" name="av-thursday" value="4"
+                                                id="av-thursday">
+                                            <label class="form-check-label"
+                                                for="av-thursday"><strong>Jueves</strong></label>
+                                        </div>
+                                        <div class="col form-check-inline">
+                                            <input type="checkbox" class="form-check-input" name="av-friday" id="av-friday" value="5">
+                                            <label class="form-check-label" for="av-friday"><strong>Viernes</strong></label>
+                                        </div>
+                                        <div class="col form-check-inline">
+                                            <input type="checkbox" class="form-check-input" name="av-saturday" value="6"
+                                                id="av-saturday">
+                                            <label class="form-check-label"
+                                                for="av-saturday"><strong>Sábado</strong></label>
+                                        </div>
+                                        <div class="col form-check-inline">
+                                            <input type="checkbox" class="form-check-input" name="av-sunday" id="av-sunday" value="7">
+                                            <label class="form-check-label" for="av-sunday"><strong>Domingo</strong></label>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col">
+                                    <label for="input-preferred_hour">Hora preferida</label>
+                                    <input type="time" class="form-control" name="preferred_hour"
+                                        id="input-preferred_hour">
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="input-start">Fecha de inicio del tratamiento</label>

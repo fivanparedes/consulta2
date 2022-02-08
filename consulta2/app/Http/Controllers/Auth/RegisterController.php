@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\PatientProfile;
 use App\Models\Permission;
 use App\Models\Profile;
+use App\Models\Role;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -32,7 +33,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo = "/profile";
 
     /**
      * Create a new controller instance.
@@ -77,9 +78,13 @@ class RegisterController extends Controller
         ]);
         if ($data['type'] == 0) {
             $_perm = Permission::where('name', 'patient-profile')->first();
+            $_role = Role::where('name', 'Patient')->first();
+            $_user->attachRole($_role);
             $_user->attachPermission($_perm);
         } else {
             $_perm = Permission::where('name', 'professional-profile')->first();
+            $_role = Role::where('name', 'Professional')->first();
+            $_user->attachRole($_role);
             $_user->attachPermission($_perm);
         }
         $_user->save();

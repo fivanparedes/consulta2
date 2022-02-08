@@ -39,7 +39,7 @@ class sendReminder extends Command
      */
     public function handle()
     {
-        $reminders = Reminder::where('sent', null)->get();
+        $reminders = Reminder::whereNull('sent')->get();
         foreach ($reminders as $reminder) {
             $startdate = date_create($reminder->calendarEvent->start);
             $remindate = date_sub($startdate,date_interval_create_from_date_string("1 days"));

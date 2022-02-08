@@ -93,20 +93,24 @@
                 dataType: 'json',
                 success: function(response) {
                     if (response.status == "success") {
+                        console.log(JSON.stringify(response));
                         var series = response.series;
                         var labels = response.labels;
+                        var names = response.names;
                         pieData = {
-                            labels: [series[0] + '%', series[1] + '%', series[2] + '%', series[3] +
-                                '%', series[4] + '%'
-                            ],
-                            series: [series[0], series[1], series[2], series[3], series[4]]
+                            
                         };
-                        $('#particular').append(labels[0]);
-                        $('#most_used_1').append(labels[1]);
-                        $('#most_used_2').append(labels[2]);
-                        $('#most_used_3').append(labels[3]);
-                        $('#least_used').append(labels[4]);
+                        Chartist.Pie('#chartPreferences', {
+                            labels: labels,
+                            series: series
+                        });
+                        $('#particular').append(names[0]);
+                        $('#most_used_1').append(names[1]);
+                        $('#most_used_2').append(names[2]);
+                        $('#most_used_3').append(names[3]);
+                        $('#least_used').append(names[4]);
                     } else {
+                        console.log(JSON.stringify(response));
                         Chartist.Pie('#chartPreferences', {
                             labels: ['Faltan datos.', '-', '-', '-', '-'],
                             series: [100, 0, 0, 0, 0]
@@ -114,6 +118,7 @@
                     }
                 },
                 error: function(response) {
+                    console.log(JSON.stringify(response));
                     Chartist.Pie('#chartPreferences', {
                         labels: ['Faltan datos.', '-', '-', '-', '-'],
                         series: [100, 0, 0, 0, 0]
@@ -154,6 +159,7 @@
                 dataType: 'json',
                 success: function(response) {
                     if (response.status == "success") {
+                        console.log(JSON.stringify(response));
                         var series = response.series;
                         var data = {
                             labels: ['0-9', '10-19', '20-29', '30-39', '40-49', '50-59', '60-69',
@@ -166,6 +172,7 @@
                         var chartActivity = Chartist.Bar('#chartActivity', data, options,
                             responsiveOptions);
                     } else {
+                        console.log(JSON.stringify(response));
                         var data = {
                             labels: ['S/D', 'S/D', 'S/D', 'S/D', 'S/D', 'S/D', 'S/D',
                                 'S/D'
@@ -179,6 +186,7 @@
                     }
                 },
                 error: function (response) {
+                    console.log(JSON.stringify(response));
                     var data = {
                             labels: ['S/D', 'S/D', 'S/D', 'S/D', 'S/D', 'S/D', 'S/D',
                                 'S/D'

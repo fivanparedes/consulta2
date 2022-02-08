@@ -45,7 +45,7 @@ class CreateCalendarEventsTable extends Migration
             $table->id();
             $table->boolean('assisted');
             $table->boolean('covered');
-            $table->string('resume');
+            $table->string('resume', 200)->nullable()->default(null);
             $table->boolean('paid');
             $table->unsignedBigInteger('treatment_id')->nullable();
             $table->foreign('treatment_id')->references('id')->on('treatments')

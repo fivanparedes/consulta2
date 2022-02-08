@@ -17,9 +17,11 @@
         "laravel/ui": "^3.3",
         "owen-it/laravel-auditing": "^12.0",
         "santigarcor/laratrust": "^6.3",
-        "soarecostin/file-vault": "^1.2"
+        "soarecostin/file-vault": "^1.2",
+        "spatie/laravel-google-calendar": "^3.5"
     },
     "require-dev": {
+        "andyabih/laravel-to-uml": "^1.0",
         "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",
         "laravel/sail": "^1.0.1",

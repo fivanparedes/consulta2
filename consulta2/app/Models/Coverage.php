@@ -36,7 +36,7 @@ class Coverage extends Model implements Auditable
         'city'
     ];
 
-    public function lifesheet() {
+    public function lifesheets() {
         return $this->hasMany(Lifesheet::class);
     }
 

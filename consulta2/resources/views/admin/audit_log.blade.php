@@ -16,7 +16,7 @@
                             </div>
                         </div>
                         <div class="card-header table">
-                            <form class="form-inline" action="{{ url('/non_workable_days') }}" method="GET">
+                            <form class="form-inline" action="{{ url('/audits') }}" method="GET">
                                 <div class="row ml-4">
                                     <p class="pt-1 ">Filtro</p>
                                     <div class="col" style="width: 10%;">

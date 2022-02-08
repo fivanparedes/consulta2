@@ -18,11 +18,12 @@ perfil', 'activeButton' => 'laravel'])
                             </div>
                         </div>
                         <div class="row">
-                            @if ($professional->institution->id != 1)
-                                <div class="col"><a class="btn bg-primary text-light" href="{{ url('/institution/show/{{ $professional->institution->id }}') }}">Ver lugar de
-                                    trabajo</a></div> 
+                            @if ($professional->institution_id != 1)
+                                <div class="col"><a class="btn bg-primary text-light"
+                                        href="{{ url('/institution/show/' . $professional->institution->id) }}">Ver lugar de
+                                        trabajo</a></div>
                             @endif
-                            
+
                         </div>
 
                     </div>
@@ -99,11 +100,11 @@ perfil', 'activeButton' => 'laravel'])
                             </div>
                         </div>
                     </div>
-                    <div class="text-center"> 
+                    <div class="text-center">
                         <a class="btn bg-secondary text-light" href="{{ url('/professionals/list') }}">Atrás</a>
-                        <button class="btn btn-primary" onclick="eventclick()" id="submit-button"
-                            type="submit">Reservar
-                            turno</button></div>
+                        <button class="btn btn-primary" onclick="eventclick()" id="submit-button" type="submit">Reservar
+                            turno</button>
+                    </div>
 
 
 
@@ -155,15 +156,18 @@ perfil', 'activeButton' => 'laravel'])
                             if (response.covered == 0) {
                                 $("#price-line").append('<strong>Precio:</strong><p>$' + response.price +
                                     '</p>');
-                                    if (phpcovered) {
-                                        $("#coverage-line").append('<strong>Su obra social no cubre esta operación.</strong>');
-                                    }
-                                
+                                if (phpcovered) {
+                                    $("#coverage-line").append(
+                                        '<strong>Su obra social no cubre esta operación.</strong>');
+                                }
+
                             } else {
                                 if (phpcovered) {
+                                    $("#coverage-line").empty();
                                     $("#coverage-line").append('<strong>Como afiliado debe abonar:.</strong>');
                                 }
-                                $("#price-line").append('<strong>Precio:</strong><p>$' + response.price + '</p>');
+                                $("#price-line").append('<strong>Precio:</strong><p>$' + response.price +
+                                    '</p>');
                             }
                             for (var i = 0; i < data.length; i++) {
                                 $("#hour-group").append(

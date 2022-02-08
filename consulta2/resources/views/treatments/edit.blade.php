@@ -29,6 +29,69 @@
                                 required>
                         </div>
                         <div class="form-group">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="row">
+                                        <div class="col form-check-inline">
+                                            <input type="checkbox" class="form-check-input" name="av-monday" id="av-monday" value="1" @if (in_array("1", $preferred_days))
+                                                checked
+                                            @endif>
+                                            <label class="form-check-label" for="av-monday"><strong>Lunes</strong></label>
+                                        </div>
+                                        <div class="col form-check-inline">
+                                            <input type="checkbox" class="form-check-input" name="av-tuesday" value="2" @if (in_array("2", $preferred_days))
+                                                checked
+                                            @endif
+                                                id="av-tuesday">
+                                            <label class="form-check-label" for="av-tuesday"><strong>Martes</strong></label>
+                                        </div>
+                                        <div class="col form-check-inline">
+                                            <input type="checkbox" class="form-check-input" name="av-wednesday" value="3" @if (in_array("3", $preferred_days))
+                                                checked
+                                            @endif
+                                                id="av-wednesday">
+                                            <label class="form-check-label"
+                                                for="av-wednesday"><strong>Miércoles</strong></label>
+                                        </div>
+                                        <div class="col form-check-inline">
+                                            <input type="checkbox" class="form-check-input" name="av-thursday" value="4" @if (in_array("4", $preferred_days))
+                                                checked
+                                            @endif
+                                                id="av-thursday">
+                                            <label class="form-check-label"
+                                                for="av-thursday"><strong>Jueves</strong></label>
+                                        </div>
+                                        <div class="col form-check-inline">
+                                            <input type="checkbox" class="form-check-input" name="av-friday" id="av-friday" value="5" @if (in_array("5", $preferred_days))
+                                                checked
+                                            @endif>
+                                            <label class="form-check-label" for="av-friday"><strong>Viernes</strong></label>
+                                        </div>
+                                        <div class="col form-check-inline">
+                                            <input type="checkbox" class="form-check-input" name="av-saturday" value="6" @if (in_array("6", $preferred_days))
+                                                checked
+                                            @endif
+                                                id="av-saturday">
+                                            <label class="form-check-label"
+                                                for="av-saturday"><strong>Sábado</strong></label>
+                                        </div>
+                                        <div class="col form-check-inline">
+                                            <input type="checkbox" class="form-check-input" name="av-sunday" id="av-sunday" value="7" @if (in_array("7", $preferred_days))
+                                                checked
+                                            @endif>
+                                            <label class="form-check-label" for="av-sunday"><strong>Domingo</strong></label>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col">
+                                    <label for="input-preferred_hour">Hora preferida</label>
+                                    <input type="time" class="form-control" name="preferred_hour" value="{{  $treatment->preferred_hour }}"
+                                        id="input-preferred_hour">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label for="input-start">Fecha de inicio del tratamiento</label>
                             <input class="form-control" type="date" name="start" id="input-start" required value="{{ date('Y-m-d', strtotime($treatment->start)) }}">
                         </div>

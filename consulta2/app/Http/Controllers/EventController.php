@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\CalendarEvent;
 use App\Models\Cite;
 use App\Models\ConsultType;
+use App\Models\MedicalHistory;
 use App\Models\Profile;
 use App\Models\PatientProfile;
 use App\Models\Practice;
@@ -214,7 +215,7 @@ class EventController extends Controller
             $formatDate = date("Y-m-d H:i:s", $futureDate);
             $_event = new CalendarEvent([
                 'title' => $user->name . ' ' . $user->lastname,
-                'start' => $selectedDate,
+                'start' => date("Y-m-d H:i", $currentDate),
                 'end' => $formatDate,
                 'approved' => $_consult_type->requires_auth ? 0 : 1,
                 'confirmed' => false,
@@ -235,6 +236,15 @@ class EventController extends Controller
             if ($_patient->lifesheet->coverage->id == 1) {
                 $covered = false;
             }
+
+            $medical_history = $_patient->medicalHistories->where('professional_profile_id', $professional->id)->first();
+            if ($medical_history == null) {
+                $medical_history = new MedicalHistory();
+                $medical_history->indate = $selectedDate;
+                $medical_history->patient_profile_id = $_patient->id;
+                $medical_history->professional_profile_id = $professional->id;
+                $medical_history->save();
+            }
             $_cite = new Cite([
                 'assisted' => false,
                 'covered' => $covered,
@@ -242,6 +252,7 @@ class EventController extends Controller
             ]);
             $_cite->calendarEvent()->associate($_event);
             $_cite->practice()->associate($_practice);
+            $_cite->medicalHistory()->associate($medical_history);
             $_cite->save();
 
             $_cite->save();
@@ -289,7 +300,7 @@ class EventController extends Controller
             DB::beginTransaction();
             $user = User::find(auth()->user()->id);
             $events = CalendarEvent::where('professional_profile_id', $user->profile->professionalProfile->id)
-                ->where('start', '>=', date_create($request->from))->orWhere('start', '<=', date_create($request->input('to')))->get();
+                ->where('start', '>=', date_create($request->from))->where('start', '<=', date_create($request->input('to')))->get();
             if ($events->count() > 0) {
                 foreach ($events as $event) {
                     $patients = $event->patientProfiles;
