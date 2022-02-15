@@ -19,36 +19,44 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Laratrust;
 use App\Models\NonWorkableDay;
-
+use DateTimeZone;
+use Google\Service\Calendar\Event;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Carbon;
+use Spatie\GoogleCalendar\Event as GoogleCalendarEvent;
+use Barryvdh\DomPDF\Facade as PDF;
 class EventController extends Controller
 {
     public function index(Request $request)
     {
-        $user_profile = Profile::where('user_id', auth()->user()->id)->first();
-        $patient_profile = PatientProfile::where('profile_id', $user_profile->id)->first();
-        $professional_profile = ProfessionalProfile::where('profile_id', $user_profile->id)->first();
         if ($request->ajax()) {
-            if ($patient_profile != null) {
-                // TODO: order query for patient users
-                $userdata = CalendarEvent::where('user_id', auth()->user()->id)
-                    ->whereDate('start', '>=', $request->start)
-                    ->whereDate('end',   '<=', $request->end)
-                    ->get(['id', 'title', 'start', 'end']);
+            $user = User::find(auth()->user()->id);
+            $data = array();
+            if ($user->isAbleTo('patient-profile')) {
+                foreach ($user->profile->patientProfile->calendarEvents as $event) {
+                    $obj = [
+                        "id" => $event->id,
+                        "start" => $event->start,
+                        "end" => $event->end,
+                        "title" => $event->professionalProfile->getFullName()
+                    ];
+                    array_push($data, $obj);
+                }
 
-                $forbidata = CalendarEvent::where('user_id', '<>', auth()->user()->id)
-                    ->whereDate('start', '>=', $request->start)
-                    ->whereDate('end',   '<=', $request->end)
-                    ->get(['id', 'start', 'end']);
-                $data = $userdata->concat($forbidata);  //Concat both the user events and the foreign events, but without revealing their identity.
-            } else if ($professional_profile != null) {
-                $data = CalendarEvent::whereDate('start', '>=', $request->start)
-                    ->whereDate('end',   '<=', $request->end)
-                    ->get(['id', 'title', 'start', 'end']);
+            } elseif ($user->isAbleTo('professional-profile')) {
+                foreach($user->profile->professionalProfile->calendarEvents as $event) {
+                    $obj = [
+                        "id" => $event->id,
+                        "start" => $event->start,
+                        "end" => $event->end,
+                        "title" => $event->professionalProfile->getFullName()
+                    ];
+                    array_push($data, $obj);
+                }
             }
 
             return response()->json($data);
         }
-        return view('calendar');
     }
 
     public function showAvailableTimes(Request $request)
@@ -179,12 +187,14 @@ class EventController extends Controller
         $_professional = ProfessionalProfile::find($request->input('profid'));
         $_consult_type = ConsultType::find($request->input('consult-type'));
         $practice = Practice::find($request->practice);
+        $total = $request->price;
         return view('events.confirm')->with([
             'professional' => $_professional,
             'selectedDate' => $selectedDate->format('d/m/Y H:i'),
             'consult_type' => $_consult_type,
             'isVirtual' => $request->input('isVirtual'),
-            'practice' => $practice
+            'practice' => $practice,
+            'total' => $total
         ]);
     }
 
@@ -202,21 +212,24 @@ class EventController extends Controller
                 return abort(403);
             }
         }
-        
+        $profuser = User::find($request->profid);
+        $professional = $profuser->profile->professionalProfile;
 
         try {
             DB::beginTransaction();
             $selectedDate = $request->input('date');
+            
             $_practice = Practice::find($request->input('practice-id'));
             $_consult_type = ConsultType::find($request->input('consult-type'));
-            
-            $currentDate = strtotime($selectedDate);
-            $futureDate = $currentDate + (60 * $_practice->maxtime);
-            $formatDate = date("Y-m-d H:i:s", $futureDate);
+            $carbonDate = new Carbon(date_create_from_format('d/m/Y h:i',$selectedDate)->format('Y-m-d h:i:s'), new DateTimeZone("-0300"));
+            //$currentDate = date($selectedDate);
+            //dd($carbonDate);
+            $futureDate = $carbonDate;
+            $futureDate = $futureDate->addHour();
             $_event = new CalendarEvent([
                 'title' => $user->name . ' ' . $user->lastname,
-                'start' => date("Y-m-d H:i", $currentDate),
-                'end' => $formatDate,
+                'start' => new Carbon(date_create_from_format('d/m/Y h:i',$selectedDate)->format('Y-m-d h:i:s'), new DateTimeZone("-0300")),
+                'end' => $futureDate->setTimezone("-0300"),
                 'approved' => $_consult_type->requires_auth ? 0 : 1,
                 'confirmed' => false,
                 'isVirtual' => boolval($request->input('isVirtual')),
@@ -226,8 +239,7 @@ class EventController extends Controller
 
             $_event->consultType()->associate($_consult_type);
 
-            $profuser = User::find($request->profid);
-            $professional = $profuser->profile->professionalProfile;
+            
             $_event->professionalProfile()->associate($professional);
             $_event->save();
             $_event->patientProfiles()->attach($_patient->id);
@@ -248,7 +260,8 @@ class EventController extends Controller
             $_cite = new Cite([
                 'assisted' => false,
                 'covered' => $covered,
-                'paid' => false
+                'paid' => false,
+                'total' => $request->total
             ]);
             $_cite->calendarEvent()->associate($_event);
             $_cite->practice()->associate($_practice);
@@ -256,6 +269,20 @@ class EventController extends Controller
             $_cite->save();
 
             $_cite->save();
+
+            
+            $gevent = new GoogleCalendarEvent();
+            $gevent->name = $_consult_type->name;
+            $gevent->description = 'Turno agendado por medio de Consulta2.';
+            $gevent->startDateTime = new Carbon(date_create_from_format('d/m/Y h:i', $selectedDate)->format('Y-m-d h:i:s'), new DateTimeZone("-0300"));;
+            $gevent->endDateTime = $futureDate->setTimezone("-0300");
+            $gevent->addAttendee([
+                'email' => $_patient->profile->user->email,
+                'name' => $_patient->profile->user->name . ' ' . $_patient->profile->user->lastname,
+            ]);
+            $gevent->addAttendee(['email' => $professional->profile->user->email]);
+
+            $gevent->save();
 
             if ($_consult_type->requires_auth != 0) {
                 Mail::send('external.created', [
@@ -278,17 +305,32 @@ class EventController extends Controller
                     $message->from('sistema@consulta2.com', 'Consulta2');
                 });
             }
+
             DB::commit();
+            $gevents = GoogleCalendarEvent::get();
+            foreach ($gevents as $item) {
+                if ($item->startDateTime == new Carbon($_event->start)) {
+                    $_event->gid = $item->id;
+                    $_event->save();
+                    break;
+                }
+            }
+            if ($user->hasRole('Patient')) {
+                return redirect()->route('events.success', ['event' => $_event]);
+            } else {
+                return back()->withStatus('Turno registrado.');
+            }
         } catch (\Throwable $th) {
             DB::rollBack();
-            throw $th;
-        }
-        if ($user->hasRole('Patient')) {
-            return redirect('/professionals/list')->with(['justregistered' => true]);
-        } else {
-            return back()->withStatus('Turno registrado.');
+            return redirect('/professionals/show/'.$professional->id)->withErrors('turno', 'Error al agendar turno, intente de nuevo');
         }
         
+        
+    }
+
+    public function success(CalendarEvent $event) {
+        $gevent = GoogleCalendarEvent::find($event->gid);
+        return view('events.success')->with(['event' => $event, 'gevent' => $gevent]);
     }
 
     public function massCancel(Request $request) {
@@ -338,28 +380,38 @@ class EventController extends Controller
 
     public function delete(Request $request)
     {
-
-        $event = CalendarEvent::find($request->id);
-        $patients = $event->patientProfiles;
-        $user = User::find(Auth::user()->id);
-        $event->delete();
-        if ($user->hasRole('Professional')) {
-            foreach ($patients as $patient) {
-                $data = array(
-                    'email' => $patient->profile->user->email,
-                    'fullname' => $patient->profile->user->name . ' ' . $patient->profile->user->lastname
-                );
-
-                Mail::send('external.prof_deleted', [
-                    'user' => $user,
-                    'event' => $event
-                ], function ($message) use ($data) {
-                    $message->to($data['email'], $data['fullname'])->subject('Consulta2 | Turno cancelado');
-                    $message->from('sistema@consulta2.com', 'Consulta2');
-                });
-                return redirect('/cite');
+        DB::beginTransaction();
+        try {
+            $event = CalendarEvent::find($request->id);
+            $gevent = \Spatie\GoogleCalendar\Event::find($event->gid);
+            $patients = $event->patientProfiles;
+            $user = User::find(Auth::user()->id);
+            $event->delete();
+            if (isset($gevent)) {
+                $gevent->delete();
             }
+            DB::commit();
+            if ($user->hasRole('Professional')) {
+                foreach ($patients as $patient) {
+                    $data = array(
+                        'email' => $patient->profile->user->email,
+                        'fullname' => $patient->profile->user->name . ' ' . $patient->profile->user->lastname
+                    );
+
+                    Mail::send('external.prof_deleted', [
+                        'user' => $user,
+                        'event' => $event
+                    ], function ($message) use ($data) {
+                        $message->to($data['email'], $data['fullname'])->subject('Consulta2 | Turno cancelado');
+                        $message->from('sistema@consulta2.com', 'Consulta2');
+                    });
+                    return redirect('/cite');
+                }
+            }
+        } catch (\Throwable $th) {
+            dd($th);
         }
+        
 
         return redirect('/profile/events')->withStatus('Turno cancelado.');
     }
@@ -374,5 +426,10 @@ class EventController extends Controller
     {
         $event = CalendarEvent::find($request->id)->delete();
         return view('external.deleted');
+    }
+
+    public function createTicket(CalendarEvent $event) {
+        $pdf = PDF::loadView('events.pdf', ['event' => $event]);
+        return $pdf->download('comprobante_turno_agendado'.$event->id.'.pdf');
     }
 }

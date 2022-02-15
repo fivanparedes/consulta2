@@ -101,7 +101,7 @@
 
                                     </tbody>
                                 </table>
-                                {!! $treatments->appends('treatments')->links() !!}
+                                {!! $treatments->appends('treatments')->links('vendor.pagination.bootstrap-4') !!}
                             @endif
                                 
                         </div>

@@ -40,9 +40,9 @@
                     <hr>
                     <div class=" pb-1 ml-4">
                         
-                        <form action="{{ url('/medical_history') }}" method="post">
+                        <form action="{{ url('/medical_history/'.$medical_history->id) }}" method="post">
                             @csrf
-                            @method('put')
+                            @method('patch')
                             <div class="form-group">
                                 <label for="indate">Fecha de ingreso al establecimiento</label>
                                 <input type="date" id="indate" value="{{ date('Y-m-d', strtotime($medical_history->indate)) }}" name="indate"
@@ -50,22 +50,22 @@
                             </div>
                             <div class="form-group">
                                 <label for="psicological_history">Antecedentes psicológicos/psiquiátricos</label>
-                                <input type="text" class="form-control" name="psicological_history" id="psicological_history" value="{{ $medical_history->psicological_history }}"
+                                <input type="text" class="form-control" name="psicological_history" id="psicological_history" value="{{ $psicological_history }}"
                                     placeholder="Un resumen de diagnósticos previos del paciente...">
                             </div>
                             <div class="form-group">
                                 <label for="visitreason">Razón de visita</label> 
-                                <input type="text" name="visitreason" id="visitreason" class="form-control" value="{{ decrypt($medical_history->visitreason) }}"
+                                <input type="text" name="visitreason" id="visitreason" class="form-control" value="{{ $visitreason }}"
                                     placeholder="Un resumen del motivo por el cual se iniciará un tratamiento o se realizó la consulta/evaluación...">
                             </div>
                             <div class="form-group">
                                 <label for="clinical_history">Antecedentes médicos</label>
-                                <input type="text" name="clinical_history" id="clinical_history" class="form-control" value="{{ decrypt($medical_history->clinical_history) }}"
+                                <input type="text" name="clinical_history" id="clinical_history" class="form-control" value="{{ $clinical_history }}"
                                     placeholder="Un resumen de diagnósticos y atenciones previas...">
                             </div>
                             <div class="form-group">
                                 <label for="diagnosis">Diagnóstico actual</label>
-                                <input type="text" name="diagnosis" id="diagnosis" class="form-control" value="{{ decrypt($medical_history->diagnosis) }}"
+                                <input type="text" name="diagnosis" id="diagnosis" class="form-control" value="{{ $diagnosis }}"
                                     placeholder="Descripción del estado del paciente en el tratamiento actual con usted o su establecimiento">
                             </div>
                     </div>

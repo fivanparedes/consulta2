@@ -70,7 +70,6 @@
 
                                     </tbody>
                                 </table>
-                                {!! $citea->append('cites')->links() !!}
                             @endif
 
                         </div>
@@ -79,62 +78,3 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Agendar turno manualmente</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form method="post" action="/event/store">
-                    @csrf
-                    @method('post')
-                    <div class="modal-body">
-                        Escriba el DNI del paciente que desea agregar.
-                        <div class="form-group">
-                            <label for="dni">N° Documento:</label>
-                            <input type="number" class="form-control" name="dni" onchange="searchByDni(this.value)">
-                        </div>
-                        <div class="form-group" id="patientdata"></div>
-                        <div class="form-group">
-                            <label for="time">Fecha y hora</label>
-                            <input type="datetime-local" min="{{ date('Y-m-d', strtotime(now())) }}"
-                                class="form-control" name="date">
-                        </div>
-                        <div class="form-group">
-                            <input type="hidden" value="1" name="consult-type">
-                            <label for="practice">Tipo de atención:</label>
-                            @if (isset($professional))
-                                <select class="form-control" name="practice" id="input-practice" onchange="setConsultId()">
-                                @foreach ($professional->consultTypes as $consult)
-                                    <optgroup label="{{ $consult->name }}">
-                                        @foreach ($consult->practices as $practice)
-                                            <option value="{{ $practice->id }}">{{ $practice->name }}
-                                                [{{ $practice->coverage->name }}]</option>
-                                        @endforeach
-                                    </optgroup>
-                                @endforeach
-                            </select>
-                            @endif
-                            
-
-                            <input name="profid" type="hidden" value="{{ Auth::user()->id }}">
-
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No, volver
-                            atrás.</button>
-
-                        <button type="submit" class="btn bg-primary text-light">Agendar turno</button>
-
-
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    

@@ -26,7 +26,7 @@ class InstitutionController extends Controller
         if (!$user->hasRole('Admin')) {
             return abort(404);
         }
-        $institutions = InstitutionProfile::where('id', '>', 2);
+        $institutions = InstitutionProfile::where('id', '>', 0);
         
         $institutions = $institutions->sortable()->paginate(10);
         return view('institutions.index')->with(['institutions' => $institutions]);
@@ -64,6 +64,17 @@ class InstitutionController extends Controller
             return abort(404);
         }
         try {
+            $request->validate([
+                'user_name' => 'required|string|max:20',
+                'user_lastname' => 'required|string|max:30',
+                'user_dni' => 'required|unique:users,dni|numeric',
+                'name' => 'required|string|max:50',
+                'description' => 'required|string|max:100',
+                'address' => 'required|string|max:100',
+                'phone' => 'required|numeric|max:10',
+                'city' => 'required|numeric'
+            ]);
+
             $inst_user = new User();
             $inst_user->name = $request->user_name;
             $inst_user->lastname = $request->user_lastname;
@@ -113,7 +124,11 @@ class InstitutionController extends Controller
      */
     public function edit($id)
     {
-        //
+        $user = User::find(auth()->user()->id);
+        $institution = InstitutionProfile::find(base64_decode(base64_decode($id)));
+        if ($user->isAbleTo('admin-profile')) {
+            return view('institutions.edit')->with(['institution' => $institution]);
+        }
     }
 
     /**
@@ -125,29 +140,40 @@ class InstitutionController extends Controller
      */
     public function update(Request $request, $id)
     {
+        //dd($request->all());
         $user = User::find(auth()->user()->id);
         if (!$user->isAbleTo('admin-profile') && !$user->isAbleTo('institution-profile')) {
             return abort(404);
         }
         try {
             $institutionProfile = InstitutionProfile::find($id);
-            $inst_user = $institutionProfile->user;
+            $request->validate([
+                'user_name' => 'required|string|max:20',
+                'user_lastname' => 'required|string|max:30',
+                'user_dni' => 'required|unique:users,dni|numeric',
+                'name' => 'required|string|max:50',
+                'description' => 'required|string|max:100',
+                'address' => 'required|string|max:100',
+                'phone' => 'required|numeric|max:10',
+                'city' => 'required|numeric'
+            ]);
+            /* $inst_user = $institutionProfile->user;
             $inst_user->name = $request->user_name;
             $inst_user->lastname = $request->user_lastname;
             $inst_user->dni = $request->user_dni;
             $inst_user->email = $request->user_email;
             $inst_user->password = Hash::make($request->user_dni);
-            $inst_user->save();
-
-            
+            $inst_user->save(); */
+            //dd($institutionProfile);
             $institutionProfile->name = $request->name;
             $institutionProfile->description = $request->description;
             $institutionProfile->address = $request->address;
             $institutionProfile->phone = $request->phone;
             $institutionProfile->city_id = $request->city;
-            $institutionProfile->active = $request->active;
+            $institutionProfile->active = $request->active == 1 ? true : false;
             $institutionProfile->save();
         } catch (Throwable $th) {
+            dd($th);
             return back()->withErrors('error', 'Error al guardar.');
         }
         return redirect('/institutions');
@@ -212,23 +238,29 @@ class InstitutionController extends Controller
     {
         if ($request->ajax()) {
             $institution = InstitutionProfile::find(decrypt($request->id));
-            $list = $institution->professionalProfiles->where('status', '<>', 0);
+            $list = $institution->professionalProfiles->where('status', '<>', 0)->toQuery();
+            
             if ($request->specialty != 0) {
                 $list = $list->where('specialty_id', $request->specialty);
             }
+            
             if ($request->location != "all") {
                 if ($request->location == "city") {
                     $profs = Profile::where('city_id', Auth::user()->profile->city->id)->get(['id'])->toArray();
                     $list = $list->whereIn('profile_id', $profs);
+                    
                 } elseif ($request->location == "province") {
                     $cities = City::where('province_id', Auth::user()->profile->city->province->id)->get(['id'])->toArray();
+                    
                     $profs = Profile::whereIn('city_id', $cities)->get(['id'])->toArray();
                     $list = $list->whereIn('profile_id', $profs);
+                    
                 }
             }
-            $list = $list->get();
+            
             $collection = array();
-
+            $list = $list->get();
+            //dd($list);
             foreach ($list as $item) {
                 $coverages = array();
                 foreach ($item->coverages as $coverage) {
@@ -237,6 +269,7 @@ class InstitutionController extends Controller
                 $obj = [
                     'id' => $item->id,
                     'fullname' => $item->profile->user->name . ' ' . $item->profile->user->lastname,
+                    'pfp' => $item->profile->user->pfp != '' ? asset('/storage/images/' . explode('/', $item->profile->user->pfp)[2]) : asset('light-bootstrap/img/default-avatar.png'),
                     'specialty' => $item->specialty->displayname . ' (' . $item->field . ')',
                     'institution' => $item->institution->id != 1 ? 'Lugar de consulta: ' . $item->institution->name : 'Independiente / Consultorio propio',
                     'coverages' => implode(" / ", $coverages),
@@ -247,4 +280,5 @@ class InstitutionController extends Controller
             return response()->json(['status' => 'success', 'content' => $collection]);
         }
     }
+
 }

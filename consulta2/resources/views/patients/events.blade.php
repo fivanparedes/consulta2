@@ -22,20 +22,20 @@ perfil', 'activeButton' => 'laravel'])
                         @else
                             <table class="table table-hover table-striped">
                                 <thead>
-                                    <th>Prestador</th>
-                                    <th>Fecha y hora</th>
-                                    <th>Rubro</th>
-                                    <th>Modalidad</th>
+                                    <th>@sortablelink('start', 'Fecha y hora')</th>
+                                    <th>@sortablelink('professionalProfile', 'Prestador')</th> 
+                                    <th>@sortablelink('specialty', 'Rubro')</th>
+                                    <th>@sortablelink('isVirtual', 'Modalidad')</th>
                                     <th>Tipo de consulta</th>
-                                    <th>Estado</th>
+                                    <th>@sortablelink('approved', 'Estado')</th>
                                     <th>Más</th>
                                 </thead>
                                 <tbody>
                                     @foreach ($events as $event)
                                         <tr>
+                                            <td>{{ date('d-m-Y h:i', strtotime($event->start)) }}</td>
                                             <td>{{ $event->professionalProfile->profile->user->name . ' ' . $event->professionalProfile->profile->user->lastname }}
                                             </td>
-                                            <td>{{ date('d-m-Y h:i', strtotime($event->start)) }}</td>
                                             <td>{{ $event->professionalProfile->specialty->displayname }}</td>
                                             <td>
                                                 @if ($event->isVirtual)

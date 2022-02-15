@@ -51,12 +51,12 @@
                             @else
                                 <table class="table table-hover table-striped">
                                     <thead>
-                                        <th>ID</th>
-                                        <th>ID de Usuario</th>
-                                        <th>Evento</th>
-                                        <th>Valor anterior</th>
-                                        <th>Valor posterior</th>
-                                        <th>URL</th>
+                                        <th>@sortablelink('id', 'ID')</th>
+                                        <th>@sortablelink('user_id', 'ID de Usuario')</th>
+                                        <th>@sortablelink('event', 'Evento')</th>
+                                        <th style="max-width: 200px;">@sortablelink('old_values', 'Valores anteriores')</th>
+                                        <th style="max-width: 200px;">@sortablelink('new_values', 'Valores posteriores')</th>
+                                        <th>@sortablelink('url', 'URL')</th>
                                         <th>Ver</th>
                                     </thead>
                                     <tbody>
@@ -65,8 +65,8 @@
                                                 <td>{{ $audit->id }}</td>
                                                 <td>{{ $audit->user_id }}</td>
                                                 <td>{{ $audit->event }}</td>
-                                                <td>{{ implode('-', $audit->old_values) }}</td>
-                                                <td>{{ implode('-', $audit->new_values) }}</td>
+                                                <td style="max-width: 200px;">{{ ($audit->old_values != []) ? substr(implode('-', $audit->old_values), 0, 50) : "Vacío"}}</td>
+                                                <td style="max-width: 200px;">{{ ($audit->new_values != []) ? substr(implode('-', $audit->new_values), 0, 50) : "Vacío" }}</td>
                                                 <td>{{ $audit->url }}</td>
                                                 <td><a href="/audits/{{ $audit->id }}"
                                                         class="btn bg-primary text-light">Detalles</a></td>
@@ -75,7 +75,7 @@
 
                                     </tbody>
                                 </table>
-
+                                {!! $audits->links('vendor.pagination.bootstrap-4') !!}
                             @endif
 
                         </div>

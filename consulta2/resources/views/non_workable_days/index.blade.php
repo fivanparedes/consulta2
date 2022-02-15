@@ -98,7 +98,7 @@
 
                                     </tbody>
                                 </table>
-                                {!! $nonworkabledays->appends('nonworkabledays')->links() !!}
+                                {!! $nonworkabledays->appends('nonworkabledays')->links('vendor.pagination.bootstrap-4') !!}
                             @endif
 
                         </div>

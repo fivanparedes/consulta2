@@ -133,7 +133,7 @@
 
                                     </tbody>
                                 </table>
-                                {!! $professionals->appends('professionals')->links() !!}
+                                {!! $professionals->appends('professionals')->links('vendor.pagination.bootstrap-4') !!}
                             @endif
 
                         </div>

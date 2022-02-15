@@ -1,12 +1,16 @@
 <?php
 
+use App\Http\Controllers\AuditController;
 use App\Http\Controllers\CiteController;
+use App\Http\Controllers\CityController;
+use App\Http\Controllers\CountryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\MedicalHistoryController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProfessionalController;
+use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\ReminderController;
 use App\Http\Controllers\StatisticsController;
 use Illuminate\Support\Facades\Auth;
@@ -62,6 +66,9 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/manage/patients/edit/{id}', ['as' => 'admin.patients.edit', 'uses' => 'App\Http\Controllers\PatientController@edit']);
 	Route::resource('/manage/patients', 'App\Http\Controllers\PatientController', ['except' => 'show']);
 	Route::get('/manage/patients/pdf', ['as' => 'admin.patients.pdf', 'uses' => 'App\Http\Controllers\PatientController@createPDF'] );
+	Route::get('/config', ['as' => 'admin.config', 'uses' => 'App\Http\Controllers\AuditController@config']);
+	Route::get('/config/settings', ['as' => 'admin.config.settings', 'uses' => 'App\Http\Controllers\AuditController@settings']);
+	Route::patch('/config/settings', [AuditController::class, 'settingsUpdate']);
 	/**
 	 * Controlador de eventos (turnos de calendario)
 	 */
@@ -93,9 +100,9 @@ Route::group(['middleware' => 'auth'], function () {
 	 * Controlador de citas (sesiones de consultorio)
 	 */
 	Route::get('cite', ['as' => 'cite.index', 'uses' => 'App\Http\Controllers\CiteController@index']);
-	//Route::get('/cite/{id}', ['as' => 'cite.show', 'uses' => 'App\Http\Controllers\CiteController@show']);
+	Route::get('/cite/{id}', ['as' => 'cite.show', 'uses' => 'App\Http\Controllers\CiteController@_show']);
 	Route::get('/cite/edit/{id}', ['as' => 'cite.edit', 'uses' => 'App\Http\Controllers\CiteController@edit']);
-	Route::get('/cite/pdf', ['as' => 'cite.pdf', 'uses' => 'App\Http\Controllers\CiteController@createPDF']);
+	Route::get('/cite_pdf', ['as' => 'cite.pdf', 'uses' => 'App\Http\Controllers\CiteController@createPDF']);
 	Route::patch('/cite/update/{id}', ['as' => 'cite.update', 'uses' => 'App\Http\Controllers\CiteController@update']);
 	
 	Route::resource('/treatments','App\Http\Controllers\TreatmentController', ['except' => ['show']]);
@@ -121,6 +128,8 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::delete('/profile/events/delete/{id}', ['as' => 'profile.events.delete', 'uses' => 'App\Http\Controllers\EventController@delete']);
 	Route::get('/profile/attendees', ['as' => 'profile.attendees', 'uses' => 'App\Http\Controllers\UserController@listAtendees']);
 	Route::get('/users/searchByDni', 'App\Http\Controllers\UserController@searchByDni');
+	Route::get('/profile/events/success/{event}', ['as' => 'events.success', 'uses' => 'App\Http\Controllers\EventController@success']);
+	Route::get('/profile/events/pdf/{calendarEvent}', ['as' => 'events.pdf', 'uses' => 'App\Http\Controllers\EventController@createTicket']);
 	
 	/**
 	 * Historias médicas (ultra sensible)
@@ -133,7 +142,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/medical_history/create', 'App\Http\Controllers\MedicalHistoryController@create');
 	Route::post('/medical_history', 'App\Http\Controllers\MedicalHistoryController@store');
 	Route::get('/medical_history/{id}/edit', 'App\Http\Controllers\MedicalHistoryController@edit');
-	Route::patch('/medical_history', 'App\Http\Controllers\MedicalHistoryController@index');
+	Route::patch('/medical_history/{id}', 'App\Http\Controllers\MedicalHistoryController@update');
 	Route::delete('/medical_history/{id}', 'App\Http\Controllers\MedicalHistoryController@destroy');
 	Route::get('/medical_history/toggleInstitutionPrivilege', 'App\Http\Controllers\MedicalHistoryController@toggleInstitutionPrivilege');
 	Route::get('/medical_history/locatePatient', 'App\Http\Controllers\MedicalHistoryController@locatePatient');
@@ -151,15 +160,31 @@ Route::group(['middleware' => 'auth'], function () {
 
 	Route::get('institutions/list', ['as' => 'institution.list', 'uses' => 'App\Http\Controllers\InstitutionController@list']);
 	Route::get('institutions/getFilteredList', [InstitutionController::class, 'getFilteredInstitutions']);
-	Route::get('institution/{id}/getFilteredList', [InstitutionController::class, 'getFilteredList']);
+	Route::get('institution/{id}/getFilteredList', [InstitutionController::class, 'getFilteredProfessionals']);
 	Route::get('institution/show/{id}', [InstitutionController::class, 'show']);
 
+
+	/**
+	 * ABM MENORES
+	 */
+	Route::resource('cities', 'App\Http\Controllers\CityController', ['except' => 'show']);
+	Route::get('cities/getInstitutions', [CityController::class, 'getInstitutions']);
+	Route::resource('provinces', 'App\Http\Controllers\ProvinceController', ['except' => 'show']);
+	Route::get('provinces/getCities', [ProvinceController::class, 'getCities']);
+	Route::resource('countries', 'App\Http\Controllers\CountryController', ['except' => 'show']);
+	Route::get('countries/getProvinces', [CountryController::class, 'getProvinces']);
+	Route::resource('specialties', 'App\Http\Controllers\SpecialtyController', ['except' => 'show']);
+	
 	/**
 	 * Estadística
 	 */
-	Route::get('/statistics/loadCoverageComparison', [StatisticsController::class, 'loadCoverageComparison']);
-	Route::get('/statistics/loadAgeRange', [StatisticsController::class, 'loadAgeRange']);
-	Route::get('/statistics', [StatisticsController::class, 'index']);
-	Route::get('/statistics/pdf', [StatisticsController::class, 'createPDF']);
+	Route::get('statistics/loadCoverageComparison', [StatisticsController::class, 'loadCoverageComparison']);
+	Route::get('statistics/loadAgeRange', [StatisticsController::class, 'loadAgeRange']);
+	Route::get('statistics', [StatisticsController::class, 'index']);
+	Route::get('statistics/pdf', [StatisticsController::class, 'createPDF']);
+
+	Route::get('/icons', function() {
+		return view('pages.icons');
+	});
 
 });

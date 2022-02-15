@@ -63,7 +63,7 @@ class ProfessionalProfile extends Model implements Auditable
     }
 
     public function institution() {
-        return $this->belongsTo(InstitutionProfile::class, 'institution_id', 'institution_id');
+        return $this->belongsTo(InstitutionProfile::class, 'institution_id');
     }
 
     public function businessHours() {

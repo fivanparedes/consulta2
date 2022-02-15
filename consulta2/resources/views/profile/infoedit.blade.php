@@ -27,7 +27,7 @@
                                 @include('alerts.error_self_update', ['key' => 'not_allow_profile'])
         
                                 <div class="pl-lg-4">
-                                    <div class="form-group{{ $errors->has('name') ? ' has-danger' : '' }}">
+                                    <div class="form-group{{ $errors->has('bornDate') ? ' has-danger' : '' }}">
                                         <label class="form-control-label" for="bornDate">
                                             <i class="w3-xxlarge fa fa-user"></i>{{ __('Fecha de nacimiento') }}
                                         </label>
@@ -37,8 +37,17 @@
                                     </div>
                                     <div class="form-group{{ $errors->has('gender') ? ' has-danger' : '' }}">
                                         <label class="form-control-label" for="input-gender"><i class="w3-xxlarge fa fa-envelope-o"></i>{{ __('Género') }}</label>
-                                        <input type="text" name="gender" id="input-gender" class="form-control{{ $errors->has('gender') ? ' is-invalid' : '' }}" placeholder="{{ __('Género') }}" value="{{ old('gender', $user_profile->gender) }}" required>
-        
+                                        <select name="gender" id="input-gender" class="form-control">
+                                            <option value="Femenino" @if (old('gender', $user_profile->gender) == "Femenino")
+                                                selected
+                                            @endif>Femenino</option>
+                                            <option value="Masculino" @if (old('gender', $user_profile->gender) == "Masculino")
+                                                selected
+                                            @endif>Masculino</option>
+                                            <option value="Otro" @if (old('gender', $user_profile->gender) == "Otro")
+                                                selected
+                                            @endif>Otro</option>
+                                        </select>
                                         @include('alerts.feedback', ['field' => 'gender'])
                                     </div>
                                     <div class="form-group{{ $errors->has('phone') ? ' has-danger' : '' }}">
@@ -53,7 +62,7 @@
                                         <label class="form-control-label" for="input-address"><i class="w3-xxlarge fa fa-envelope-o"></i>{{ __('Domicilio') }}</label>
                                         <input type="text" name="address" id="input-address" class="form-control{{ $errors->has('address') ? ' is-invalid' : '' }}" placeholder="{{ __('Domicilio') }}" value="{{ old('address', $user_profile->address) }}" required>
         
-                                        @include('alerts.feedback', ['field' => 'gender'])
+                                        @include('alerts.feedback', ['field' => 'address'])
                                     </div>
                                     <hr class="my-4" />
                                     {{-- Este formulario aparece si el usuario esta logueado como paciente --}}

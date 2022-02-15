@@ -97,7 +97,7 @@
 
                                     </tbody>
                                 </table>
-                                {!! $coverages->appends('coverages')->links() !!}
+                                {!! $coverages->appends('coverages')->links('vendor.pagination.bootstrap-4') !!}
                             @endif
                                 
                         </div>

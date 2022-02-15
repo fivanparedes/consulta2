@@ -26,7 +26,8 @@ class City extends Model implements Auditable
     public $sortable = [
         'id',
         'name',
-        'province'
+        'province',
+        'country'
     ];
 
     public function profiles() {
@@ -34,7 +35,7 @@ class City extends Model implements Auditable
     }
 
     public function institutions() {
-        return $this->hasMany(Institution::class);
+        return $this->hasMany(InstitutionProfile::class);
     }
 
     public function province() {

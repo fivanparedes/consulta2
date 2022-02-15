@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Akaunting\Sortable\Traits\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Auditable as AuditingAuditable;
@@ -11,6 +12,7 @@ class Province extends Model implements Auditable
 {
     use HasFactory;
     use AuditingAuditable;
+    use Sortable;
 
     protected $table = 'provinces';
 
@@ -20,6 +22,12 @@ class Province extends Model implements Auditable
 
     protected $auditInclude = [
         'name'
+    ];
+
+    public $sortable = [
+        'id',
+        'name',
+        'country'
     ];
 
     public function cities() {

@@ -1,4 +1,5 @@
-@extends('layouts.app', ['activePage' => 'professional_show', 'title' => 'Consulta2 | Confirmar turno', 'navName' => 'Agendar un turno', 'activeButton' => 'laravel'])
+@extends('layouts.app', ['activePage' => 'professional_show', 'title' => 'Consulta2 | Confirmar turno', 'navName' =>
+'Agendar un turno', 'activeButton' => 'laravel'])
 
 @section('content')
     <div class="content">
@@ -8,56 +9,51 @@
                     <div class="card">
                         <div class="card-body">
                             <h2>Turno agendado exitosamente!</h2>
-                                <strong>Nombre del profesional: </strong>
-                                <p>{{ $professional->profile->user->name . ' ' . $professional->profile->user->lastname }}
-                                </p>
-                                <input type="hidden" name="profid" value="{{ $professional->profile->user->id }}">
-                                <strong>Área:</strong>
-                                <p> {{ $professional->specialty->displayname }}</p>
-                                <strong>Fecha y hora: </strong>
-                                <p> {{ $selectedDate }}</p>
-                                <input type="hidden" name="date" value="{{ $selectedDate }}">
-                                <strong>Tipo de consulta:</strong>
-                                <p> {{ $consult_type->name }}</p>
-                                <input type="hidden" name="consult-type" value="{{ $consult_type->id }}">
-                                <input type="hidden" name="practice-id" value="{{ $practice->id }}">
-                                <strong>Modalidad:</strong>
-                                <p>
-                                    @if ($isVirtual == 0)
-                                        Presencial
-                                    @else
-                                        Virtual
-                                    @endif
-                                </p>
-                                <input type="hidden" name="isVirtual" value="{{ $isVirtual }}">
-                                <strong>Precio:</strong>
-                                <p>
-                                    
-                                        @if ($practice->price->price == 0)
-                                            @if ($practice->price->copayment == 0)
-                                                No es necesario abonar nada.
-                                            @else
-                                                El afiliado debe abonar ${{ $practice->price->copayment }}
-                                            @endif
-                                        @else
-                                            @if (Auth::user()->profile->patientProfile->lifesheet->coverage_id == 1 || $practice->coverage->id == 1)
-                                                El afiliado debe abonar ${{ $practice->price->price }}
-                                            @else
-                                                @if ($practice->price->copayment == 0)
-                                                    No es necesario abonar nada.
-                                                @else
-                                                    El afiliado debe abonar ${{ $practice->price->copayment }}
-                                                @endif
-                                            @endif
-                                        @endif
-                                    
+                            <strong>Nombre del prestador: </strong>
+                            <p>{{ $event->professionalProfile->getFullName() }}
+                            </p>
+                            <strong>Área:</strong>
+                            <p> {{ $event->professionalProfile->specialty->displayname }}</p>
+                            <strong>Fecha y hora: </strong>
+                            <p> {{ date_create($event->start)->format('D M Y H:i') }}</p>
+                            <strong>Tipo de consulta:</strong>
+                            <p> {{ $event->consultType->name }}</p>
+                            <strong>Modalidad:</strong>
+                            <p>
+                                @if ($event->isVirtual == 0)
+                                    Presencial
+                                @else
+                                    Virtual
+                                @endif
+                            </p>
+                            <strong>Precio:</strong>
+                            <p>
 
-                                </p>
-                                <hr>
-                                <strong>Confirmar:</strong>
-                                <a class="btn btn-dark text-light" href="{{ url('professionals/list/') }}">Volver al listado</a>
-                                <button class="btn btn-primary text-light" type="submit">Imprimir comprobante</button>
-                            </form>
+                                @if ($event->cite->total == 0)
+                                    No es necesario abonar nada.
+                                @else
+                                    El afiliado debe abonar ${{ $event->cite->total }}.
+                                @endif
+
+                            </p>
+                            <hr>
+                            <div class="text-center">
+                                <div class="row">
+                                    <div class="col">
+                                        <a class="btn bg-primary text-light" href="{{ url('/home') }}">Volver al inicio</a>
+                                    </div>
+                                    <div class="col">
+                                        <a class="btn bg-secondary text-light" href="{{ route('events.pdf', ['calendarEvent' => $event]) }}">Imprimir comprobante</a>
+                                    </div>
+                                    @if (isset($gevent))
+                                        <div class="col">
+                                        <a class="btn bg-success text-light" href="{{ $gevent->htmlLink }}"><img src="https://fonts.gstatic.com/s/i/productlogos/calendar_2020q4/v13/web-64dp/logo_calendar_2020q4_color_1x_web_64dp.png" style="max-width: 30px; max-height:30px;"> Ir a Calendar</a>
+                                        </div>
+                                    @endif
+                                    
+                                </div>
+                                
+                            </div>
                         </div>
                     </div>
                 </div>

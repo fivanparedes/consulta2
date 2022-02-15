@@ -8,15 +8,26 @@ sesión', 'activeButton' => 'laravel'])
                 <!--   you can change the color of the filter page using: data-color="blue | purple | green | orange | red | rose " -->
                 <div class="row">
 
-                    <div class="card col-md-8">
+                    <div class="card col-md-12">
                         <div class="card-header">
                             <div class="row align-items-center">
-                                <div class="col-md-8">
+                                <div class="col">
                                     <h3 class="mb-0">{{ 'Turno N° ' . $event->id }}</h3>
-                                    <p>Prestador/a:
-                                        {{ $event->professionalProfile->profile->user->name . ' ' . $event->professionalProfile->profile->user->lastname }}
+                                    <p><strong>Paciente:</strong> {{ $event->title }}</p>
+                                    <p><strong>Fecha de turno:</strong>
+                                        {{ date_create($event->start)->format('d/m/Y h:i') }}</p>
+                                    <p><strong>Cobertura médica:</strong>
+                                        {{ $event->cite->medicalHistory->patientProfile->lifesheet->coverage->name }}</p>
+                                    <p><strong>Fue cubierto por obra social:</strong>
+                                        {{ $event->cite->covered ? 'Sí' : 'No' }}</p>
+                                    <p><strong>Tratamiento:</strong>
+                                        {{ isset($event->cite->treatment) ? $event->cite->treatment->name : 'Ninguno' }}
                                     </p>
-                                    <p>Fecha de turno: {{ $event->start }}</p>
+                                    <p><strong>Precio a pagar:</strong>
+                                        ${{ isset($event->cite->total) ? $event->cite->total : $event->cite->practice->price->price }}
+                                        <span
+                                            class="badge {{ $event->cite->paid ? 'badge-success' : 'badge-secondary' }}">{{ $event->cite->paid ? 'Pagado' : 'No pagado' }}</span>
+                                    </p>
                                     @if (date_create($event->start) > date_create('now'))
                                         <div class="alert alert-warning">
                                             <button type="button" aria-hidden="true" class="close"
@@ -30,6 +41,28 @@ sesión', 'activeButton' => 'laravel'])
                                         </div>
                                     @endif
                                 </div>
+                                <div class="col">
+                                    @if (isset($gevent))
+                                        <div class="row">
+                                            <div class="col">
+                                                <a href="{{ $gevent->htmlLink }}" class="btn bg-success text-light"><img
+                                                    src="https://fonts.gstatic.com/s/i/productlogos/calendar_2020q4/v13/web-64dp/logo_calendar_2020q4_color_1x_web_64dp.png"
+                                                    style="max-width: 30px; max-height:30px;"> Ver en Google Calendar</a>
+                                            </div>
+                                            
+                                        </div>
+                                    @endif
+                                    <div class="row">
+                                        <div class="col">
+                                            <button id="btn-cancelar" class="btn bg-danger text-light mt-4"
+                                                data-toggle="modal"
+                                                data-target="#exampleModal">{{ __('Cancelar turno') }}</button>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
                             </div>
                         </div>
                         <div class="card-body">
@@ -64,8 +97,7 @@ sesión', 'activeButton' => 'laravel'])
                                     @endif
                                 </div>
                             </form>
-                            <button id="btn-cancelar" class="btn bg-danger text-light mt-4" data-toggle="modal"
-                                data-target="#exampleModal">{{ __('Cancelar turno') }}</button>
+
                         </div>
                     </div>
                     <!-- Button trigger modal -->

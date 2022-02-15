@@ -21,7 +21,8 @@ class CalendarEvent extends Model implements Auditable
         'end',
         'approved',
         'confirmed',
-        'isVirtual'
+        'isVirtual',
+        'gid'
     ];
 
     public $sortable = [
@@ -31,8 +32,6 @@ class CalendarEvent extends Model implements Auditable
         'approved',
         'confirmed',
         'isVirtual',
-        'cite',
-        'consultType',
     ];
 
     protected $auditInclude = [

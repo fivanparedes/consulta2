@@ -80,7 +80,7 @@ class ProfessionalController extends Controller
         $patuser->name = $request->user_name;
         $patuser->lastname = $request->user_lastname;
         $patuser->dni = $request->user_dni;
-        $patuser->email = $request->email;
+        $patuser->email = $request->user_email;
         $patuser->password = Hash::make($request->user_dni);
         $patuser->save();
         $patuser->attachRole('Professional');
@@ -99,7 +99,7 @@ class ProfessionalController extends Controller
         $patientProfile->status = 1;
         $patientProfile->field = $request->field;
         $patientProfile->specialty_id = $request->specialty;
-        $patientProfile->institution_id = $user->hasPermission('institution-profile') ? $user->institutionProfile->id : 1;
+        $patientProfile->institution_id = $user->hasPermission('institution-profile') ? $user->institutionProfile->id : ($request->has('institution_id') ? $request->institution_id : 1);
         $patientProfile->profile_id = $patprofile->id;
         $patientProfile->save();
 
@@ -219,15 +219,16 @@ class ProfessionalController extends Controller
 
     public function save(Request $request)
     {
+        $user = User::find(auth()->user()->id);
         $professional = ProfessionalProfile::find($request->id);
-        $professional->update([
-            'status' => $request->input('status')
-        ]);
+        $professional->status = $request->input('status');
+        $professional->institution_id = $user->hasPermission('institution-profile') ? $user->institutionProfile->id : ($request->has('institution_id') ? $request->institution_id : 1);
+        $professional->save();
         $turnperm = Permission::where('name', 'receive-consults')->first();
-        if ($request->input('status') == 1) {
+        if ($request->input('status') == 1 && !$professional->profile->user->isAbleTo('receive-consults')) {
             $professional->profile->user->attachPermission($turnperm);
             $professional->save();
-        } else {
+        } elseif ($request->input('status') == 0 && $professional->profile->user->isAbleTo('receive-consults')) {
             $professional->profile->user->detachPermission($turnperm);
             $professional->save();
         }

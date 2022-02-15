@@ -72,27 +72,35 @@ class MedicalHistoryController extends Controller
         $medical_history = MedicalHistory::find($id);
         $user = $medical_history->patientProfile->profile->user;
 
-        $psicological_history = $medical_history->psicological_history;
-        $visitreason = Crypt::decryptString($medical_history->visitreason);
+        $psicological_history = $medical_history->psicological_history != '** Sin datos **' ? Crypt::decryptString($medical_history->psicological_history) : $medical_history->psicological_history;
+        $visitreason = $medical_history->visitreason != "** Sin datos **" ? Crypt::decryptString($medical_history->visitreason) : $medical_history->visitreason;
+        $diagnosis = $medical_history->diagnosis != '** Sin datos **' ? Crypt::decryptString($medical_history->diagnosis) : $medical_history->diagnosis;
+        $clinical_history = $medical_history->clinical_history != "** Sin datos **" ? decrypt($medical_history->clinical_history) : $medical_history->clinical_history;
         if ($user->id == auth()->user()->id) {
             return view('medical_histories.show')->with([
                 'medical_history' => $medical_history,
                 'psicological_history' => $psicological_history,
-                'visitreason' => $visitreason
+                'visitreason' => $visitreason,
+                'diagnosis' => $diagnosis,
+                'clinical_history' => $clinical_history
             ]);
         } else {
             if (auth()->user()->id == $medical_history->professionalProfile->profile->user->id) {
                 return view('medical_histories.show')->with([
                     'medical_history' => $medical_history,
                     'psicological_history' => $psicological_history,
-                    'visitreason' => $visitreason
+                    'visitreason' => $visitreason,
+                    'diagnosis' => $diagnosis,
+                    'clinical_history' => $clinical_history
                 ]);
             } else {
                 if (auth()->user()->id == $medical_history->institutionProfile->user->id) {
                     return view('medical_histories.show')->with([
                         'medical_history' => $medical_history,
                         'psicological_history' => $psicological_history,
-                        'visitreason' => $visitreason
+                        'visitreason' => $visitreason,
+                        'diagnosis' => $diagnosis,
+                        'clinical_history' => $clinical_history
                     ]);
                 }
             }
@@ -105,27 +113,35 @@ class MedicalHistoryController extends Controller
         $medical_history = MedicalHistory::find($id);
         $user = $medical_history->patientProfile->profile->user;
 
-        $psicological_history = $medical_history->psicological_history;
-        $visitreason = Crypt::decryptString($medical_history->visitreason);
+        $psicological_history = $medical_history->psicological_history != '** Sin datos **' ? Crypt::decryptString($medical_history->psicological_history) : $medical_history->psicological_history;
+        $visitreason = $medical_history->visitreason != "** Sin datos **" ? Crypt::decryptString($medical_history->visitreason) : $medical_history->visitreason;
+        $diagnosis = $medical_history->diagnosis != '** Sin datos **' ? Crypt::decryptString($medical_history->diagnosis) : $medical_history->diagnosis;
+        $clinical_history = $medical_history->clinical_history != "** Sin datos **" ? decrypt($medical_history->clinical_history) : $medical_history->clinical_history;
         if ($user->id == auth()->user()->id) {
             return view('medical_histories.edit')->with([
                 'medical_history' => $medical_history,
                 'psicological_history' => $psicological_history,
-                'visitreason' => $visitreason
+                'visitreason' => $visitreason,
+                'diagnosis' => $diagnosis,
+                'clinical_history' => $clinical_history
             ]);
         } else {
             if (auth()->user()->id == $medical_history->professionalProfile->profile->user->id) {
                 return view('medical_histories.edit')->with([
                     'medical_history' => $medical_history,
                     'psicological_history' => $psicological_history,
-                    'visitreason' => $visitreason
+                    'visitreason' => $visitreason,
+                    'diagnosis' => $diagnosis,
+                    'clinical_history' => $clinical_history
                 ]);
             } else {
                 if (auth()->user()->id == $medical_history->institutionProfile->user->id) {
                     return view('medical_histories.edit')->with([
                         'medical_history' => $medical_history,
                         'psicological_history' => $psicological_history,
-                        'visitreason' => $visitreason
+                        'visitreason' => $visitreason,
+                        'diagnosis' => $diagnosis,
+                        'clinical_history' => $clinical_history
                     ]);
                 }
             }
@@ -138,14 +154,19 @@ class MedicalHistoryController extends Controller
         $medical_history = MedicalHistory::find($id);
         $user = $medical_history->patientProfile->profile->user;
 
-        $psicological_history = $medical_history->psicological_history;
-        $visitreason = Crypt::decryptString($medical_history->visitreason);
+        $psicological_history = $medical_history->psicological_history != '** Sin datos **' ? Crypt::decryptString($medical_history->psicological_history) : $medical_history->psicological_history;
+        $visitreason = $medical_history->visitreason != "** Sin datos **" ? Crypt::decryptString($medical_history->visitreason) : $medical_history->visitreason;
+        $diagnosis = $medical_history->diagnosis != '** Sin datos **' ? Crypt::decryptString($medical_history->diagnosis) : $medical_history->diagnosis;
+        $clinical_history = $medical_history->clinical_history != "** Sin datos **" ? decrypt($medical_history->clinical_history) : $medical_history->clinical_history;
+        
         if ($user->id == auth()->user()->id) {
 
             $pdf = PDF::loadView('medical_histories.pdf',[
                 'medical_history' => $medical_history,
                 'psicological_history' => $psicological_history,
-                'visitreason' => $visitreason
+                'visitreason' => $visitreason,
+                'diagnosis' => $diagnosis,
+                'clinical_history' => $clinical_history
             ]);
             return $pdf->download('historia_medica_'.$user->name .'_' .$user->lastname.'.pdf');
         } else {
@@ -153,7 +174,9 @@ class MedicalHistoryController extends Controller
                 $pdf = PDF::loadView('medical_histories.pdf', [
                     'medical_history' => $medical_history,
                     'psicological_history' => $psicological_history,
-                    'visitreason' => $visitreason
+                    'visitreason' => $visitreason,
+                    'diagnosis' => $diagnosis,
+                    'clinical_history' => $clinical_history
                 ]);
                 return $pdf->download('historia_medica_' . $medical_history->id. '.pdf');
             } else {
@@ -161,7 +184,9 @@ class MedicalHistoryController extends Controller
                     $pdf = PDF::loadView('medical_histories.pdf', [
                         'medical_history' => $medical_history,
                         'psicological_history' => $psicological_history,
-                        'visitreason' => $visitreason
+                        'visitreason' => $visitreason,
+                        'diagnosis' => $diagnosis,
+                        'clinical_history' => $clinical_history
                     ]);
                     return $pdf->download('historia_medica_' . $medical_history->id . '.pdf');
                 }
@@ -172,7 +197,20 @@ class MedicalHistoryController extends Controller
 
     public function update(Request $request)
     {
-        return back()->withStatus('Se actualizó la historia médica.');
+        $user = User::find(auth()->user()->id);
+        if (!$user->isAbleTo('manage-histories')) {
+            return abort(403);
+        } else {
+            $medical_history = MedicalHistory::find($request->id);
+            $medical_history->indate = date_create($request->indate);
+            $medical_history->psicological_history = encrypt($request->psicological_history);
+            $medical_history->visitreason = encrypt($request->visitreason);
+            $medical_history->clinical_history = encrypt($request->clinical_history);
+            $medical_history->diagnosis = encrypt($request->diagnosis);
+            $medical_history->save();
+
+            return redirect('/medical_history/'.encrypt($medical_history->id));
+        }
     }
 
     public function list(Request $request)
@@ -246,5 +284,16 @@ class MedicalHistoryController extends Controller
         Document::destroy($id);
         Storage::delete($document->path);
         return back();
+    }
+
+    public function locatePatient(Request $request) {
+        if ($request->ajax()) {
+            $user = User::where('dni', $request->dni)->first();
+            if ($user != null) {
+                return response()->json($user->profile->patientProfile);
+            } else {
+                return response()->json(['status' => 'error']);
+            }
+        }
     }
 }

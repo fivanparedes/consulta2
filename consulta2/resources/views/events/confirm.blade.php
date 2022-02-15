@@ -34,7 +34,7 @@
                                 <input type="hidden" name="isVirtual" value="{{ $isVirtual }}">
                                 <strong>Precio:</strong>
                                 <p>
-                                    
+                                <input type="hidden" name="total" value="{{ $total }}">
                                         @if ($practice->price->price == 0)
                                             @if ($practice->price->copayment == 0)
                                                 No es necesario abonar nada.

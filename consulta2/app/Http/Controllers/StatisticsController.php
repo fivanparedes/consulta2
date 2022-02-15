@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\DB;
 
 class StatisticsController extends Controller
 {
+    public function index(Request $request) {
+        $user = User::find(auth()->user()->id);
+        return view('pages.statistics');
+    }
+
     public function loadAgeRange(Request $request) {
         if ($request->ajax()) {
             $user = User::find(auth()->user()->id);

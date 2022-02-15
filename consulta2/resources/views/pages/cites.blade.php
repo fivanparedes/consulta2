@@ -37,13 +37,13 @@
                                         <div class="">
                                             <label for="filter1">Concurrencia</label>
                                             <select name="filter1" id="filter1" class="form-control" style="width: 97%;">
-                                                <option value="" @if (!isset($filter1) || $filter1 == '')
+                                                <option value="all" @if (!isset($filter1) || $filter1 == 'all')
                                                     selected
                                                     @endif>Todas</option>
-                                                <option value=">=" @if (isset($filter1) && $filter1 == '>=')
+                                                <option value="future" @if (!isset($filter1) || $filter1 == 'future')
                                                     selected
                                                     @endif>Futuras</option>
-                                                <option value="<=" @if (isset($filter1) && $filter1 == '<=')
+                                                <option value="past" @if (isset($filter1) && $filter1 == 'past')
                                                     selected
                                                     @endif>Pasadas</option>
                                             </select>
@@ -113,7 +113,7 @@
                                         <div class="">
                                             <button type="submit"
                                                 class="btn bg-primary mb-2 ml-5 text-light">Filtrar</button>
-                                            <a class="nav-link" href="/cite/pdf?filter1={{ $filter1 }}&filter2={{ $filter2 }}&filter3={{ $filter3 }}&filter4={{ $filter4 }}&filter5={{ $filter5 }}&filter6={{ $filter6 }}" title="Generar PDF">
+                                            <a class="nav-link" href="/cite_pdf?filter1={{ $filter1 }}&filter2={{ $filter2 }}&filter3={{ $filter3 }}&filter4={{ $filter4 }}&filter5={{ $filter5 }}&filter6={{ $filter6 }}" title="Generar PDF">
                                                 <i class="nc-icon nc-paper-2"></i>
                                             </a>
                                         </div>
@@ -189,7 +189,7 @@
 
                                     </tbody>
                                 </table>
-                                {!! $citea->append('cites')->links() !!}
+                                {{-- {!! $cites->append('cites')->links('vendor.pagination.bootstrap-4') !!} --}}
                             @endif
 
                         </div>

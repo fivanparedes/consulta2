@@ -49,4 +49,8 @@ class InstitutionProfile extends Model implements Auditable
         return $this->belongsTo(City::class);
     }
 
+    public function medicalHistories() {
+        return $this->hasMany(MedicalHistory::class, 'institution_id');
+    }
+
 }

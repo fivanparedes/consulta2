@@ -2,7 +2,7 @@
 
 return [
 
-    'default_auth_profile' => env('GOOGLE_CALENDAR_AUTH_PROFILE', 'service_account'),
+    'default_auth_profile' => env('GOOGLE_CALENDAR_AUTH_PROFILE', 'oauth'),
 
     'auth_profiles' => [
 

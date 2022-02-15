@@ -1,7 +1,7 @@
 @extends('layouts/app', ['activePage' => 'welcome', 'title' => 'Consulta2 | Bienvenido/a'])
 
 @section('content')
-    <div class="full-page section-image" data-color="black" data-image="{{asset('light-bootstrap/img/full-screen-image-2.jpg')}}">
+    <div class="full-page section-image" data-color="black" data-image="https://img-new.cgtrader.com/items/719713/9c483c1c1f/modern-grey-hospital-building-001-3d-model-max.jpg">
         <div class="content">
             <div class="container">
                 <div class="row justify-content-center">

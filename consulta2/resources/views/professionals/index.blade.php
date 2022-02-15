@@ -87,7 +87,7 @@
                             for (var i = 0; i < content.length; i++) {
 
                                 $('#listbody').append(
-                                    '<div class="row"><div class="col-md-12"><div class="card"><div class="card-body"><div class="row"><div class="col left" style="left: 0%; max-width: 30%;"><img src="' +
+                                    '<div class="row"><div class="col-md-12"><div class="card"><div class="card-body"><div class="row"><div class="col left" style="left: 0%; max-width: 30%;"><img class="avatar border-gray" style="width: 180px; height: 180px;" src="' +
                                     content[i].pfp +
                                     '" /></div><div class="col right"><h4 class="card-title font-weight-bold">' + content[i]
                                     .fullname +

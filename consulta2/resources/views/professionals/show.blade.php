@@ -20,7 +20,8 @@ perfil', 'activeButton' => 'laravel'])
                         <div class="row">
                             @if ($professional->institution_id != 1)
                                 <div class="col"><a class="btn bg-primary text-light"
-                                        href="{{ url('/institution/show/' . $professional->institution->id) }}">Ver lugar de
+                                        href="{{ url('/institution/show/' . $professional->institution->id) }}">Ver lugar
+                                        de
                                         trabajo</a></div>
                             @endif
 
@@ -40,6 +41,7 @@ perfil', 'activeButton' => 'laravel'])
                             @endif
 
                         @endif
+                        @include('alerts.error_self_update', ['key' => 'not_allow_profile'])
                     </div>
                 </div>
 
@@ -75,9 +77,14 @@ perfil', 'activeButton' => 'laravel'])
                             <div class="form-group">
                                 <label for="input-consult">Tipo de consulta:</label>
                                 <select class="form-control" name="consult-type" id="input-consult">
-                                    @foreach ($consulttypes as $consulttype)
+                                    @if ($consulttypes->count() > 0)
+                                        @foreach ($consulttypes as $consulttype)
                                         <option value="{{ $consulttype->id }}">{{ $consulttype->name }}</option>
-                                    @endforeach
+                                        @endforeach
+                                    @else
+                                        <option value="0">Este profesional requiere derivación previa.</option>
+                                    @endif
+                                    
                                 </select>
                             </div>
                             <div class="form-group">
@@ -96,6 +103,7 @@ perfil', 'activeButton' => 'laravel'])
                                 <div class="card-body">
                                     <div class="form-group" id="coverage-line"></div>
                                     <div class="form-group" id="price-line"> </div>
+                                    <input type="hidden" name="price">
                                 </div>
                             </div>
                         </div>
@@ -160,7 +168,7 @@ perfil', 'activeButton' => 'laravel'])
                                     $("#coverage-line").append(
                                         '<strong>Su obra social no cubre esta operación.</strong>');
                                 }
-
+                                $('input[type=hidden][name=price]').val(response.price);
                             } else {
                                 if (phpcovered) {
                                     $("#coverage-line").empty();
@@ -168,6 +176,7 @@ perfil', 'activeButton' => 'laravel'])
                                 }
                                 $("#price-line").append('<strong>Precio:</strong><p>$' + response.price +
                                     '</p>');
+                                $('input[type=hidden][name=price]').val(response.price);
                             }
                             for (var i = 0; i < data.length; i++) {
                                 $("#hour-group").append(

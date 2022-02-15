@@ -146,7 +146,7 @@
                                     
                                 </tbody>
                             </table>
-                            {!! $practices->appends('practices')->links() !!}
+                            {!! $practices->appends('practices')->links('vendor.pagination.bootstrap-4') !!}
                             @endif
                             
                         </div>

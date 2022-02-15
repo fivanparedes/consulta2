@@ -45,8 +45,8 @@
             <p><strong>Fecha de ingreso al consultorio:</strong> {{ $medical_history->indate }}</p>
             <p><strong>Historia psicológica:</strong> {{ $psicological_history }}</p>
             <p><strong>Razón de visita:</strong> {{ $visitreason }}</p>
-            <p><strong>Diagnóstico:</strong> {{ Crypt::decryptString($medical_history->diagnosis) }}</p>
-            <p><strong>Antecedentes médicos:</strong>{{ Crypt::decryptString($medical_history->clinical_history) }}
+            <p><strong>Diagnóstico:</strong> {{ $diagnosis }}</p>
+            <p><strong>Antecedentes médicos:</strong>{{ $clinical_history }}
             </p>
         </div>
         <hr>

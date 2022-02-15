@@ -89,7 +89,7 @@
 
                                     </tbody>
                                 </table>
-                                {!! $nomenclatures->appends('nomenclatures')->links() !!}
+                                {!! $nomenclatures->appends('nomenclatures')->links('vendor.pagination.bootstrap-4') !!}
                             @endif
 
                         </div>

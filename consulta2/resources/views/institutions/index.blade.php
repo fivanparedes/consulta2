@@ -99,7 +99,7 @@
 
                                     </tbody>
                                 </table>
-                                {!! $institutions->appends('institutions')->links() !!}
+                                {!! $institutions->appends('institutions')->links('vendor.pagination.bootstrap-4') !!}
                             @endif
                                 
                         </div>

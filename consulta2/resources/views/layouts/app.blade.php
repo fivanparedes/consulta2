@@ -36,6 +36,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/locale/es.js'></script>
     @if ($activePage == 'role_permissions')
         <link href="{{ asset(mix('laratrust.css', 'vendor/laratrust')) }}" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
@@ -45,27 +46,30 @@
 </head>
 
 <body>
+    @php
+        /** Esto soluciona un bug del (template?) en donde no se ve ni el sidebar ni el nav autenticado */
+        $wtfpages = [
+            'medical_histories',
+            'statistics',
+            'patient_events',
+            'professional_show',
+            'institutions'
+    ];
+    @endphp
     <div
-        class="wrapper @if (!auth()->check() ||
-    request()->route()->getName() == '') 
-        @if ($activePage != 'medical_histories')
-            wrapper-full-page
-        @endif  
+        class="wrapper @if ((!auth()->check() ||
+    request()->route()->getName() == '') && !in_array($activePage, $wtfpages))
+            wrapper-full-page  
     @endif">
 
-        @if (auth()->check() &&
-    request()->route()->getName() != '')
+        @if ((auth()->check() &&
+    request()->route()->getName() != '') || in_array($activePage, $wtfpages))
             @include('layouts.navbars.sidebar')
             @include('pages/sidebarstyle')
-        @elseif ($activePage == 'medical_histories')
-                @include('layouts.navbars.sidebar')
-                @include('pages/sidebarstyle')
         @endif
 
         <div class="@if ((auth()->check() &&
-    request()->route()->getName() != '')) main-panel 
-    @elseif ($activePage == 'medical_histories')
-            main-panel
+    request()->route()->getName() != '') || in_array($activePage, $wtfpages)) main-panel 
     @endif">
             @include('layouts.navbars.navbar')
             @yield('content')

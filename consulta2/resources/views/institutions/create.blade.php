@@ -8,6 +8,7 @@
                 <div class="card-header">
                     <h2 class="card-title">Crear institución</h2>
                 </div>
+                @include('alerts.errors')
             </div>
             <form id="create-form" class="form-horizontal" action="{{ url('/institutions') }}" method="post">
                 @csrf

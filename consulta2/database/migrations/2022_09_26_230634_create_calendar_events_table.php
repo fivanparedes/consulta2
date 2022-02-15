@@ -22,6 +22,7 @@ class CreateCalendarEventsTable extends Migration
             $table->integer('approved');
             $table->boolean('confirmed');
             $table->boolean('isVirtual');
+            $table->string('gid');
             $table->integer('consult_type_id');
             $table->foreign('consult_type_id')->references('id')->on('consult_types')
                 ->onUpdate('cascade')->onDelete('cascade');

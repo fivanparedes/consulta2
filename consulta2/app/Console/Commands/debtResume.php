@@ -44,7 +44,7 @@ class debtResume extends Command
         $treatments = Treatment::where('start', '<', now())->where('end', '>', now())->get();
         if (count($treatments) > 0) {
             foreach ($treatments as $treatment) {
-                $cites = $treatment->cites->whereNotNull('resume')->where('paid', false)->get();
+                $cites = $treatment->cites->whereNotNull('resume')->where('paid', false);
                 $citecount = count($cites);
                 switch ($citecount) {
                     case 0:
@@ -78,8 +78,10 @@ class debtResume extends Command
                         echo "Deudor debe 2 consultas. Calculando total a pagar...\n";
                         $total = 0; 
                         foreach ($cites as $cite) {
-                            $debt = $cite->practice->price->price;
+                            $debt = $cite->total;
                             $total = (float)$debt + (float)($debt * 0.1); 
+                            $cite->total = $total;
+                            $cite->save();
                         }
                         echo "Debe $". (string)$total."\n";
 
@@ -104,8 +106,10 @@ class debtResume extends Command
                         $treatment->save();
                         $total = 0;
                         foreach ($cites as $cite) {
-                            $debt = $cite->practice->price->price;
+                            $debt = $cite->total;
                             $total = (float)$debt + (float)($debt * 0.1);
+                            $cite->total = $total;
+                            $cite->save();
                         }
                         echo "Debe $" . (string)$total . "\n";
                         $cite = $cites->first();
