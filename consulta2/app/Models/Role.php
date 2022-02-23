@@ -2,16 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Laratrust\Models\LaratrustRole;
 
-class Role extends Model
+class Role extends LaratrustRole
 {
-    use HasFactory;
+    public $guarded = [ ];
 
-    protected $table = "roles";
-
-    public function user() {
-        return $this->hasMany(User::class);
-    }
+    public $fillable = [
+        'name',
+        'display_name',
+        'description'
+    ];
+    
 }

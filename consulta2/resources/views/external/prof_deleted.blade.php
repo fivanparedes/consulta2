@@ -1,0 +1,1 @@
+<p>Señor/a paciente {{ $event->title }} le informamos que el prestador {{ $user->name . ' '. $user->lastname}} canceló el turno para el día {{ date_create($event->start)->format('d/m/Y h:i') }} por motivos personales y/o contraactuales.</p>

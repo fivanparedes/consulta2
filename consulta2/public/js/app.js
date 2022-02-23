@@ -3768,7 +3768,7 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
     popperConfig: null
   };
   var DefaultType$2 = {
-    offset: '(number|string|function)',
+    offset: '(number|string|filled|function)',
     flip: 'boolean',
     boundary: '(string|element)',
     reference: '(string|element)',
@@ -4981,7 +4981,7 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
     html: 'boolean',
     selector: '(string|boolean)',
     placement: '(string|function)',
-    offset: '(number|string|function)',
+    offset: '(number|string|filled|function)',
     container: '(string|element|boolean)',
     fallbackPlacement: '(string|array)',
     boundary: '(string|element)',

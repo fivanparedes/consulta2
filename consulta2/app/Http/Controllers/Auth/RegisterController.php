@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\PatientProfile;
+use App\Models\Permission;
 use App\Models\Profile;
+use App\Models\Role;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -31,7 +33,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo = "profile/registered";
 
     /**
      * Create a new controller instance.
@@ -54,6 +56,7 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'dni' => ['required', 'numeric', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
@@ -66,13 +69,25 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $_user = User::create([
             'name' => $data['name'],
             'lastname' => $data['lastname'],
             'email' => $data['email'],
             'dni' => $data['dni'],
-            'password' => Hash::make($data['password']),
-            'role_id' => 4
+            'password' => Hash::make($data['password'])
         ]);
+        if ($data['type'] == 0) {
+            $_perm = Permission::where('name', 'patient-profile')->first();
+            $_role = Role::where('name', 'Patient')->first();
+            $_user->attachRole($_role);
+            $_user->attachPermission($_perm);
+        } else {
+            $_perm = Permission::where('name', 'professional-profile')->first();
+            $_role = Role::where('name', 'Professional')->first();
+            $_user->attachRole($_role);
+            $_user->attachPermission($_perm);
+        }
+        $_user->save();
+        return $_user;
     }
 }

@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Laratrust\Checkers\Role;
 
 class HomeController extends Controller
 {
@@ -23,6 +26,16 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('dashboard');
+        $user = User::find(auth()->user()->id);
+        if ($user->hasRole('Patient')) {
+            return view('patients.welcome');
+        } elseif ($user->hasRole('Professional')) {
+            return redirect('/statistics');
+        } elseif ($user->hasRole('Institution')){
+            return redirect('/statistics');
+        } elseif ($user->hasRole('Admin')) {
+            return redirect('/manage/professionals');
+        }
+        
     }
 }

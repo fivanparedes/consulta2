@@ -6,16 +6,23 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "akaunting/laravel-sortable": "^1.0",
         "barryvdh/laravel-dompdf": "^0.9.0",
         "fruitcake/laravel-cors": "^2.0",
+        "google/apiclient": "^2.0",
+        "graham-campbell/security": "^9.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.54",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.3",
-        "santigarcor/laratrust": "^6.3"
+        "owen-it/laravel-auditing": "^12.0",
+        "santigarcor/laratrust": "^6.3",
+        "soarecostin/file-vault": "^1.2",
+        "spatie/laravel-google-calendar": "^3.5"
     },
     "require-dev": {
+        "andyabih/laravel-to-uml": "^1.0",
         "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",
         "laravel/sail": "^1.0.1",

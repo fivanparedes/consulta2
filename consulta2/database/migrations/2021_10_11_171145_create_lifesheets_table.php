@@ -13,38 +13,59 @@ class CreateLifesheetsTable extends Migration
      */
     public function up()
     {
+        Schema::create('coverages', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('address');
+            $table->string('phone');
+            $table->integer('city_id');
+            $table->foreign('city_id')->references('id')->on('cities')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->timestamps();
+        });
+
+        Schema::create('coverage_professionals', function (Blueprint $table) {
+            $table->unsignedBigInteger('professional_id');
+            $table->unsignedBigInteger('coverage_id');
+            $table->foreign('professional_id')->references('id')->on('professional_profiles')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('coverage_id')->references('id')->on('coverages')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->primary(['professional_id', 'coverage_id'], 'coverage_professionals');
+        });
         Schema::create('lifesheets', function (Blueprint $table) {
             $table->id();
-            $table->multiLineString('diseases');
-            $table->multiLineString('surgeries');
-            $table->multiLineString('medication');
-            $table->multiLineString('allergies');
+            $table->string('diseases');
+            $table->string('surgeries');
+            $table->string('medication');
+            $table->string('allergies');
             $table->integer('smokes');
             $table->integer('drinks');
             $table->integer('exercises');
             $table->string('hceu');
             $table->unsignedBigInteger('patient_profile_id');
+            $table->unsignedBigInteger('coverage_id');
+            $table->foreign('patient_profile_id')->references('id')->on('patient_profiles')
+                ->onUpdate('cascade')->onDelete('cascade');
+
+            $table->foreign('coverage_id')->references('id')->on('coverages')
+                ->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
         });
 
         Schema::create('medical_histories', function (Blueprint $table) {
             $table->id();
             $table->date('indate');
-            $table->multiLineString('psicological_history');
-            $table->string('visitreason');
-            $table->string('diagnosis');
-            $table->string('clinical_history')->nullable();
+            $table->string('psicological_history')->nullable()->default('** Sin datos **');
+            $table->string('visitreason')->nullable()->default('** Sin datos **');
+            $table->string('diagnosis')->nullable()->default('** Sin datos **');
+            $table->string('clinical_history')->nullable()->default('** Sin datos **');
             $table->unsignedBigInteger('patient_profile_id');
-            $table->timestamps();
-        });
-
-        Schema::create('coverages', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('address');
-            $table->string('phone');
-            $table->boolean('supported');
-            $table->unsignedBigInteger('lifesheet_id');
+            $table->foreign('patient_profile_id')->references('id')->on('patient_profiles')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->unsignedBigInteger('professional_profile_id');
+            $table->foreign('professional_profile_id')->references('id')->on('professional_profiles')
+                ->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -57,5 +78,8 @@ class CreateLifesheetsTable extends Migration
     public function down()
     {
         Schema::dropIfExists('lifesheets');
+        Schema::dropIfExists('coverages');
+        Schema::dropIfExists('coverage_professionals');
+        Schema::dropIfExists('medical_histories');
     }
 }

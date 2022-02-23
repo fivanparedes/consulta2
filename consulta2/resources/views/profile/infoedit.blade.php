@@ -27,7 +27,7 @@
                                 @include('alerts.error_self_update', ['key' => 'not_allow_profile'])
         
                                 <div class="pl-lg-4">
-                                    <div class="form-group{{ $errors->has('name') ? ' has-danger' : '' }}">
+                                    <div class="form-group{{ $errors->has('bornDate') ? ' has-danger' : '' }}">
                                         <label class="form-control-label" for="bornDate">
                                             <i class="w3-xxlarge fa fa-user"></i>{{ __('Fecha de nacimiento') }}
                                         </label>
@@ -37,8 +37,17 @@
                                     </div>
                                     <div class="form-group{{ $errors->has('gender') ? ' has-danger' : '' }}">
                                         <label class="form-control-label" for="input-gender"><i class="w3-xxlarge fa fa-envelope-o"></i>{{ __('Género') }}</label>
-                                        <input type="text" name="gender" id="input-gender" class="form-control{{ $errors->has('gender') ? ' is-invalid' : '' }}" placeholder="{{ __('Género') }}" value="{{ old('gender', $user_profile->gender) }}" required>
-        
+                                        <select name="gender" id="input-gender" class="form-control">
+                                            <option value="Femenino" @if (old('gender', $user_profile->gender) == "Femenino")
+                                                selected
+                                            @endif>Femenino</option>
+                                            <option value="Masculino" @if (old('gender', $user_profile->gender) == "Masculino")
+                                                selected
+                                            @endif>Masculino</option>
+                                            <option value="Otro" @if (old('gender', $user_profile->gender) == "Otro")
+                                                selected
+                                            @endif>Otro</option>
+                                        </select>
                                         @include('alerts.feedback', ['field' => 'gender'])
                                     </div>
                                     <div class="form-group{{ $errors->has('phone') ? ' has-danger' : '' }}">
@@ -53,11 +62,11 @@
                                         <label class="form-control-label" for="input-address"><i class="w3-xxlarge fa fa-envelope-o"></i>{{ __('Domicilio') }}</label>
                                         <input type="text" name="address" id="input-address" class="form-control{{ $errors->has('address') ? ' is-invalid' : '' }}" placeholder="{{ __('Domicilio') }}" value="{{ old('address', $user_profile->address) }}" required>
         
-                                        @include('alerts.feedback', ['field' => 'gender'])
+                                        @include('alerts.feedback', ['field' => 'address'])
                                     </div>
                                     <hr class="my-4" />
                                     {{-- Este formulario aparece si el usuario esta logueado como paciente --}}
-                                    @if ($patient_profile != null)
+                                    @if (isset($patient_profile))
                                         <h6 class="heading-small text-muted mb-4">{{ __('Datos del paciente') }}</h6>
                                         <div class="pl-lg-4">
                                         <div class="form-group{{ $errors->has('bornPlace') ? ' has-danger' : '' }}">
@@ -65,14 +74,6 @@
                                             <i class="w3-xxlarge fa fa-user"></i>{{ __('Lugar de nacimiento') }}
                                             </label>
                                             <input type="text" name="bornPlace" id="bornPlace" class="form-control{{ $errors->has('bornPlace') ? ' is-invalid' : '' }}" placeholder="{{ __('Ciudad, Provincia, Pais') }}" value="{{ old('bornPlace', $patient_profile->bornPlace) }}" required autofocus>
-    
-                                            @include('alerts.feedback', ['field' => 'bornPlace'])
-                                        </div>
-                                        <div class="form-group{{ $errors->has('phone') ? ' has-danger' : '' }}">
-                                            <label class="form-control-label" for="phone">
-                                            <i class="w3-xxlarge fa fa-user"></i>{{ __('Teléfono') }}
-                                            </label>
-                                            <input type="text" name="phone" id="phone" class="form-control{{ $errors->has('phone') ? ' is-invalid' : '' }}" placeholder="{{ __('Número de teléfono') }}" value="{{ old('phone', $patient_profile->phone) }}" required autofocus>
     
                                             @include('alerts.feedback', ['field' => 'bornPlace'])
                                         </div>
@@ -109,7 +110,7 @@
 
                                     {{-- formulario correspondiente al profesional. --}}
                                     {{-- TODO: comprobar por ROLE_ID en vez de PROFILE_ID--}}
-                                    @elseif ($professional_profile != null)
+                                    @elseif (isset($professional_profile))
 
                                         <h6 class="heading-small text-muted mb-4">{{ __('Datos del profesional') }}</h6>
                                         <div class="pl-lg-4">
@@ -129,9 +130,21 @@
                                         </div>
                                         <div class="form-group{{ $errors->has('specialty') ? ' has-danger' : '' }}">
                                             <label class="form-control-label" for="input-specialty"><i class="w3-xxlarge fa fa-envelope-o"></i>{{ __('Especialización') }}</label>
-                                            <input type="text" name="specialty" id="input-specialty" class="form-control{{ $errors->has('specialty') ? ' is-invalid' : '' }}" placeholder="{{ __('Especificar especialización') }}" value="{{ old('specialty', $professional_profile->specialty) }}" required>
-
+                                            <select name="specialty" id="input-specialty" class="form-control{{ $errors->has('specialty') ? ' is-invalid' : ''}}">
+                                                @foreach (\App\Models\Specialty::all() as $specialty)
+                                                    <option value="{{ $specialty->id }}" @if($specialty->id == $professional_profile->specialty_id) selected @endif >{{ $specialty->displayname }}</option>
+                                                @endforeach
+                                            </select>
                                             @include('alerts.feedback', ['field' => 'specialty'])
+                                        </div>
+                                        <div class="form-group{{ $errors->has('coverages') ? ' has-danger' : '' }}">
+                                            <label class="form-control-label" for="input-coverages"><i class="w3-xxlarge fa fa-envelope-o"></i>{{ __('Obras sociales aceptadas') }}</label>
+                                            <select multiple name="coverages[]" id="input-coverages" class="form-control{{ $errors->has('coverages') ? ' is-invalid' : ''}}">
+                                                @foreach (\App\Models\Coverage::all() as $coverage)
+                                                    <option value="{{ $coverage->id }}" @if($professional_profile->coverages->contains($coverage)) selected @endif >{{ $coverage->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            @include('alerts.feedback', ['field' => 'coverages[]'])
                                         </div>
                                     </div>
                                     @endif 
