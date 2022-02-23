@@ -28,7 +28,8 @@ use Spatie\GoogleCalendar\Event;
 class PatientController extends Controller
 {
 
-    public function index() {
+    public function index(Request $request)
+    {
         $user = User::find(auth()->user()->id);
         if ($user->isAbleTo('professional-profile')) {
             $col = new Collection();
@@ -47,10 +48,58 @@ class PatientController extends Controller
                     }
                 }
             }
-            
+
             $patients = PatientProfile::whereIn('id', $col->toArray(['id']));
+            if ($request->has('filter1') && $request->filter1 != "") {
+                $user_ids = array();
+                foreach ($col as $item) {
+                    if (strpos($item->profile->user->name, $request->filter1) !== FALSE || strpos($item->profile->user->lastname, $request->filter1) !== FALSE) {
+                        array_push($user_ids, $item->id);
+                    }
+                }
+
+                $patients = $patients->whereIn('id', $user_ids);
+            }
+            if ($request->has('filter2') && $request->filter2 != "") {
+                $user_ids = array();
+                foreach ($col as $item) {
+                    if (strpos((string)$item->profile->user->dni, (string)$request->filter2) !== FALSE) {
+                        array_push($user_ids, $item->id);
+                    }
+                }
+
+                $patients = $patients->whereIn('id', $user_ids);
+            }
+            if ($request->has('filter3') && $request->filter3 != "") {
+                $user_ids = array();
+                foreach ($col as $item) {
+                    if (strpos((string)$item->lifesheet->coverage->name, (string)$request->filter3) !== FALSE) {
+                        array_push($user_ids, $item->id);
+                    }
+                }
+
+                $patients = $patients->whereIn('id', $user_ids);
+            }
+            if ($request->has('filter4') && $request->filter4 != "") {
+                $user_ids = array();
+                foreach ($col as $item) {
+                    if (strpos((string)$item->profile->city->name, (string)$request->filter4) !== FALSE) {
+                        array_push($user_ids, $item->id);
+                    }
+                }
+
+                $patients = $patients->whereIn('id', $user_ids);
+            }
+
             $patients = $patients->sortable()->paginate(10);
-            return view('patients.index')->with(['patients' => $patients]);
+
+            return view('patients.index')->with([
+                'patients' => $patients,
+                'filter1' => $request->filter1 != "" ? $request->filter1 : "",
+                'filter2' => $request->filter2 != "" ? $request->filter2 : "",
+                'filter3' => $request->filter3 != "" ? $request->filter3 : "",
+                'filter4' => $request->filter4 != "" ? $request->filter4 : "",
+            ]);
         } elseif ($user->isAbleTo('institution-profile')) {
             $patients = new Collection();
             $professionals = Auth::user()->institutionProfile->professionalProfiles->toArray(['id']);
@@ -73,20 +122,109 @@ class PatientController extends Controller
                     }
                 }
             }
-            
+
 
             $patients = PatientProfile::whereIn('id', $patients->toArray());
+            if ($request->has('filter1') && $request->filter1 != "") {
+                $user_ids = array();
+                foreach ($patients->get() as $item) {
+                    if (strpos($item->profile->user->name, $request->filter1) !== FALSE || strpos($item->profile->user->lastname, $request->filter1) !== FALSE) {
+                        array_push($user_ids, $item->id);
+                    }
+                }
+
+                $patients = $patients->whereIn('id', $user_ids);
+            }
+            if ($request->has('filter2') && $request->filter2 != "") {
+                $user_ids = array();
+                foreach ($patients->get() as $item) {
+                    if (strpos((string)$item->profile->user->dni, (string)$request->filter2) !== FALSE) {
+                        array_push($user_ids, $item->id);
+                    }
+                }
+
+                $patients = $patients->whereIn('id', $user_ids);
+            }
+            if ($request->has('filter3') && $request->filter3 != "") {
+                $user_ids = array();
+                foreach ($patients->get() as $item) {
+                    if (strpos((string)$item->lifesheet->coverage->name, (string)$request->filter3) !== FALSE) {
+                        array_push($user_ids, $item->id);
+                    }
+                }
+
+                $patients = $patients->whereIn('id', $user_ids);
+            }
+            if ($request->has('filter4') && $request->filter4 != "") {
+                $user_ids = array();
+                foreach ($patients->get() as $item) {
+                    if (strpos((string)$item->profile->city->name, (string)$request->filter4) !== FALSE) {
+                        array_push($user_ids, $item->id);
+                    }
+                }
+
+                $patients = $patients->whereIn('id', $user_ids);
+            }
             $patients = $patients->sortable()->paginate(10);
-            return view('patients.index')->with(['patients' => $patients]);
+            return view('patients.index')->with(['patients' => $patients,
+                'filter1' => $request->filter1 != "" ? $request->filter1 : "",
+                'filter2' => $request->filter2 != "" ? $request->filter2 : "",
+                'filter3' => $request->filter3 != "" ? $request->filter3 : "",
+                'filter4' => $request->filter4 != "" ? $request->filter4 : "",]);
         } elseif ($user->isAbleTo('admin-profile')) {
-            $patients = PatientProfile::where('id', '>', 0);
+            $patients = PatientProfile::all()->toQuery();
+            if ($request->has('filter1') && $request->filter1 != "") {
+                $user_ids = array();
+                foreach ($patients->get() as $item) {
+                    if (strpos($item->profile->user->name, $request->filter1) !== FALSE || strpos($item->profile->user->lastname, $request->filter1) !== FALSE) {
+                        array_push($user_ids, $item->id);
+                    }
+                }
+
+                $patients = $patients->whereIn('id', $user_ids);
+            }
+            if ($request->has('filter2') && $request->filter2 != "") {
+                $user_ids = array();
+                foreach ($patients->get() as $item) {
+                    if (strpos((string)$item->profile->user->dni, (string)$request->filter2) !== FALSE) {
+                        array_push($user_ids, $item->id);
+                    }
+                }
+
+                $patients = $patients->whereIn('id', $user_ids);
+            }
+            if ($request->has('filter3') && $request->filter3 != "") {
+                $user_ids = array();
+                foreach ($patients->get() as $item) {
+                    if (strpos((string)$item->lifesheet->coverage->name, (string)$request->filter3) !== FALSE) {
+                        array_push($user_ids, $item->id);
+                    }
+                }
+
+                $patients = $patients->whereIn('id', $user_ids);
+            }
+            if ($request->has('filter4') && $request->filter4 != "") {
+                $user_ids = array();
+                foreach ($patients->get() as $item) {
+                    if (strpos((string)$item->profile->city->name, (string)$request->filter4) !== FALSE) {
+                        array_push($user_ids, $item->id);
+                    }
+                }
+
+                $patients = $patients->whereIn('id', $user_ids);
+            }
             $patients = $patients->sortable()->paginate(10);
-            
-            return view('patients.index')->with(['patients' => $patients]);
+
+            return view('patients.index')->with(['patients' => $patients,
+                'filter1' => $request->filter1 != "" ? $request->filter1 : "",
+                'filter2' => $request->filter2 != "" ? $request->filter2 : "",
+                'filter3' => $request->filter3 != "" ? $request->filter3 : "",
+                'filter4' => $request->filter4 != "" ? $request->filter4 : "",]);
         }
     }
 
-    public function createPDF(Request $request) {
+    public function createPDF(Request $request)
+    {
         $user = User::find(auth()->user()->id);
         if ($user->isAbleTo('professional-profile')) {
             $patients = new Collection();
@@ -110,7 +248,7 @@ class PatientController extends Controller
 
             $patients = PatientProfile::whereIn('id', $patients->toArray());
             $patients = $patients->sortable()->paginate(10);
-            $pdf = PDF::loadView('patients.pdf',['patients' => $patients]);
+            $pdf = PDF::loadView('patients.pdf', ['patients' => $patients]);
             return $pdf->download('pacientes.pdf');
         } elseif ($user->isAbleTo('institution-profile')) {
             $patients = new Collection();
@@ -135,13 +273,60 @@ class PatientController extends Controller
 
             $patients = PatientProfile::whereIn('id', $patients->toArray());
             $patients = $patients->sortable()->paginate(10);
-            $pdf = PDF::loadView('patients.pdf',['patients' => $patients]);
+            $pdf = PDF::loadView('patients.pdf', ['patients' => $patients,
+                'filter1' => $request->filter1 != "" ? $request->filter1 : "",
+                'filter2' => $request->filter2 != "" ? $request->filter2 : "",
+                'filter3' => $request->filter3 != "" ? $request->filter3 : "",
+                'filter4' => $request->filter4 != "" ? $request->filter4 : "",]);
             return $pdf->download('pacientes.pdf');
         } elseif ($user->isAbleTo('admin-profile')) {
-            $patients = PatientProfile::where('id', '>', 0);
-            $patients = $patients->sortable()->paginate(10);
+            $patients = PatientProfile::all()->toQuery();
+            if ($request->has('filter1') && $request->filter1 != "") {
+                $user_ids = array();
+                foreach ($patients->get() as $item) {
+                    if (strpos($item->profile->user->name, $request->filter1) !== FALSE || strpos($item->profile->user->lastname, $request->filter1) !== FALSE) {
+                        array_push($user_ids, $item->id);
+                    }
+                }
 
-            $pdf = PDF::loadView('patients.pdf',['patients' => $patients]);
+                $patients = $patients->whereIn('id', $user_ids);
+            }
+            if ($request->has('filter2') && $request->filter2 != "") {
+                $user_ids = array();
+                foreach ($patients->get() as $item) {
+                    if (strpos((string)$item->profile->user->dni, (string)$request->filter2) !== FALSE) {
+                        array_push($user_ids, $item->id);
+                    }
+                }
+
+                $patients = $patients->whereIn('id', $user_ids);
+            }
+            if ($request->has('filter3') && $request->filter3 != "") {
+                $user_ids = array();
+                foreach ($patients->get() as $item) {
+                    if (strpos((string)$item->lifesheet->coverage->name, (string)$request->filter3) !== FALSE) {
+                        array_push($user_ids, $item->id);
+                    }
+                }
+
+                $patients = $patients->whereIn('id', $user_ids);
+            }
+            if ($request->has('filter4') && $request->filter4 != "") {
+                $user_ids = array();
+                foreach ($patients->get() as $item) {
+                    if (strpos((string)$item->profile->city->name, (string)$request->filter4) !== FALSE) {
+                        array_push($user_ids, $item->id);
+                    }
+                }
+
+                $patients = $patients->whereIn('id', $user_ids);
+            }
+            $patients = $patients->get();
+            $pdf = PDF::loadView('patients.pdf', ['patients' => $patients,
+                'filter1' => $request->filter1 != "" ? $request->filter1 : "",
+                'filter2' => $request->filter2 != "" ? $request->filter2 : "",
+                'filter3' => $request->filter3 != "" ? $request->filter3 : "",
+                'filter4' => $request->filter4 != "" ? $request->filter4 : "",]);
             return $pdf->download('pacientes.pdf');
         }
     }
@@ -157,7 +342,7 @@ class PatientController extends Controller
             $calendarevents = $calendarevents->toQuery();
             $calendarevents = $calendarevents->sortable()->paginate(10);
         }
-        
+
         return view('patients.events')->with([
             'events' => $calendarevents
         ]);
@@ -167,21 +352,21 @@ class PatientController extends Controller
     {
         $event = CalendarEvent::find($id);
         $gevent = null;
-        if ($event->gid == null) {
+        /* if ($event->gid == null) {
             $gevents = Event::get();
             foreach ($gevents as $item) {
-            if ($item->startDateTime == new Carbon($event->start, new DateTimeZone("-0300"))) {
-                $gevent = $item;
-                break;
-            }
+                if ($item->startDateTime == new Carbon($event->start, new DateTimeZone("-0300"))) {
+                    $gevent = $item;
+                    break;
+                }
             }
         } else {
             $gevent = Event::find($event->gid);
-        }
-        
+        } */
+
         //dd($gevents);
         //$gevent = null;
-        
+
         if ($event->gid == null && isset($gevent->id)) {
             $event->gid = $gevent->id;
             $event->save();
@@ -193,6 +378,18 @@ class PatientController extends Controller
     public function update(Request $request)
     {
         $user = User::find(auth()->user()->id);
+        $request->validate([
+            'bornDate' => 'required|date_format:Y-m-d|before:' . date('Y-m-d'),
+            'gender' => 'required|string',
+            'phone' => 'required',
+            'address' => 'required|string|filled|max:100',
+            'bornPlace' => 'required|string',
+            'familyGroup' => 'required|string|filled|max:100',
+            'familyPhone' => 'required',
+            'civilState' => 'required|string|filled|max:40',
+            'scholarity' => 'required|string|filled|max:20',
+            'occupation' => 'required|string|filled|max:20'
+        ]);
         if ($user->isAbleTo('patient-profile') || $user->isAbleTo('professional-profile')) {
             $user_profile = Profile::where('user_id', auth()->user()->id)->first();
             $patient_profile = PatientProfile::where('profile_id', $user_profile->id)->first();
@@ -267,49 +464,16 @@ class PatientController extends Controller
         }
     }
 
-
-    //Creates a blank patient profile after registering.
-    // TODO: make this damn thing work
     public function create(Request $request)
     {
         $user = User::find(auth()->user()->id);
-        if ($request->registering) {
-            $user = User::find(auth()->user()->id);
-            $city = City::find(1);
-            if ($user->profile != null) {
-                return abort(404);
-            }
-            $profile = new Profile();
-            $profile->user()->associate($user);
-            $profile->city()->associate($city);
-            $profile->save();
-            $user->save();
-            if ($user->isAbleTo('patient-profile')) {
-                $patient = new PatientProfile();
-                $lifesheet = new Lifesheet();
-                $coverage = Coverage::find(1);
-                $patient->profile()->associate($profile);
-                $patient->save();
-                $lifesheet->coverage()->associate($coverage);
-                $lifesheet->patientProfile()->associate($patient);
-                $lifesheet->save();
-            } else if ($user->isAbleTo('professional-profile')) {
-                $institution = InstitutionProfile::find(1);
-                $professional = new ProfessionalProfile();
-                $professional->profile()->associate($profile);
-                $professional->institution()->associate($institution);
-                $professional->save();
-                $profile->save();
-            }
-
-            return redirect('/profile/info');
-        } else {
-            if (!$user->isAbleTo('PatientController@create')) {
-                return abort(404);
-            }
-            return view('patients.create');
+        if ($user->profile == null) {
+            return redirect('/profile/registered');
         }
-        
+        if (!$user->isAbleTo('PatientController@create')) {
+            return abort(404);
+        }
+        return view('patients.create');
     }
 
     public function store(Request $request)
@@ -318,6 +482,23 @@ class PatientController extends Controller
         /* if (!$user->isAbleTo('PatientController@create')) {
             return abort(404);
         } */
+
+        $request->validate([
+            'user_name' => 'required|string|filled|max:60',
+            'user_lastname' => 'required|string|filled|max:60',
+            'user_dni' => 'required|numeric|unique:users,dni',
+            'user_email' => 'required|email:strict|unique:users,email',
+            'bornDate' => 'required|date_format:Y-m-d|before:' . date('Y-m-d'),
+            'gender' => 'required|string',
+            'phone' => 'required',
+            'address' => 'required|string|filled|max:100',
+            'bornPlace' => 'required|string',
+            'familyGroup' => 'required|string|filled|max:100',
+            'familyPhone' => 'required',
+            'civilState' => 'required|string|filled|max:40',
+            'scholarity' => 'required|string|filled|max:20',
+            'occupation' => 'required|string|filled|max:20'
+        ]);
 
         $patuser = new User();
         $patuser->name = $request->user_name;
@@ -363,13 +544,12 @@ class PatientController extends Controller
 
             $medical_history->save();
         }
-        
-        
 
         return redirect('/manage/patients');
     }
 
-    public function edit($id) {
+    public function edit($id)
+    {
         $user = User::find(auth()->user()->id);
         if (!$user->isAbleTo('PatientController@edit')) {
             return abort(404);
@@ -379,7 +559,8 @@ class PatientController extends Controller
         return view('patients.edit')->with(['patient' => $patient]);
     }
 
-    public function destroy($id) {
+    public function destroy($id)
+    {
         PatientProfile::destroy($id);
         return redirect('/patients');
     }

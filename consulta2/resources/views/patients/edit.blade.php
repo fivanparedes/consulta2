@@ -15,6 +15,8 @@
                             <p><strong>N° Documento:</strong>{{ $patient->profile->user->dni }}</p>
                         </div>
                     </div>
+                    @include('alerts.errors')
+                    @include('alerts.success')
                     <div class="col">
                         @if (Auth::user()->isAbleTo('manage-histories'))
                             @if (Auth::user()->isAbleTo('professional-profile'))

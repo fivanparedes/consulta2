@@ -41,7 +41,10 @@ class ConsultTypeController extends Controller
     public function store(Request $request)
     {
         $profile = Auth::user()->profile->professionalProfile;
-        //return dd($request->all());
+        $request->validate([
+            'name' => 'required|string|filled|max:20',
+            'selected_practices' => 'array'
+        ]);
         $av = '';
         if ($request->input('av-monday') == 'on') {
             $av .= '1;';
@@ -158,6 +161,10 @@ class ConsultTypeController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'name' => 'required|string|filled|max:20',
+            'selected_practices' => 'array'
+        ]);
         $profile = Auth::user()->profile->professionalProfile;
         //return dd($request->all());
         $av = '';

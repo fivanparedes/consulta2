@@ -158,15 +158,7 @@ cuenta', 'activeButton' => 'laravel'])
                             </div>
                             <hr>
                             <div class="button-container mr-auto ml-auto">
-                                <button href="#" class="btn btn-simple btn-link btn-icon">
-                                    <i class="fa fa-facebook-square"></i>
-                                </button>
-                                <button href="#" class="btn btn-simple btn-link btn-icon">
-                                    <i class="fa fa-twitter"></i>
-                                </button>
-                                <button href="#" class="btn btn-simple btn-link btn-icon">
-                                    <i class="fa fa-google-plus-square"></i>
-                                </button>
+                               <label for="">Subir una foto de perfil formal de usted</label>
                             </div>
                         </div>
                     </div>

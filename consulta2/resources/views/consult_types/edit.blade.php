@@ -11,6 +11,7 @@
                     <h3>Configuración N° {{ $consult->id }}</h3>
                     <p><strong>Nombre:</strong> {{ $consult->name }}</p><p><strong>Cant. prácticas cubiertas:</strong> {{ $consult->practices->count() }}</p>
                 </div>
+                @include('alerts.errors')
             </div>
             <form id="create-form" class="form-horizontal" action="{{ url('/consult_types/' . $consult->id) }}"
                 method="post">

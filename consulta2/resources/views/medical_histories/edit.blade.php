@@ -33,7 +33,7 @@
                                 </div>
                                     </div>
                                 </div>
-                                
+                                @include('alerts.errors')
                             </div>
                         </div>
                     </div>

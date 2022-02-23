@@ -38,9 +38,15 @@ class absoluteClear extends Command
      */
     public function handle()
     {
-        Artisan::call('view:clear');
-        Artisan::call('config:clear');
         Artisan::call('cache:clear');
+        echo "Limpiando cache\n";
+        Artisan::call('view:clear');
+        echo "Limpiando vistas\n";
+        Artisan::call('config:clear');
+        echo "Limpiando config\n";
         Artisan::call('route:clear');
+        echo "Limpiando rutas\n";
+        Artisan::call('cache:clear');
+        echo "Limpiando cache\n";
     }
 }

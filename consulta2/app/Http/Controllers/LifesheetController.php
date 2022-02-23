@@ -15,6 +15,12 @@ class LifesheetController extends Controller
     }
 
     public function update(Request $request) {
+        $request->validate([
+            'diseases' => 'required|string|filled|max:200',
+            'surgeries' => 'required|string|filled|max:200',
+            'medication' => 'required|string|filled|max:200',
+            'allergies' => 'required|string|filled|max:200'
+        ]);
         $patient = Auth::user()->profile->patientProfile;
         $lifesheet = $patient->lifesheet;
         $chosencoverage = Coverage::find($request->input('coverage'));
@@ -23,6 +29,7 @@ class LifesheetController extends Controller
             'diseases' => $request->diseases,
             'surgeries' => $request->surgeries,
             'medication' => $request->medication,
+            'allergies' => $request->allergies,
             'smokes' => $request->smokes,
             'drinks' => $request->drinks,
             'exercises' => $request->exercises

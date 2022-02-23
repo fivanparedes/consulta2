@@ -14,6 +14,7 @@
                                 </p>
 
                 </div>
+                @include('alerts.errors')
             </div>
             <form id="create-form" class="form-horizontal" action="{{ route('consult_types.store') }}" method="post">
                 @csrf

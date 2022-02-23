@@ -52,7 +52,8 @@
             @foreach ($permissions as $permission)
               <label class="inline-flex items-center mr-6 my-2 text-sm" style="flex: 1 0 20%;">
                 <input
-                  type="checkbox"
+                  type="{{ $permission->id == 3 || $permission->id == 4 || $permission->id == 5 || $permission == 6 ? "radio" : "checkbox"}}checkbox"
+                  
                   class="form-checkbox h-4 w-4"
                   name="permissions[]"
                   value="{{$permission->id}}"

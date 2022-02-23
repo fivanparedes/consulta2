@@ -21,13 +21,13 @@
     </ul>
 @endif
 
-@if ($disabling)
+@if (isset($disabling))
     El agendamiento automático de turnos para su tratamiento no será renovado hasta que regularice su situación.
 @else
-    <p>Si usted desea <strong>cancelar su tratamiento</strong> toque el link de abajo: </p>
+    <p>Si usted desea <strong>cancelar su tratamiento</strong> toque el link de abajo:</p>
     <ul>
         <li><a
-                href="{{ env('APP_URL') }}:8000/reminder/treatment/cancel/{{ encrypt($event->cite->treament->id) }}">{{ env('APP_URL') }}:8000/reminder/treatment/cancel/{{ encrypt($event->cite->treatment->id) }}</a>
+                href="{{ env('APP_URL') }}:8000/reminder/treatment/cancel/{{ encrypt($event->cite->treatment->id) }}">{{ env('APP_URL') }}:8000/reminder/treatment/cancel/{{ encrypt($event->cite->treatment->id) }}</a>
         </li>
     </ul>
 @endif
@@ -35,6 +35,6 @@
 <p>Si usted cree que este aviso es un  <strong>error</strong> toque el link de abajo: </p>
     <ul>
         <li><a
-                href="{{ env('APP_URL') }}:8000/reminder/treatment/mistake/{{ encrypt($event->cite->treament->id) }}">{{ env('APP_URL') }}:8000/reminder/treatment/mistake/{{ encrypt($event->cite->treatment->id) }}</a>
+                href="{{ env('APP_URL') }}:8000/reminder/treatment/mistake/{{ encrypt($event->cite->treatment->id) }}">{{ env('APP_URL') }}:8000/reminder/treatment/mistake/{{ encrypt($event->cite->treatment->id) }}</a>
         </li>
     </ul>

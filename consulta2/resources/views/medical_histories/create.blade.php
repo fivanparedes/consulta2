@@ -15,6 +15,7 @@
                             </div>
                         </div>
                     </div>
+                    @include('alerts.errors')
                     <hr>
                     <div class=" pb-1 ml-4">
                         

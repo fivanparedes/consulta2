@@ -20,7 +20,7 @@ class sendReminder extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Envía correos con un día de anticipación con respecto al día pactado.';
 
     /**
      * Create a new command instance.
@@ -43,7 +43,7 @@ class sendReminder extends Command
         foreach ($reminders as $reminder) {
             $startdate = date_create($reminder->calendarEvent->start);
             $remindate = date_sub($startdate,date_interval_create_from_date_string("1 days"));
-            if (date_create('now') >= $remindate) {
+            if (date_create('now') >= $remindate && date_create('now') <= $startdate) {
                 foreach ($reminder->calendarEvent->patientProfiles as $patient) {
                     try {
                         $data = array(

@@ -122,7 +122,7 @@ Tip 2: you can also add an image using data-image tag
              @if (Auth::user()->isAbleTo('admin-profile') || Auth::user()->isAbleTo('institution-profile') || Auth::user()->isAbleTo('professional-profile'))
              <li class="nav-item @if ($activePage == 'patients') active @endif">
                     <a class="nav-link" href="{{ route('patients.index') }}">
-                        <i class="nc-icon nc-single-02"></i>
+                        <i class="fa fa-users"></i>
                         <p>{{ __('Pacientes') }}</p>
                     </a>
                 </li>
@@ -131,25 +131,28 @@ Tip 2: you can also add an image using data-image tag
             @if (Auth::user()->isAbleTo('admin-profile') || Auth::user()->isAbleTo('institution-profile'))
                 <li class="nav-item @if ($activePage == 'professionals') active @endif">
                     <a class="nav-link" href="{{ route('admin.professionals') }}">
-                        <i class="nc-icon nc-chart-pie-35"></i>
+                        <i class="fa fa-user-md"></i>
                         <p>{{ __('Profesionales') }}</p>
                     </a>
                 </li>
-                <li class="nav-item @if ($activePage == 'practices') active @endif">
+                @if (Auth::user()->isAbleTo('PracticeController@index'))
+                        <li class="nav-item @if ($activePage == 'practices') active @endif">
                     <a class="nav-link" href="{{ route('practices.index') }}">
                         <i class="nc-icon nc-ruler-pencil"></i>
                         <p>{{ __('Prácticas') }}</p>
                     </a>
                 </li>
+                @endif
+                
                 <li class="nav-item @if ($activePage == 'nomenclatures') active @endif">
                     <a class="nav-link" href="{{ route('nomenclatures.index') }}">
-                        <i class="nc-icon nc-chart-pie-35"></i>
+                        <i class="nc-icon nc-bank"></i>
                         <p>{{ __('Nomenclador') }}</p>
                     </a>
                 </li>
                 <li class="nav-item @if ($activePage == 'coverages') active @endif">
                     <a class="nav-link" href="{{ route('coverages.index') }}">
-                        <i class="nc-icon nc-chart-pie-35"></i>
+                        <i class="fa fa-id-card"></i>
                         <p>{{ __('Obras sociales') }}</p>
                     </a>
                 </li>
@@ -158,7 +161,7 @@ Tip 2: you can also add an image using data-image tag
             @if (Auth::user()->isAbleTo('admin-profile'))
             <li class="nav-item @if ($activePage == 'institutions') active @endif">
                     <a class="nav-link" href="{{ route('institutions.index') }}">
-                        <i class="nc-icon nc-bank"></i>
+                        <i class="fa fa-hospital"></i>
                         <p>{{ __('Instituciones') }}</p>
                     </a>
                 </li>

@@ -62,6 +62,10 @@ class NomenclatureController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'code' => 'required|string|filled|max:40',
+            'description' => 'required|string|filled|max:100'
+        ]);
         $nomenclature = new Nomenclature();
         $nomenclature->code = $this->sec->clean($request->input('code'));
         $nomenclature->description = strtoupper($request->input('description'));
@@ -104,6 +108,10 @@ class NomenclatureController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'code' => 'required|string|filled|max:40',
+            'description' => 'required|string|filled|max:100'
+        ]);
         $nomenclature = Nomenclature::find($id);
         $nomenclature->code = $request->input('code');
         $nomenclature->description = strtoupper($request->input('description'));

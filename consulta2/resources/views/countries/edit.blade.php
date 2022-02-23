@@ -8,6 +8,7 @@
                 <div class="card-header">
                     <h1 class="card-title">Editar país N° {{ $country->id }}</h1>
                 </div>
+                @include('alerts.errors')
             </div>
             <form id="create-form" class="form-horizontal" action="{{ url('/countries/'.$country->id) }}" method="post">
                 @csrf

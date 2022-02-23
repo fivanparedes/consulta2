@@ -8,6 +8,7 @@
                 <div class="card-header">
                     <h1 class="card-title">Editar ciudad N° {{ $city->id }}</h1>
                 </div>
+                @include('alerts.errors')
             </div>
             <form id="create-form" class="form-horizontal" action="{{ url('/cities/' . $city->id) }}" method="post">
                 @csrf

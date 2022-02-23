@@ -7,8 +7,9 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
+                            @include('alerts.errors')
                             <h2>Confirmar turno</h2>
-                            <form class="form" action="/event/store" method="POST">
+                            <form class="form" action="/event_store" method="POST">
                                 @csrf
                                 <strong>Nombre del profesional: </strong>
                                 <p>{{ $professional->profile->user->name . ' ' . $professional->profile->user->lastname }}

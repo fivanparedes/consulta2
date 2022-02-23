@@ -9,6 +9,7 @@
                     <h1 class="card-title">Agregar nomenclatura</h1>
                     <p>Agregar una nomenclatura de acuerdo al Nomenclador Nacional de Prácticas Médicas.</p>
                 </div>
+                @include('alerts.errors')
             </div>
             <form id="create-form" class="form-horizontal" action="{{ url('/nomenclatures') }}" method="post">
                 @csrf

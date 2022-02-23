@@ -84,6 +84,14 @@ class PracticeController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string|filled|max:60',
+            'maxtime' => 'required|numeric|max:100',
+            'description' => 'required|string|filled|max:100',
+            'allowed_modes' => 'required|numeric|max:1',
+            'price' => 'required',
+            'copayment' => 'required'
+        ]);
         $practice = new Practice();
         $practice->name = $request->input('name');
         $practice->maxtime = $request->input('maxtime');
@@ -145,6 +153,14 @@ class PracticeController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'name' => 'required|string|filled|max:60',
+            'maxtime' => 'required|numeric|max:100',
+            'description' => 'required|string|filled|max:100',
+            'allowed_modes' => 'required|numeric|max:1',
+            'price' => 'required',
+            'copayment' => 'required'
+        ]);
         $practice = Practice::find($id);
         $practice->name = $request->input('name');
         $practice->maxtime = $request->input('maxtime');

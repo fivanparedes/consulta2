@@ -104,6 +104,11 @@ class CoverageController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string|filled|max:60',
+            'address' => 'required|string|filled|max:60',
+            'phone' => 'required'
+        ]);
         $coverage = new Coverage();
         $coverage->name = $request->input('name');
         $coverage->address = $request->input('address');
@@ -146,6 +151,11 @@ class CoverageController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'name' => 'required|string|filled|max:60',
+            'address' => 'required|string|filled|max:60',
+            'phone' => 'required'
+        ]);
         $coverage = Coverage::find($id);
         $coverage->name = $request->input('name');
         $coverage->address = $request->input('address');

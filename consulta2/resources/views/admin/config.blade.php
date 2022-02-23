@@ -10,6 +10,7 @@
                     <p>Listado de distintos parámetros. <span class="text-danger"><i class="fa fa-danger"></i>
                             Advertencia: información delicada</span></p>
                 </div>
+                @include('alerts.errors')
             </div>
             <div class="row">
                 <div class="col">

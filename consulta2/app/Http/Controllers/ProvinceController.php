@@ -37,6 +37,9 @@ class ProvinceController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string|filled|max:70'
+        ]);
         $province = new Province();
         $province->name = $request->name;
         $province->country_id = $request->country_id;
@@ -76,6 +79,9 @@ class ProvinceController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'name' => 'required|string|filled|max:70'
+        ]);
         $province = Province::find($id);
         $province->name = $request->name;
         $province->country_id = $request->country_id;

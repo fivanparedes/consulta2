@@ -1,16 +1,41 @@
-@extends('layouts.app', ['activePage' => 'professional_show', 'title' => 'Consulta2 | Confirmar turno', 'navName' =>
-'Agendar un turno', 'activeButton' => 'laravel'])
+<html>
 
-@section('content')
-    <div class="content">
-        <div class="container-fluid">
-            <div class="row">
+<head>
+    <title>Consulta2 | Comprobante - Turno agendado</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+
+<body>
+    <style type="text/css">
+        table tr td,
+        table tr th {
+            font-size: 9pt;
+        }
+
+    </style>
+    <div style="text-align: center">
+        <div class="row">
+            <div class="col">
+                <img style="position: relative; float:left" src='https://static.vecteezy.com/system/resources/previews/000/499/145/original/vector-health-sign-icon-design.jpg'
+                    width="100" height="100" alt="Logo" />
+            </div>
+            <div class="col">
+                <h1 style="position: relative; float: right;">Consulta2</h1>
+            </div>
+        </div>
+    </div>
+    <hr style="clear: both;">
+    <div class="row">
+            <h2>Comprobante de turno</h2>
+            <br>
+            </div>
+    <div class="row">
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
                             <h2>Turno agendado exitosamente!</h2>
                             <strong>Nombre del prestador: </strong>
-                            <p>{{ $event->professionalProfile->getFullName() }}
+                            <p>{{ $event->professionalProfile->profile->user->lastname . ' ' . $event->professionalProfile->profile->user->name }}
                             </p>
                             <strong>Área:</strong>
                             <p> {{ $event->professionalProfile->specialty->displayname }}</p>
@@ -37,27 +62,10 @@
 
                             </p>
                             <hr>
-                            <div class="text-center">
-                                <div class="row">
-                                    <div class="col">
-                                        <a class="btn bg-primary text-light" href="{{ url('/home') }}">Volver al inicio</a>
-                                    </div>
-                                    <div class="col">
-                                        <a class="btn bg-secondary text-light" href="{{ route('events.pdf', ['calendarEvent' => $event]) }}">Imprimir comprobante</a>
-                                    </div>
-                                    @if (isset($gevent))
-                                        <div class="col">
-                                        <a class="btn bg-success text-light" href="{{ $gevent->htmlLink }}"><img src="https://fonts.gstatic.com/s/i/productlogos/calendar_2020q4/v13/web-64dp/logo_calendar_2020q4_color_1x_web_64dp.png" style="max-width: 30px; max-height:30px;"> Ir a Calendar</a>
-                                        </div>
-                                    @endif
-                                    
-                                </div>
-                                
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-@endsection
+</body>
+
+</html>

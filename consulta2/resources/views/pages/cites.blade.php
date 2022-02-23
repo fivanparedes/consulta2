@@ -109,19 +109,24 @@
                                         </div>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="row ml-4">
                                     <div class="col" style="width: 10%;">
                                         <div class="">
                                             <button type="submit"
                                                 class="btn bg-primary mb-2 ml-5 text-light">Filtrar</button>
-                                            <a class="nav-link" href="/cite_pdf?filter1={{ $filter1 }}&filter2={{ $filter2 }}&filter3={{ $filter3 }}&filter4={{ $filter4 }}&filter5={{ $filter5 }}&filter6={{ $filter6 }}" title="Generar PDF">
-                                                <i class="nc-icon nc-paper-2"></i>
-                                            </a>
+                                            
                                         </div>
                                     </div>
                                     <div class="col" style="width: 10%;">
                                         <div class="">
                                             <a href="/cite" class="btn bg-danger"><i class="fa fa-trash"></i></a>
                                         </div>
+                                    </div>
+                                    <div class="col" style="width:10%">
+                                        <a class="btn bg-primary text-light" href="/cite_pdf?filter1={{ $filter1 }}&filter2={{ $filter2 }}&filter3={{ $filter3 }}&filter4={{ $filter4 }}&filter5={{ $filter5 }}&filter6={{ $filter6 }}" title="Generar PDF">
+                                                <i class="fa fa-file-pdf"></i>
+                                            </a>
                                     </div>
                                 </div>
                             </form>
@@ -181,7 +186,7 @@
                                                         Sin confirmar.
                                                     @endif
                                                 </td>
-                                                <td><a class="nav-link" href="/cite/{{ $cite->cite->id }}">
+                                                <td><a class="nav-link" href="/cite/{{ $cite->id}}">
                                                         <i class="nc-icon nc-badge"></i>
                                                     </a></td>
                                             </tr>
@@ -189,7 +194,7 @@
 
                                     </tbody>
                                 </table>
-                                {{-- {!! $cites->append('cites')->links('vendor.pagination.bootstrap-4') !!} --}}
+                                {!! $cites->appends('cites')->links('vendor.pagination.bootstrap-4') !!}
                             @endif
 
                         </div>

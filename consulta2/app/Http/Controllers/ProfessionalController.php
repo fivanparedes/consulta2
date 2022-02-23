@@ -74,6 +74,19 @@ class ProfessionalController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'user_name' => 'required|string|filled|max:60',
+            'user_lastname' => 'required|string|filled|max:60',
+            'user_dni' => 'required|numeric|unique:users,dni',
+            'user_email' => 'required|email:strict|unique:users,email',
+            'bornDate' => 'required|date_format:Y-m-d|before:' . date('Y-m-d'),
+            'gender' => 'required|string',
+            'phone' => 'required',
+            'address' => 'required|string|filled|max:100',
+            'licensePlate' => 'required|string|filled|max:40',
+            'status' => 'required|numeric|max:1',
+            'field' => 'required|string|filled|max:20',
+        ]);
         $user = User::find(auth()->user()->id);
 
         $patuser = new User();
@@ -219,8 +232,50 @@ class ProfessionalController extends Controller
 
     public function save(Request $request)
     {
+        $request->validate([
+            'user_name' => 'string|max:60',
+            'user_lastname' => 'string|max:60',
+            'user_dni' => 'numeric',
+            'user_email' => 'email:strict',
+            'bornDate' => 'required|date_format:Y-m-d|before:' . date('Y-m-d'),
+            'gender' => 'required|string',
+            'phone' => 'required',
+            'address' => 'required|string|filled|string|max:100',
+            'licensePlate' => 'required|string|filled|max:40',
+            'status' => 'required|numeric|max:1',
+            'field' => 'required|string|filled|max:20',
+        ]);
         $user = User::find(auth()->user()->id);
         $professional = ProfessionalProfile::find($request->id);
+
+        $patuser = $professional->profile->user;
+        if ($patuser->name != $request->user_name) {
+            $patuser->name = $request->user_name;
+        }
+        if ($patuser->lastname != $request->lastname) {
+            $patuser->lastname = $request->user_lastname;
+        }
+        if ($patuser->dni != $request->user_dni) {
+            $patuser->dni = $request->user_dni;
+        }
+        if ($patuser->email != $request->user_email) {
+            $patuser->email = $request->user_email;
+        }
+        
+        $patuser->save();
+
+        $patprofile = $professional->profile;
+        $patprofile->bornDate = date_create($request->bornDate);
+        $patprofile->gender = $request->gender;
+        $patprofile->phone = $request->phone;
+        $patprofile->address = $request->address;
+        $patprofile->city_id = $request->city;
+        $patprofile->user_id = $patuser->id;
+        $patprofile->save();
+
+        $professional->licensePlate = $request->licensePlate;
+        $professional->field = $request->field;
+        $professional->specialty_id = $request->specialty;
         $professional->status = $request->input('status');
         $professional->institution_id = $user->hasPermission('institution-profile') ? $user->institutionProfile->id : ($request->has('institution_id') ? $request->institution_id : 1);
         $professional->save();

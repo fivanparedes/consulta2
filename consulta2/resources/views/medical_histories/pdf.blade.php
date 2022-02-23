@@ -75,7 +75,6 @@
                             <p><strong>Fecha:</strong>{{ date_create($cite->calendarEvent->start)->format('d/m/Y h:i') }}
                             </p>
                             <p><strong>Tipo de atención:</strong> {{ $cite->calendarEvent->consultType->name }}</p>
-                            <a class="btn bg-primary text-light" href="/cite/{{ $cite->id }}">Ver detalles</a>
                         </div>
                     </div>
                 @endforeach

@@ -10,6 +10,7 @@ use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\MedicalHistoryController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProfessionalController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\ReminderController;
 use App\Http\Controllers\StatisticsController;
@@ -76,7 +77,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('/manage-events', [EventController::class, 'manageEvents']);
 	Route::get('/show-available-hours', [EventController::class, 'showAvailableTimes']);
 	Route::get('/event/confirm', [EventController::class, 'confirm']);
-	Route::post('/event/store', [EventController::class, 'store']);
+	Route::post('/event_store', [EventController::class, 'store']);
 	Route::post('/event/massCancel', [EventController::class, 'massCancel']);
 
 	Route::get('/external/event/cancel/{id}', [EventController::class, 'externalCancel']);
@@ -91,7 +92,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::resource('/practices', 'App\Http\Controllers\PracticeController');
 	Route::resource('/nomenclatures', 'App\Http\Controllers\NomenclatureController');
 	Route::resource('/coverages', 'App\Http\Controllers\CoverageController', ['except' => 'createPDF']);
-	Route::get('/coverages/pdf', 'App\Http\Controllers\CoverageController@createPDF');
+	Route::get('/coverages_pdf', 'App\Http\Controllers\CoverageController@createPDF');
 	Route::resource('/non_workable_days', 'App\Http\Controllers\NonWorkableDayController');
 	Route::resource('/institutions', 'App\Http\Controllers\InstitutionController', ['except' => 'show']);
 	Route::get('/institutions/pdf', 'App\Http\Controllers\InstitutionController@createPDF');
@@ -115,6 +116,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('profile/info', ['as' => 'profile.infoedit', 'uses' => 'App\Http\Controllers\ProfileController@info']);
 	Route::post('profile/pfp', 'App\Http\Controllers\UserController@updatePfp');
 	Route::get('/profile/create', [PatientController::class, 'create']);
+	Route::get('/profile/registered', [ProfileController::class, 'register']);
 	Route::patch('profile/info/update', ['as' => 'generalinfo.update', 'uses' => 'App\Http\Controllers\PatientController@update']);
 	Route::patch('profile/password', ['as' => 'profile.password', 'uses' => 'App\Http\Controllers\ProfileController@password']);
 	

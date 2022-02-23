@@ -19,28 +19,46 @@
                             <form class="form-inline" action="{{ url('/audits') }}" method="GET">
                                 <div class="row ml-4">
                                     <p class="pt-1 ">Filtro</p>
-                                    <div class="col" style="width: 10%;">
+                                    <div class="col">
                                         <div class="">
                                             <input type="date" class="form-control" id="filter1" name="filter1"
                                                 style="width: 97%;" placeholder="Entre..."
                                                 value="{{ isset($filter1) ? $filter1 : '' }}">
                                         </div>
                                     </div>
+                                    <div class="col">
+                                        <select name="filter2" id="input-filter2" class="form-control">
+                                            <option value="all" @if (!isset($filter2))
+                                                selected
+                                            @endif>Todos los eventos</option>
+                                            <option value="updated" @if (isset($filter2) && $filter2 == "updated")
+                                                selected
+                                            @endif>Update</option>
+                                            <option value="created" @if (isset($filter2) && $filter2 == "created")
+                                                selected
+                                            @endif>Insert</option>
+                                            <option value="deleted" @if (isset($filter2) && $filter2 == "deleted")
+                                                selected
+                                            @endif>Delete</option>
+                                        </select>
+                                    </div>
                                     <div class="col" style="width: 10%;">
                                         <div class="">
                                             <button type="submit"
                                                 class="btn bg-primary mb-2 ml-5 text-light">Filtrar</button>
-                                            <a class="nav-link" href="/non_workable_days" title="Generar PDF">
-                                                <i class="nc-icon nc-paper-2"></i>
-                                            </a>
+                                            
                                         </div>
                                     </div>
-                                    <div class="col" style="width: 10%;">
+                                    <div class="col ml-5" style="width: 10%;">
                                         <div class="">
                                             <a href="/non_workable_days" class="btn bg-danger"><i
                                                     class="fa fa-trash"></i></a>
                                         </div>
                                     </div>
+                                    <div class="col" style="width: 10%;">
+                                    <a class="btn bg-secondary text-light" href="/audits?filter1={{ isset($filter1) ? $filter1 : '' }}&filter2=" title="Generar PDF">
+                                                <i class="nc-icon nc-paper-2"></i>
+                                            </a></div>
                                 </div>
                             </form>
                         </div>

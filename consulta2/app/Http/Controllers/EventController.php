@@ -207,11 +207,7 @@ class EventController extends Controller
         if ($user->hasRole('Professional')) {
             $user = User::where('dni', $request->input('dni'))->first();
             
-        } else {
-            if (!$user->isAbleTo('patient-profile')) {
-                return abort(403);
-            }
-        }
+        } 
         $profuser = User::find($request->profid);
         $professional = $profuser->profile->professionalProfile;
 
@@ -271,7 +267,7 @@ class EventController extends Controller
             $_cite->save();
 
             
-            $gevent = new GoogleCalendarEvent();
+            /* $gevent = new GoogleCalendarEvent();
             $gevent->name = $_consult_type->name;
             $gevent->description = 'Turno agendado por medio de Consulta2.';
             $gevent->startDateTime = new Carbon(date_create_from_format('d/m/Y h:i', $selectedDate)->format('Y-m-d h:i:s'), new DateTimeZone("-0300"));;
@@ -282,7 +278,7 @@ class EventController extends Controller
             ]);
             $gevent->addAttendee(['email' => $professional->profile->user->email]);
 
-            $gevent->save();
+            $gevent->save(); */
 
             if ($_consult_type->requires_auth != 0) {
                 Mail::send('external.created', [
@@ -307,14 +303,14 @@ class EventController extends Controller
             }
 
             DB::commit();
-            $gevents = GoogleCalendarEvent::get();
+            /* $gevents = GoogleCalendarEvent::get();
             foreach ($gevents as $item) {
                 if ($item->startDateTime == new Carbon($_event->start)) {
                     $_event->gid = $item->id;
                     $_event->save();
                     break;
                 }
-            }
+            } */
             if ($user->hasRole('Patient')) {
                 return redirect()->route('events.success', ['event' => $_event]);
             } else {
@@ -322,15 +318,15 @@ class EventController extends Controller
             }
         } catch (\Throwable $th) {
             DB::rollBack();
-            return redirect('/professionals/show/'.$professional->id)->withErrors('turno', 'Error al agendar turno, intente de nuevo');
+            return back()->withErrors('turno', 'Error al agendar turno, intente de nuevo');
         }
         
         
     }
 
     public function success(CalendarEvent $event) {
-        $gevent = GoogleCalendarEvent::find($event->gid);
-        return view('events.success')->with(['event' => $event, 'gevent' => $gevent]);
+        /* $gevent = GoogleCalendarEvent::find($event->gid); */
+        return view('events.success')->with(['event' => $event, /* 'gevent' => $gevent */]);
     }
 
     public function massCancel(Request $request) {
@@ -383,7 +379,7 @@ class EventController extends Controller
         DB::beginTransaction();
         try {
             $event = CalendarEvent::find($request->id);
-            $gevent = \Spatie\GoogleCalendar\Event::find($event->gid);
+            //$gevent = \Spatie\GoogleCalendar\Event::find($event->gid);
             $patients = $event->patientProfiles;
             $user = User::find(Auth::user()->id);
             $event->delete();
@@ -428,7 +424,8 @@ class EventController extends Controller
         return view('external.deleted');
     }
 
-    public function createTicket(CalendarEvent $event) {
+    public function createTicket(CalendarEvent $event, $id) {
+        $event = CalendarEvent::find($id);
         $pdf = PDF::loadView('events.pdf', ['event' => $event]);
         return $pdf->download('comprobante_turno_agendado'.$event->id.'.pdf');
     }

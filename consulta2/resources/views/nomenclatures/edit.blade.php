@@ -8,6 +8,7 @@
                 <div class="card-header">
                     <h1 class="card-title">Editar nomenclatura N° {{ $nomenclature->id }}</h1>
                 </div>
+                @include('alerts.errors')
             </div>
             <form id="create-form" class="form-horizontal" action="{{ url('/nomenclatures/'.$nomenclature->id) }}" method="post">
                 @csrf

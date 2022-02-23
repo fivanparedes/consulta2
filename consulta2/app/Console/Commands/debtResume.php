@@ -51,7 +51,7 @@ class debtResume extends Command
                         echo "No hay consultas impagas en este tratamiento.\n";
                         break;
                     case 1:
-                        echo "Deudor debe 1 consulta. Enviando recordatorio...";
+                        echo "Deudor ". $treatment->medicalHistory->patientProfile->getFullName()." debe 1 consulta. Enviando recordatorio...\n";
                         $cite = $cites->first();
                         $data = array(
                             'fullname' => $treatment->medicalHistory->patientProfile->getFullName(),
@@ -75,7 +75,7 @@ class debtResume extends Command
                         echo "Enviado un email a " . $data['email'] . "\n";
                         break;
                     case 2:
-                        echo "Deudor debe 2 consultas. Calculando total a pagar...\n";
+                        echo "Deudor " . $treatment->medicalHistory->patientProfile->getFullName() . " debe 2 consultas. Calculando total a pagar...\n";
                         $total = 0; 
                         foreach ($cites as $cite) {
                             $debt = $cite->total;
@@ -101,7 +101,7 @@ class debtResume extends Command
                         echo "Enviado un email a " . $data['email'] . "\n";
                         break;
                     case 3:
-                        echo "Deudor debe 3 consultas. Deshabilitando tratamiento. Volver a habilitar por medio del panel de edición...\n";
+                        echo "Deudor " . $treatment->medicalHistory->patientProfile->getFullName() . " debe 3 consultas. Deshabilitando tratamiento. Volver a habilitar por medio del panel de edición...\n";
                         $treatment->times_per_month = 0;
                         $treatment->save();
                         $total = 0;

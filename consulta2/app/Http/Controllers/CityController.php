@@ -37,6 +37,10 @@ class CityController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string|filled|max:70',
+            'zipcode' => 'required|numeric|max:10000'
+        ]);
         $city = new City();
         $city->name = $request->name;
         $city->zipcode = $request->zipcode;
@@ -77,6 +81,10 @@ class CityController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'name' => 'required|string|filled|max:70',
+            'zipcode' => 'required|numeric|max:10000'
+        ]);
         $city = City::find($id);
         $city->name = $request->name;
         $city->zipcode = $request->zipcode;

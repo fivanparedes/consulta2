@@ -14,7 +14,8 @@ perfil', 'activeButton' => 'laravel'])
                     <div class="col align-self-mid">
                         <div class="row">
                             <div class="col">
-                                <button class="btn bg-primary text-light">Ver información de contacto</button>
+                                <p><strong>Teléfono:</strong> {{ $professional->profile->phone }}</p>
+                                <p><strong>Correo:</strong> {{ $professional->profile->user->email }}</p>
                             </div>
                         </div>
                         <div class="row">
@@ -41,7 +42,7 @@ perfil', 'activeButton' => 'laravel'])
                             @endif
 
                         @endif
-                        @include('alerts.error_self_update', ['key' => 'not_allow_profile'])
+                        @include('alerts.errors')
                     </div>
                 </div>
 

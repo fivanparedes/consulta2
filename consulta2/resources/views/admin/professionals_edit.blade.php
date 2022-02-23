@@ -21,6 +21,7 @@
                                 </div>
                             </div>
                         </div>
+                        @include('alerts.errors')
                         <div class="card-body">
                             <form method="POST" action="/manage/professionals/update/{{ $professional->id }}"
                                 autocomplete="off" enctype="multipart/form-data">

@@ -37,6 +37,10 @@ class SpecialtyController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required|max:20',
+            'displayname' => 'required|string|filled|max:20'
+        ]);
         $specialty = new Specialty();
         $specialty->name = $request->name;
         $specialty->displayname = $request->displayname;
@@ -76,6 +80,10 @@ class SpecialtyController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'name' => 'required|max:20',
+            'displayname' => 'required|string|filled|max:20'
+        ]);
         $specialty = Specialty::find($id);
         $specialty->name = $request->name;
         $specialty->displayname = $request->displayname;

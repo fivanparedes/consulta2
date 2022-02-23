@@ -9,6 +9,7 @@
                     <h2 class="card-title">Añadir paciente</h2>
                 </div>
             </div>
+            @include('alerts.errors')
             <form id="create-form" class="form-horizontal" action="{{ route('patients.store') }}" method="post">
                 @csrf
                 @method('post')

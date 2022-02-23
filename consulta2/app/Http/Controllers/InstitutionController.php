@@ -59,21 +59,22 @@ class InstitutionController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'user_name' => 'required|string|filled|max:20',
+            'user_lastname' => 'required|string|filled|max:60',
+            'user_dni' => 'required|unique:users,dni|numeric',
+            'name' => 'required|string|filled|max:70',
+            'description' => 'required|string|filled|max:100',
+            'address' => 'required|string|filled|max:100',
+            'phone' => 'required|numeric|max:40',
+            'city' => 'required|numeric'
+        ]);
         $user = User::find(auth()->user()->id);
         if (!$user->isAbleTo('admin-profile') && !$user->isAbleTo('institution-profile')) {
             return abort(404);
         }
         try {
-            $request->validate([
-                'user_name' => 'required|string|max:20',
-                'user_lastname' => 'required|string|max:30',
-                'user_dni' => 'required|unique:users,dni|numeric',
-                'name' => 'required|string|max:50',
-                'description' => 'required|string|max:100',
-                'address' => 'required|string|max:100',
-                'phone' => 'required|numeric|max:10',
-                'city' => 'required|numeric'
-            ]);
+            
 
             $inst_user = new User();
             $inst_user->name = $request->user_name;
@@ -140,6 +141,13 @@ class InstitutionController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'name' => 'required|string|filled|max:70',
+            'description' => 'required|string|filled|max:100',
+            'address' => 'required|string|filled|max:100',
+            'phone' => 'required|numeric',
+            'city' => 'required|numeric'
+        ]);
         //dd($request->all());
         $user = User::find(auth()->user()->id);
         if (!$user->isAbleTo('admin-profile') && !$user->isAbleTo('institution-profile')) {
@@ -147,16 +155,7 @@ class InstitutionController extends Controller
         }
         try {
             $institutionProfile = InstitutionProfile::find($id);
-            $request->validate([
-                'user_name' => 'required|string|max:20',
-                'user_lastname' => 'required|string|max:30',
-                'user_dni' => 'required|unique:users,dni|numeric',
-                'name' => 'required|string|max:50',
-                'description' => 'required|string|max:100',
-                'address' => 'required|string|max:100',
-                'phone' => 'required|numeric|max:10',
-                'city' => 'required|numeric'
-            ]);
+            
             /* $inst_user = $institutionProfile->user;
             $inst_user->name = $request->user_name;
             $inst_user->lastname = $request->user_lastname;
@@ -173,7 +172,7 @@ class InstitutionController extends Controller
             $institutionProfile->active = $request->active == 1 ? true : false;
             $institutionProfile->save();
         } catch (Throwable $th) {
-            dd($th);
+            //dd($th);
             return back()->withErrors('error', 'Error al guardar.');
         }
         return redirect('/institutions');

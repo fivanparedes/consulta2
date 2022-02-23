@@ -56,6 +56,14 @@ class TreatmentController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string|filled|max:20',
+            'description' => 'required|string|filled|max:100',
+            'times_per_month' => 'required|numeric|between:1,30',
+            'preferred_hour' => 'required',
+            'start' => 'required|date:Y-m-d',
+            'end' => 'required|date:Y-m-d|after:'.date($request->start)
+        ]);
         $treatment = new Treatment();
         $preferred_days = "";
         if ($request->has('av-monday')) {
@@ -127,8 +135,17 @@ class TreatmentController extends Controller
      */
     public function update(Request $request, Treatment $treatment)
     {
+        $request->validate([
+            'name' => 'required|string|filled|max:20',
+            'description' => 'required|string|filled|max:100',
+            'times_per_month' => 'required|numeric|between:1,30',
+            'preferred_hour' => 'required',
+            'start' => 'required|date:Y-m-d',
+            'end' => 'required|date:Y-m-d|after:' . date($request->start)
+        ]);
         //$treatment = Treatment::find($request->id);
         $treatment->name = $request->name;
+        $treatment->description = $request->description;
         $treatment->times_per_month = $request->times_per_month;
         $treatment->start = date_create($request->start);
         $treatment->end = date_create($request->end);

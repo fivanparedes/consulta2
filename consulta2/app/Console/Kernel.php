@@ -21,6 +21,7 @@ class Kernel extends ConsoleKernel
         sendReminder::class,
         autoAssignOverTreatment::class,
         debtResume::class,
+        absoluteClear::class,
     ];
 
     /**

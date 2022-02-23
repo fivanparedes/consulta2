@@ -55,14 +55,14 @@
                                         </div>
 
                                     </div>
-                                    <div class="row">
-                                        @if (date_create($cite->calendarEvent->start) > now())
+                                    {{-- <div class="row">
+                                        @if (date_create($cite->calendarEvent->start) < now())
                                             <div class="col">
                                                 <button class="btn bg-primary text-light" data-toggle="modal"
                                                     data-target="#quickCloseModal">Cierre rápido</button>
                                             </div>
                                         @endif
-                                    </div>
+                                    </div> --}}
                                 </div>
 
                             </div>
@@ -96,8 +96,10 @@
                                             @else
                                                 <select class="form-control" name="assisted" id="input-assisted">
                                         @endif
-                                        <option value="1" @if (old('assisted', $cite->assisted) == 1) selected @endif>Asistió.</option>
-                                        <option value="0" @if (old('assisted', $cite->assisted) == 0) selected @endif>No asistió.</option>
+                                        <option value="1" @if (old('assisted', $cite->assisted) == 1) selected @endif>Asistió.
+                                        </option>
+                                        <option value="0" @if (old('assisted', $cite->assisted) == 0) selected @endif>No asistió.
+                                        </option>
                                         </select>
                                     </div>
 
@@ -106,13 +108,12 @@
                                 </div>
                                 <div class="form-group{{ $errors->has('resume') ? ' has-error' : '' }}">
 
-                                    @if (isset($cite->resume))
+                                    @if ($cite->resume != null)
                                         <p><strong>Resumen de la sesión/consulta:</strong> {{ decrypt($cite->resume) }}
                                         </p>
                                     @else
                                         <label for="input-resume">Resumen de la consulta/sesión</label>
-                                        <input type="text" class="form-control" name="resume" id="input-resume"
-                                            @if (date_create($cite->calendarEvent->start) > now()) disabled @endif>
+                                        <textarea name="resume" id="input-resume" class="form-control" @if (date_create($cite->calendarEvent->start) > now()) disabled @endif></textarea>
                                     @endif
 
                                     @include('alerts.feedback', ['field' => 'resume'])
@@ -121,33 +122,30 @@
                                     <label for="input-isVirtual">Modalidad</label>
                                     <select class="form-control" name="isVirtual" id="input-isVirtual">
                                         <option value="1" @if (old('isVirtual', $cite->isVirtual) == 1) selected @endif>Virtual</option>
-                                        <option value="0" @if (old('isVirtual', $cite->isVirtual) == 0) selected @endif>Presencial</option>
+                                        <option value="0" @if (old('isVirtual', $cite->isVirtual) == 0) selected @endif>Presencial
+                                        </option>
                                     </select>
 
                                     @include('alerts.feedback', ['field' => 'isVirtual'])
                                 </div>
                                 <div class="form-group">
                                     <label for="input-approved">Estado</label>
-                                    <select name="approved" id="input-approved" class="form-control" @if (isset($cite->resume))
-                                        disabled
-                                        @endif>
-                                        <option value="0" @if (old('approved', $calendarEvent->approved == 0))
-                                            selected
-                                            @endif>Pendiente</option>
-                                        <option value="1" @if (old('approved', $calendarEvent->approved != 0))
-                                            selected
-                                            @endif>Aprobado</option>
+                                    <select name="approved" id="input-approved" class="form-control"
+                                        @if (isset($cite->resume)) disabled @endif>
+                                        <option value="0" @if (old('approved', $calendarEvent->approved == 0)) selected @endif>Pendiente
+                                        </option>
+                                        <option value="1" @if (old('approved', $calendarEvent->approved != 0)) selected @endif>Aprobado
+                                        </option>
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="input-practice">¿Qué actividad se realizará?</label>
-                                    <select name="practice" id="input-practice" class="form-control" @if (isset($cite->resume))
-                                        disabled
-                                        @endif>
+                                    <select name="practice" id="input-practice" class="form-control"
+                                        @if (isset($cite->resume)) disabled @endif>
                                         @foreach ($calendarEvent->consultType->practices as $practice)
-                                            <option value="{{ $practice->id }}" @if ($practice == $cite->practice)
-                                                selected
-                                        @endif>{{ $practice->name }}</option>
+                                            <option value="{{ $practice->id }}"
+                                                @if ($practice == $cite->practice) selected @endif>{{ $practice->name }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -155,26 +153,27 @@
                                     <label class="form-control-label" for="input-paid">¿Pagó la consulta?</label>
                                     @if (date_create($cite->calendarEvent->start) > now())
                                         <select disabled="true" class="form-control" name="paid" id="input-paid"
-                                            @if (isset($cite->resume))
-                                            disabled
-                                    @endif>
-                                @else
-                                    <select class="form-control" name="paid" id="input-paid">
-                                        @endif
-                                        <option value="1" @if (old('paid', $cite->paid) == 1) selected @endif>Pagó.</option>
-                                        <option value="0" @if (old('paid', $cite->paid) == 0) selected @endif>No pagó.</option>
+                                            @if (isset($cite->resume)) disabled @endif>
+                                        @else
+                                            <select class="form-control" name="paid" id="input-paid">
+                                    @endif
+                                    <option value="1" @if (old('paid', $cite->paid) == 1) selected @endif>Pagó.</option>
+                                    <option value="0" @if (old('paid', $cite->paid) == 0) selected @endif>No pagó.</option>
                                     </select>
                                 </div>
                                 <input type="hidden" value="{{ $cite->id }}">
                                 <div class="text-center">
-                                    <button type="button" class="btn bg-danger text-light mt-4" data-toggle="modal"
-                                        data-target="#exampleModal">Cancelar turno</button>
-                                    <button type="submit"
-                                        class="btn bg-primary text-light mt-4">{{ __('Guardar') }}</button>
+                                    @if ($cite->resume != null)
+                                        <a href="" class="btn bg-primary text-light">Imprimir comprobante</a>
+                                    @else
+                                        <button type="button" class="btn bg-danger text-light mt-4" data-toggle="modal"
+                                            data-target="#exampleModal">Cancelar turno</button>
+                                        <button type="submit"
+                                            class="btn bg-primary text-light mt-4">{{ __('Guardar') }}</button>
+                                    @endif
                                 </div>
                             </form>
                         </div>
-
                     </div>
                 </div>
             </div>

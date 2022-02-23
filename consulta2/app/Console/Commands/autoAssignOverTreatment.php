@@ -209,7 +209,7 @@ class autoAssignOverTreatment extends Command
                                 'title' => $treatment->medicalHistory->patientProfile->profile->user->name . ' ' . $treatment->medicalHistory->patientProfile->profile->user->lastname,
                                 'start' => $selectedDate,
                                 'end' => $formatDate,
-                                'approved' => 0,
+                                'approved' => 1,
                                 'confirmed' => false,
                                 'isVirtual' => false,
                             ]);

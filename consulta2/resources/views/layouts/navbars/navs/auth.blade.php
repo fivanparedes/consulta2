@@ -52,7 +52,7 @@
                                 class="notification">{{ Auth::user()->profile->professionalProfile->calendarEvents->where('approved', 0)->count() }}</span>
                             <span class="d-lg-none">{{ __('Notificaciones') }}</span>
                         </a> --}}
-                        <ul class="dropdown-menu">
+                        {{-- <ul class="dropdown-menu">
                             @if (Auth::user()->profile->professionalProfile->calendarEvents->where('approved', 0)->count() == 0)
                                 <p class="nav-item">No hay recordatorios</p>
                             @else
@@ -69,7 +69,7 @@
 
                             @endif
 
-                        </ul>
+                        </ul> --}}
                     </li>
                 @endif
 

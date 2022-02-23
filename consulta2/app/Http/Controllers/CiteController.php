@@ -26,14 +26,14 @@ class CiteController extends Controller
     public function index(Request $request)
     {
         $user = User::find(auth()->user()->id);
-        $cites = CalendarEvent::where('id', '>', 0);
+        $cites = CalendarEvent::all()->toQuery();
         if ($user->isAbleTo('professional-profile')) {
-            $cites = CalendarEvent::where('professional_profile_id', Auth::user()->profile->professionalProfile->id);
+            $cites = $cites->where('professional_profile_id', Auth::user()->profile->professionalProfile->id);
         } elseif ($user->isAbleTo('institution-profile')) {
-            $professionals = Auth::user()->institutionProfile->professionalProfiles->get(['id']);
-            $cites = CalendarEvent::whereIn('professional_profile_id', $professionals);
+            $professionals = Auth::user()->institutionProfile->professionalProfiles->toArray(['id']);
+            $cites = $cites->whereIn('professional_profile_id', $professionals);
         } elseif ($user->isAbleTo('admin-profile')) {
-            $cites = CalendarEvent::whereHas('professionalProfile', function($q) {
+            $cites = $cites->whereHas('professionalProfile', function($q) {
                 return $q->where('status', '<>', 0);
             });
         }
@@ -71,10 +71,10 @@ class CiteController extends Controller
         if ($request->has('filter6') && $request->filter6 != "") {
             $cites = $cites->where('assisted', $request->filter6);
         }
-        $cites = $cites->sortable();
+        $cites = $cites->sortable()->paginate(10);
         //dd($cites);
         return view('pages.cites')->with([
-            'cites' => $cites->paginate(10),
+            'cites' => $cites,
             //'professional' => Auth::user()->profile->professionalProfile,
             'filter1' => $request->has('filter1') != "" ? $request->input('filter1') : null,
             'filter2' => $request->has('filter2') != "" ? $request->input('filter2') : null,
@@ -108,7 +108,7 @@ class CiteController extends Controller
 
     public function createPDF(Request $request) {
         $user = User::find(auth()->user()->id);
-        $cites = CalendarEvent::where('id', '>', 0);
+        $cites = CalendarEvent::all()->toQuery();
         if ($user->isAbleTo('professional-profile')) {
             $cites = CalendarEvent::where('professional_profile_id', Auth::user()->profile->professionalProfile->id);
         } elseif ($user->isAbleTo('institution-profile')) {
@@ -225,7 +225,7 @@ class CiteController extends Controller
         }
         
         $calendarEvent->approved = $request->input('approved');
-        if ($request->has('resume')) {
+        if ($request->has('resume') && !empty($request->resume)) {
             $cite->resume = encrypt($request->resume);
         }
         $cite->save();
@@ -255,9 +255,13 @@ class CiteController extends Controller
                     $medical_history->patient_profile_id = $patient->id;
                     $medical_history->professional_profile_id = $calendarEvent->professionalProfile->id;
                     $medical_history->save();
+                    $cite->medical_history_id = $medical_history->id;
+                    $cite->save();
+                } else {
+                    $cite->medical_history_id = $patient->medicalHistory->id;
+                    $cite->save();
                 }
-                $cite->medical_history_id = $patient->medicalHistory->id;
-                $cite->save();
+                
             }
         }
         

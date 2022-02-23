@@ -30,8 +30,14 @@
             <br>
             </div>
     <div class="row">
-<p><strong>Filtros:</strong> {{ isset($filter1) ? $filter1 : '' }} {{ isset($filter2) ? ' + '.$filter2 : ''  }} {{ isset($filter3) ? ' + '.$filter3 : ''  }} {{ isset($filter4) ? ' + '.$filter4 : ''  }} {{ isset($filter5) ? ' + '.$filter5 : ''  }}</p>
-    
+        <p><strong>Emisor del formulario:</strong> {{ Auth::user()->name . ' ' . Auth::user()->lastname }}</p>
+        
+    </div>
+    <div class="row">
+        <p><strong>DNI:</strong> {{ Auth::user()->dni }}</p>
+    </div>
+    <div class="row">
+        <p><strong>Rol:</strong> {{ Auth::user()->roles->first()->display_name }}</p>
     </div>
 
     <table class="table table-bordered" style="font-size: 80%;">

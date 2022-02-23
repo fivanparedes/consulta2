@@ -37,6 +37,10 @@ class CountryController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string|filled|max:70',
+            'code' => 'required|numeric|max:1000'
+        ]);
         $country = new Country();
         $country->name = $request->name;
         $country->code = $request->code;
@@ -76,6 +80,10 @@ class CountryController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'name' => 'required|string|filled|max:70',
+            'code' => 'required|numeric|max:1000'
+        ]);
         $country = Country::find($id);
         $country->name = $request->name;
         $country->code = $request->code;

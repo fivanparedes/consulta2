@@ -50,13 +50,23 @@ class MedicalHistoryController extends Controller
     }
 
     public function store(Request $request) {
+        $request->validate([
+            'indate' => 'required|date:Y-m-d',
+            'psicological_history' => 'required|string|filled|max:300',
+            'visitreason' => 'required|string|filled|max:300',
+            'clinical_history' => 'required|string|filled|max:300',
+            'diagnosis' => 'required|string|filled|max:100',
+        ]);
         $user = User::find(auth()->user()->id);
         if (!$user->isAbleTo('manage-histories')) {
             return abort(403);
         } else {
             $medical_history = new MedicalHistory();
             $medical_history->indate = date_create($request->indate);
-            $medical_history->visitreason = $request->visitreason;
+            $medical_history->psicological_history = encrypt($request->psicological_history);
+            $medical_history->visitreason = encrypt($request->visitreason);
+            $medical_history->clinical_history = encrypt($request->clinical_history);
+            $medical_history->diagnosis = encrypt($request->diagnosis);
             $medical_history->patient_profile_id = $request->patient_profile_id;
             $medical_history->professional_profile_id = $user->isAbleTo('professional-profile') ? $user->profile->professionalProfile->id : $request->professional_profile_id;
             $medical_history->institution_id = $user->isAbleTo('institution-profile') ? $user->institutionProfile->id : null;
@@ -72,9 +82,9 @@ class MedicalHistoryController extends Controller
         $medical_history = MedicalHistory::find($id);
         $user = $medical_history->patientProfile->profile->user;
 
-        $psicological_history = $medical_history->psicological_history != '** Sin datos **' ? Crypt::decryptString($medical_history->psicological_history) : $medical_history->psicological_history;
-        $visitreason = $medical_history->visitreason != "** Sin datos **" ? Crypt::decryptString($medical_history->visitreason) : $medical_history->visitreason;
-        $diagnosis = $medical_history->diagnosis != '** Sin datos **' ? Crypt::decryptString($medical_history->diagnosis) : $medical_history->diagnosis;
+        $psicological_history = $medical_history->psicological_history != '** Sin datos **' ? decrypt($medical_history->psicological_history) : $medical_history->psicological_history;
+        $visitreason = $medical_history->visitreason != "** Sin datos **" ? decrypt($medical_history->visitreason) : $medical_history->visitreason;
+        $diagnosis = $medical_history->diagnosis != '** Sin datos **' ? decrypt($medical_history->diagnosis) : $medical_history->diagnosis;
         $clinical_history = $medical_history->clinical_history != "** Sin datos **" ? decrypt($medical_history->clinical_history) : $medical_history->clinical_history;
         if ($user->id == auth()->user()->id) {
             return view('medical_histories.show')->with([
@@ -113,9 +123,9 @@ class MedicalHistoryController extends Controller
         $medical_history = MedicalHistory::find($id);
         $user = $medical_history->patientProfile->profile->user;
 
-        $psicological_history = $medical_history->psicological_history != '** Sin datos **' ? Crypt::decryptString($medical_history->psicological_history) : $medical_history->psicological_history;
-        $visitreason = $medical_history->visitreason != "** Sin datos **" ? Crypt::decryptString($medical_history->visitreason) : $medical_history->visitreason;
-        $diagnosis = $medical_history->diagnosis != '** Sin datos **' ? Crypt::decryptString($medical_history->diagnosis) : $medical_history->diagnosis;
+        $psicological_history = $medical_history->psicological_history != '** Sin datos **' ? decrypt($medical_history->psicological_history) : $medical_history->psicological_history;
+        $visitreason = $medical_history->visitreason != "** Sin datos **" ? decrypt($medical_history->visitreason) : $medical_history->visitreason;
+        $diagnosis = $medical_history->diagnosis != '** Sin datos **' ? decrypt($medical_history->diagnosis) : $medical_history->diagnosis;
         $clinical_history = $medical_history->clinical_history != "** Sin datos **" ? decrypt($medical_history->clinical_history) : $medical_history->clinical_history;
         if ($user->id == auth()->user()->id) {
             return view('medical_histories.edit')->with([
@@ -154,9 +164,9 @@ class MedicalHistoryController extends Controller
         $medical_history = MedicalHistory::find($id);
         $user = $medical_history->patientProfile->profile->user;
 
-        $psicological_history = $medical_history->psicological_history != '** Sin datos **' ? Crypt::decryptString($medical_history->psicological_history) : $medical_history->psicological_history;
-        $visitreason = $medical_history->visitreason != "** Sin datos **" ? Crypt::decryptString($medical_history->visitreason) : $medical_history->visitreason;
-        $diagnosis = $medical_history->diagnosis != '** Sin datos **' ? Crypt::decryptString($medical_history->diagnosis) : $medical_history->diagnosis;
+        $psicological_history = $medical_history->psicological_history != '** Sin datos **' ? decrypt($medical_history->psicological_history) : $medical_history->psicological_history;
+        $visitreason = $medical_history->visitreason != "** Sin datos **" ? decrypt($medical_history->visitreason) : $medical_history->visitreason;
+        $diagnosis = $medical_history->diagnosis != '** Sin datos **' ? decrypt($medical_history->diagnosis) : $medical_history->diagnosis;
         $clinical_history = $medical_history->clinical_history != "** Sin datos **" ? decrypt($medical_history->clinical_history) : $medical_history->clinical_history;
         
         if ($user->id == auth()->user()->id) {
@@ -197,6 +207,13 @@ class MedicalHistoryController extends Controller
 
     public function update(Request $request)
     {
+        $request->validate([
+            'indate' => 'required|date:Y-m-d',
+            'psicological_history' => 'required|string|filled|max:300',
+            'visitreason' => 'required|string|filled|max:300',
+            'clinical_history' => 'required|string|filled|max:300',
+            'diagnosis' => 'required|string|filled|max:100',
+        ]);
         $user = User::find(auth()->user()->id);
         if (!$user->isAbleTo('manage-histories')) {
             return abort(403);

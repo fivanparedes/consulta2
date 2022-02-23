@@ -25,25 +25,25 @@
                             </div>
                         </div>
                         <div class="card-header table">
-                            <form class="form-inline" action="{{ url('/patients') }}" method="GET">
+                            <form class="form-inline" action="{{ url("/manage/patients")}}" method="GET">
                                 <div class="row ml-4">
                                     <p class="pt-1 ">Filtro</p>
                                     <div class="col" style="width: 10%;">
                                         <div class="">
                                             <input type="text" class="form-control" id="filter1" name="filter1" style="width: 97%;"
-                                                placeholder="Nombre" value="{{ isset($filter1) ? $filter1 : '' }}">
+                                                placeholder="Nombre/Apellido" value="{{ isset($filter1) ? $filter1 : '' }}">
                                         </div>
                                     </div>
                                     <div class="col" style="width: 10%;">
                                         <div class="form-group">
                                             <input type="text" class="form-control" id="filter2" name="filter2" style="width: 97%;"
-                                                placeholder="Dirección" value="{{ isset($filter2) ? $filter2 : '' }}">
+                                                placeholder="DNI" value="{{ isset($filter2) ? $filter2 : '' }}">
                                         </div>
                                     </div>
                                     <div class="col" style="width: 10%;">
                                         <div class="">
                                             <input type="text" class="form-control" id="filter3" name="filter3" style="width: 97%;"
-                                                placeholder="Teléfono" value="{{ isset($filter3) ? $filter3 : '' }}">
+                                                placeholder="Obra social" value="{{ isset($filter3) ? $filter3 : '' }}">
                                         </div>
                                     </div>
                                     <div class="col" style="width: 10%;">
@@ -52,20 +52,24 @@
                                                 placeholder="Ciudad" value="{{ isset($filter4) ? $filter4 : '' }}">
                                         </div>
                                     </div>
+                                </div>
+                                <div class="row ml-4">
                                     <div class="col" style="width: 10%;">
-                                        <div class="">
-                                            <button type="submit"
-                                                class="btn bg-primary mb-2 ml-5 text-light">Filtrar</button>
-                                            <a class="nav-link" href="/manage/patients/pdf" title="Generar PDF">
-                                                <i class="nc-icon nc-paper-2"></i>
-                                            </a>
-                                        </div>
+                                        
+                                            <button type="submit" class="btn bg-primary mb-2 ml-5 text-light">Filtrar</button>
+                                           
+                                        
+                                    </div>
+                                    <div class="col ml-5" style="width: 10%;">
+                                        
+                                            <a href="/manage/patients" class="btn bg-danger"><i
+                                                    class="fa fa-trash"></i></a>
+                                        
                                     </div>
                                     <div class="col" style="width: 10%;">
-                                        <div class="">
-                                            <a href="/patients" class="btn bg-danger"><i
-                                                    class="fa fa-trash"></i></a>
-                                        </div>
+                                         <a class="btn bg-secondary" href="/manage/patients/pdf?filter1={{ isset($filter1) ? $filter1 : '' }}&filter2={{ isset($filter2) ? $filter2 : '' }}&filter3={{ isset($filter3) ? $filter3 : '' }}&filter4={{ isset($filter4) ? $filter4 : '' }}" title="Generar PDF">
+                                                <i class="fa fa-file-pdf"></i>
+                                            </a>
                                     </div>
                                 </div>
                             </form>
