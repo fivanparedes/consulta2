@@ -34,7 +34,8 @@ class InstitutionController extends Controller
 
     public function createPDF(Request $request) {
         $institutions = InstitutionProfile::all();
-        $pdf = PDF::loadView('institutions.pdf',['institutions' => $institutions]);
+        $companyLogo = DB::table('settings')->where('name', 'company-logo')->first(['value']);
+        $pdf = PDF::loadView('institutions.pdf',['institutions' => $institutions, 'companyLogo' => $companyLogo->value]);
         return $pdf->download('instituciones.pdf');
     }
     /**

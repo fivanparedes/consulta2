@@ -1,4 +1,5 @@
-@extends('layouts.app', ['activePage' => 'cite', 'title' => $companyName.' | Ver sesión', 'navName' => 'Detalles de sesión',
+@extends('layouts.app', ['activePage' => 'cite', 'title' => $companyName.' | Ver sesión', 'navName' => 'Detalles de
+sesión',
 'activeButton' => 'laravel'])
 
 @section('content')
@@ -55,14 +56,14 @@
                                         </div>
 
                                     </div>
-                                    {{-- <div class="row">
+                                    <div class="row">
                                         @if (date_create($cite->calendarEvent->start) < now())
                                             <div class="col">
                                                 <button class="btn bg-primary text-light" data-toggle="modal"
                                                     data-target="#quickCloseModal">Cierre rápido</button>
                                             </div>
                                         @endif
-                                    </div> --}}
+                                    </div>
                                 </div>
 
                             </div>
@@ -84,7 +85,9 @@
 
 
                                 @include('alerts.success')
-                                @include('alerts.error_self_update', ['key' => 'not_allow_profile'])
+                                @include('alerts.error_self_update', [
+                                    'key' => 'not_allow_profile',
+                                ])
 
                                 <div class="pl-lg-4">
                                     <div class="form-group{{ $errors->has('assisted') ? ' has-danger' : '' }}">
@@ -113,7 +116,8 @@
                                         </p>
                                     @else
                                         <label for="input-resume">Resumen de la consulta/sesión</label>
-                                        <textarea name="resume" id="input-resume" class="form-control" @if (date_create($cite->calendarEvent->start) > now()) disabled @endif></textarea>
+                                        <textarea name="resume" id="input-resume" class="form-control"
+                                            @if (date_create($cite->calendarEvent->start) > now()) disabled @endif></textarea>
                                     @endif
 
                                     @include('alerts.feedback', ['field' => 'resume'])
@@ -283,6 +287,17 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Volver
                                 atrás.</button>
+                                <form method="post" action="/cite/update/{{ $cite->id }}" autocomplete="off"
+                                enctype="multipart/form-data">
+                                @csrf
+                                @method('patch')
+                                <input type="hidden" name="practice" value="{{ $cite->practice_id }}">
+                                <input type="hidden" name="assisted" value="1">
+                                <input type="hidden" name="isVirtual" value="{{ $cite->calendarEvent->isVirtual }}">
+                                <input type="hidden" name="resume" value="** Consulta ambulatoria **">
+                                <input type="hidden" name="paid" value="1">
+                                    <button type="submit" class="btn btn-primary text-light">Cerrar turno</button>
+                            </form>
                         </div>
                     </div>
                 </div>

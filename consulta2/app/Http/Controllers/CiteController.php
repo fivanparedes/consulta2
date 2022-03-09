@@ -152,6 +152,7 @@ class CiteController extends Controller
         if ($request->has('filter6') && $request->filter6 != "") {
             $cites = $cites->where('assisted', $request->filter6);
         }
+        $companyLogo = DB::table('settings')->where('name', 'company-logo')->first(['value']);
         $cites = $cites->get();
         $pdf = PDF::loadView('external.pdf', [
             'cites' => $cites,
@@ -162,6 +163,7 @@ class CiteController extends Controller
             'filter4' => $request->input('filter4') != "" ? $request->input('filter4') : null,
             'filter5' => $request->input('filter5') != "" ? $request->input('filter5') : null,
             'filter6' => $request->input('filter6') != "" ? $request->input('filter6') : null,
+            'companyLogo' => $companyLogo->value
         ]);
 
         return $pdf->download('cites.pdf');
@@ -217,7 +219,8 @@ class CiteController extends Controller
         $calendarEvent = $cite->calendarEvent;
         $cite->update([
             'assisted' => $request->input('assisted'),
-            'isVirtual' => $request->input('isVirtual')
+            'isVirtual' => $request->input('isVirtual'),
+            'paid' => $request->input('paid')
         ]);
         if ($cite->practice != $practice) {
             $cite->practice()->dissociate();
@@ -225,6 +228,7 @@ class CiteController extends Controller
         }
         
         $calendarEvent->approved = $request->input('approved');
+
         if ($request->has('resume') && !empty($request->resume)) {
             $cite->resume = encrypt($request->resume);
         }

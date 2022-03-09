@@ -1,4 +1,4 @@
-<h1>Consulta2 | Recordatorio de deuda</h1>
+<h1>{{$companyName}} | Recordatorio de deuda</h1>
 <p>Se le recuerda que el turno del día {{ date_create($event->start)->format('d/m/Y h:i') }} no fue pagado.<br>
     Se le cobrará un recargo por el retraso.
 </p>

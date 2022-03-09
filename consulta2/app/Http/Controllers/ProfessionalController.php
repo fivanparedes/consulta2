@@ -175,7 +175,8 @@ class ProfessionalController extends Controller
         $user = User::find(auth()->user()->id);
         if ($user->isAbleTo('patient-profile')) {
             $_professionals = ProfessionalProfile::where('status', '<>', 0)->get();
-            $pdf = PDF::loadView('professionals.pdf',['professionals' => $_professionals]);
+            $companyLogo = DB::table('settings')->where('name', 'company-logo')->first(['value']);
+            $pdf = PDF::loadView('professionals.pdf',['professionals' => $_professionals, 'companyLogo' => $companyLogo->value]);
             return $pdf->download('profesionales.pdf');
         }
         $professionals = ProfessionalProfile::where('id', '>=', 1);
@@ -213,6 +214,7 @@ class ProfessionalController extends Controller
         }
 
         $professionals = $professionals->sortable()->paginate(10);
+        $companyLogo = DB::table('settings')->where('name', 'company-logo')->first(['value']);
         $pdf = PDF::loadView('professionals.pdf',[
             'professionals' => $professionals,
             'filter1' => $request->input('filter1') != "" ? $request->input('filter1') : null,
@@ -220,6 +222,7 @@ class ProfessionalController extends Controller
             'filter3' => $request->input('filter3') != "" ? $request->input('filter3') : null,
             'filter4' => $request->input('filter4') != "" ? $request->input('filter4') : null,
             'filter5' => $request->input('filter5') != "" ? $request->input('filter5') : null,
+            'companyLogo' => $companyLogo->value
         ]);
         return $pdf->download('profesionales.pdf');
     }

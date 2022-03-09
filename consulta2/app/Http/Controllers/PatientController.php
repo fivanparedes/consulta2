@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Hash;
 use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
 use DateTimeZone;
+use Illuminate\Support\Facades\DB;
 use Spatie\GoogleCalendar\Event;
 
 class PatientController extends Controller
@@ -248,7 +249,8 @@ class PatientController extends Controller
 
             $patients = PatientProfile::whereIn('id', $patients->toArray());
             $patients = $patients->sortable()->paginate(10);
-            $pdf = PDF::loadView('patients.pdf', ['patients' => $patients]);
+            $companyLogo = DB::table('settings')->where('name', 'company-logo')->first(['value']);
+            $pdf = PDF::loadView('patients.pdf', ['patients' => $patients, 'companyLogo' => $companyLogo->value]);
             return $pdf->download('pacientes.pdf');
         } elseif ($user->isAbleTo('institution-profile')) {
             $patients = new Collection();
@@ -273,11 +275,13 @@ class PatientController extends Controller
 
             $patients = PatientProfile::whereIn('id', $patients->toArray());
             $patients = $patients->sortable()->paginate(10);
+            $companyLogo = DB::table('settings')->where('name', 'company-logo')->first(['value']);
             $pdf = PDF::loadView('patients.pdf', ['patients' => $patients,
                 'filter1' => $request->filter1 != "" ? $request->filter1 : "",
                 'filter2' => $request->filter2 != "" ? $request->filter2 : "",
                 'filter3' => $request->filter3 != "" ? $request->filter3 : "",
-                'filter4' => $request->filter4 != "" ? $request->filter4 : "",]);
+                'filter4' => $request->filter4 != "" ? $request->filter4 : "",
+                'companyLogo' => $companyLogo->value]);
             return $pdf->download('pacientes.pdf');
         } elseif ($user->isAbleTo('admin-profile')) {
             $patients = PatientProfile::all()->toQuery();
@@ -322,11 +326,13 @@ class PatientController extends Controller
                 $patients = $patients->whereIn('id', $user_ids);
             }
             $patients = $patients->get();
+            $companyLogo = DB::table('settings')->where('name', 'company-logo')->first(['value']);
             $pdf = PDF::loadView('patients.pdf', ['patients' => $patients,
                 'filter1' => $request->filter1 != "" ? $request->filter1 : "",
                 'filter2' => $request->filter2 != "" ? $request->filter2 : "",
                 'filter3' => $request->filter3 != "" ? $request->filter3 : "",
-                'filter4' => $request->filter4 != "" ? $request->filter4 : "",]);
+                'filter4' => $request->filter4 != "" ? $request->filter4 : "",
+                'companyLogo' => $companyLogo->value]);
             return $pdf->download('pacientes.pdf');
         }
     }

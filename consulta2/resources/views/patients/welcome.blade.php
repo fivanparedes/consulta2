@@ -74,7 +74,7 @@
                         editable: false,
                         eventClick: function(event) {
                             var id = event.id;
-                            window.location.href = {{ Auth::user()->isAbleTo('patient-profile') ? "/profile/events/" : "/cite/" }} + id;
+                            window.location.href = "{{ Auth::user()->isAbleTo('patient-profile') ? "/profile/events/" : '/cite/' }}" +  id;
                         }
                     });
 

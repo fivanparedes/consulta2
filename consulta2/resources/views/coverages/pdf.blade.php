@@ -1,7 +1,7 @@
     <html>
 
     <head>
-        <title>Consulta2 | Informe - Obras sociales</title>
+        <title>{{$companyName}} | Informe - Obras sociales</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     </head>
 

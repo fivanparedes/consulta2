@@ -432,7 +432,8 @@ class EventController extends Controller
 
     public function createTicket(CalendarEvent $event, $id) {
         $event = CalendarEvent::find($id);
-        $pdf = PDF::loadView('events.pdf', ['event' => $event]);
+        $companyLogo = DB::table('settings')->where('name', 'company-logo')->first(['value']);
+        $pdf = PDF::loadView('events.pdf', ['event' => $event, 'companyLogo' => $companyLogo->value]);
         return $pdf->download('comprobante_turno_agendado'.$event->id.'.pdf');
     }
 }

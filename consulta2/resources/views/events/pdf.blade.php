@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <title>Consulta2 | Comprobante - Turno agendado</title>
+    <title>{{$companyName}} | Comprobante - Turno agendado</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 

@@ -1,4 +1,4 @@
-<h1>Consulta2 | Informe de error</h1>
+<h1>{{$companyName}} | Informe de error</h1>
 <p>El paciente {{ $patient->getFullName() }} con DNI N° {{ $patient->profile->user->dni }} ha informado que no tiene deudas impagas o que hay un registro erróneo en cuanto a su tratamiento de {{ $treatment->name }}.
 </p>
 <h2>Datos del tratamiento:</h2>

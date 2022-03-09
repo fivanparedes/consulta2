@@ -174,33 +174,38 @@ class MedicalHistoryController extends Controller
         $clinical_history = $medical_history->clinical_history != "** Sin datos **" ? decrypt($medical_history->clinical_history) : $medical_history->clinical_history;
         
         if ($user->id == auth()->user()->id) {
-
+            $companyLogo = DB::table('settings')->where('name', 'company-logo')->first(['value']);
             $pdf = PDF::loadView('medical_histories.pdf',[
                 'medical_history' => $medical_history,
                 'psicological_history' => $psicological_history,
                 'visitreason' => $visitreason,
                 'diagnosis' => $diagnosis,
-                'clinical_history' => $clinical_history
+                'clinical_history' => $clinical_history,
+                'companyLogo' => $companyLogo->value
             ]);
             return $pdf->download('historia_medica_'.$user->name .'_' .$user->lastname.'.pdf');
         } else {
             if (auth()->user()->id == $medical_history->professionalProfile->profile->user->id) {
+                $companyLogo = DB::table('settings')->where('name', 'company-logo')->first(['value']);
                 $pdf = PDF::loadView('medical_histories.pdf', [
                     'medical_history' => $medical_history,
                     'psicological_history' => $psicological_history,
                     'visitreason' => $visitreason,
                     'diagnosis' => $diagnosis,
-                    'clinical_history' => $clinical_history
+                    'clinical_history' => $clinical_history,
+                    'companyLogo' => $companyLogo
                 ]);
                 return $pdf->download('historia_medica_' . $medical_history->id. '.pdf');
             } else {
                 if (auth()->user()->id == $medical_history->institutionProfile->user->id) {
+                    $companyLogo = DB::table('settings')->where('name', 'company-logo')->first(['value']);
                     $pdf = PDF::loadView('medical_histories.pdf', [
                         'medical_history' => $medical_history,
                         'psicological_history' => $psicological_history,
                         'visitreason' => $visitreason,
                         'diagnosis' => $diagnosis,
-                        'clinical_history' => $clinical_history
+                        'clinical_history' => $clinical_history,
+                        'companyLogo' => $companyLogo
                     ]);
                     return $pdf->download('historia_medica_' . $medical_history->id . '.pdf');
                 }
