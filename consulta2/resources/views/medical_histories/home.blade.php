@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'medical_histories', 'title' => 'Consulta2 | Mi historia clínica',
+@extends('layouts.app', ['activePage' => 'medical_histories', 'title' => $companyName.' | Mi historia clínica',
 'navName' => 'Configuración', 'activeButton' => 'laravel'])
 
 @section('content')
@@ -17,30 +17,24 @@
                                 </div>
                                 @if ($medicalHistories->count() > 0)
                                     <div class="col col-pl-4 mt-5">
-                                        @foreach ($medicalHistories as $medical_history)
-                                            <a href="{{ url('/medical_history' . '/' . encrypt($medical_history->id)) }}">
-                                                <div class="row">
-                                                    <div class="col">
-                                                        <div class="card">
-                                                            <div class="card-body">
-                                                                <div class="card-title">
-                                                                    <h5>{{ $medical_history->professionalProfile->profile->user->name . ' ' . $medical_history->professionalProfile->profile->user->lastname }}
-                                                                    </h5>
-                                                                </div>
-                                                                <div class="card-category">
-                                                                    <p>{{ $medical_history->professionalProfile->specialty->displayname }}
-                                                                    </p>
-                                                                </div>
-                                                                <p>Lugar: {{ $medical_history->professionalProfile->institution_id != 1 ? $medical_history->professionalProfile->institution->name : 'Consultorio propio' }}</p>
-                                                            </div>
+                                        @foreach ($patientProfile->calendarEvents->toQuery()->orderByDesc('start')->get() as $calendarEvent)
+                                            @if (isset($calendarEvent->cite))
+                                                <div class="card">
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <p><strong><i class="nc-icon nc-time-alarm"></i></strong> {{ date_create($calendarEvent->start)->format('d/m/Y h:i') }}</p>
+                                                            <p><strong><i class="nc-icon nc-circle-09"></i></strong> {{ $calendarEvent->professionalProfile->profile->user->lastname . ' ' . $calendarEvent->professionalProfile->profile->user->name }}</p>
+                                                            <p><strong><i class="nc-icon nc-square-pin"></i></strong> {{ $calendarEvent->professionalProfile->institution_id == 1 ? "Consultorio personal" : $calendarEvent->professionalProfile->institution->name }}</p>
+                                                            <p><strong><i class="nc-icon nc-grid-45"></i></strong> {{ $calendarEvent->consultType->name }}</p>
                                                         </div>
-
-
+                                                        <div class="col">
+                                                            <a href="/profile/events/{{ $calendarEvent->id }}" class="btn bg-primary text-light">Ver registro</a>
+                                                        </div>
                                                     </div>
-
                                                 </div>
-                                            </a>
-
+                                            </div>
+                                            @endif
                                         @endforeach
                                     </div>
                                 @else

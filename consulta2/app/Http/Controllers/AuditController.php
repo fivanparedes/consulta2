@@ -14,15 +14,20 @@ class AuditController extends Controller
         if ($user->isAbleTo('admin-profile') /* && $user->isAbleTo('AuditController@index') */) {
             $audits = Audit::all()->toQuery();
             if ($request->has('filter1') && $request->filter1 != "") {
-                $audits = $audits->where('created_at', 'like', '%'.$request->filter1.'%');
+                $audits = $audits->where('created_at', '>=', $request->filter1);
             }
+            
             if ($request->has('filter2') && $request->filter2 != "all") {
                 $audits = $audits->where('event', $request->filter2);
+            }
+            if ($request->has('filter3') && $request->filter3 != "") {
+                $audits = $audits->where('created_at', '<=', $request->filter3);
             }
             $audits = $audits->orderByDesc('created_at')->sortable()->paginate(10);
             return view('admin.audit_log')->with(['audits' => $audits,
                 'filter1' => $request->filter1 != "" ? $request->filter1 : "",
-                'filter2'=> $request->filter2 != "" ? $request->filter2 : ""
+                'filter2'=> $request->filter2 != "" ? $request->filter2 : "",
+                'filter3' => $request->filter3 != "" ? $request->filter3 : "",
         ]);
         } else {
             return abort(404);
@@ -57,12 +62,21 @@ class AuditController extends Controller
             $recharge = DB::table('settings')->where('name', 'recharge')->first('value');
             $patient_register = DB::table('settings')->where('name', 'patient_register')->first('value');
             $professional_register = DB::table('settings')->where('name', 'professional_register')->first('value');
+
+            $companyLogo = DB::table('settings')->where('name', 'company-logo')->first('value');
+            $companyName = DB::table('settings')->where('name', 'company-name')->first('value');
+            $companyEmail = DB::table('settings')->where('name', 'company-email')->first('value');
+            $companyPhone = DB::table('settings')->where('name', 'company-phone')->first('value');
             return view('admin.settings')->with([
                 'timezone' => $timezone->value,
                 'calendar_range' => $calendar_range->value,
                 'recharge' => $recharge->value,
                 'patient_register' => $patient_register->value,
-                'professional_register' => $professional_register->value
+                'professional_register' => $professional_register->value,
+                'companyLogo' => $companyLogo->value,
+                'companyName' => $companyName->value,
+                'companyEmail' => $companyEmail->value,
+                'companyPhone' => $companyPhone->value,
             ]);
         } else {
             return abort(404);
@@ -70,6 +84,10 @@ class AuditController extends Controller
     }
 
     public function settingsUpdate(Request $request) {
+        $validatedData = $request->validate([
+            'company-logo' => 'nullable|mimes:jpg,png,jpeg,gif,svg|max:10240'
+        ]);
+
         $user = User::find(auth()->user()->id);
         if ($user->isAbleTo('admin-profile') /* && $user->isAbleTo('AuditController@index') */) {
             $timezone = DB::table('settings')->where('name', 'timezone')->update([
@@ -87,6 +105,29 @@ class AuditController extends Controller
             $professional_register = DB::table('settings')->where('name', 'professional_register')->update(
                 [
                     'value' => $request->input('register-professional')
+                ]
+            );
+            
+            $companyName = DB::table('settings')->where('name', 'company-name')->update(
+                [
+                    'value' => $request->input('company-name')
+                ]
+            );
+            $companyEmail = DB::table('settings')->where('name', 'company-email')->update(
+                [
+                    'value' => $request->input('company-email')
+                ]
+            );
+            if ($request->hasFile('company-logo')) {
+                $companyLogo = DB::table('settings')->where('name', 'company-logo')->update(
+                    [
+                        'value' => $request->file('company-logo')->store('public/images')
+                    ]
+                );
+            }
+            $companyPhone = DB::table('settings')->where('name', 'company-phone')->update(
+                [
+                    'value' => $request->input('company-phone')
                 ]
             );
             return back()->withStatus('status', 'Configuración actualizada.');

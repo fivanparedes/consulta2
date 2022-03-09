@@ -8,6 +8,7 @@ use GrahamCampbell\SecurityCore\Security;
 use Illuminate\Http\Request;
 use phpDocumentor\Reflection\DocBlock\Tags\Covers;
 use Barryvdh\DomPDF\Facade as PDF;
+use Illuminate\Support\Facades\DB;
 
 class CoverageController extends Controller
 {
@@ -74,7 +75,7 @@ class CoverageController extends Controller
             $cities = City::where('name', 'like', '%' . $city . '%')->get(['id'])->toArray();
             $coverages = $coverages->whereIn('city_id', $cities);
         }
-
+        $companyLogo = DB::table('settings')->where('name', 'company-logo')->first(['value']);
         $coverages = $coverages->get();
         $pdf = PDF::loadView('coverages.pdf',[
             'coverages' => $coverages,
@@ -82,6 +83,7 @@ class CoverageController extends Controller
             'filter2' => $request->input('filter2') != "" ? $request->input('filter2') : null,
             'filter3' => $request->input('filter3') != "" ? $request->input('filter3') : null,
             'filter4' => $request->input('filter4') != "" ? $request->input('filter4') : null,
+            'companyLogo' => $companyLogo->value
         ]);
         return $pdf->download('obras_sociales.pdf');
     }

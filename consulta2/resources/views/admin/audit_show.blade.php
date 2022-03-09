@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'audits', 'title' => 'Consulta2 | Ver registro de Auditoría', 'navName' =>
+@extends('layouts.app', ['activePage' => 'audits', 'title' => $companyName.' | Ver registro de Auditoría', 'navName' =>
 'Configuración', 'activeButton' => 'laravel'])
 
 @section('content')
@@ -23,10 +23,14 @@
                     </div>
 
                     <div class="form-group">
-                        <p><strong>Valores previos:</strong> {{ implode(' - ', $audit->old_values) }}</p>
+                        <p><strong>Valores previos:</strong> @foreach ($audit->old_values as $key => $value)
+                            <span style="font-style: italic">{{ $key }}:</span> {{ $value }} <br>
+                        @endforeach</p>
                     </div>
                     <div class="form-group">
-                        <p><strong>Valores nuevos:</strong> {{ implode(' - ', $audit->new_values) }}</p>
+                        <p><strong>Valores nuevos:</strong> @foreach ($audit->new_values as $key => $value)
+                            <span style="font-style: italic">{{ $key }}:</span> {{ $value }} <br>
+                        @endforeach</p>
                     </div>
                     <div class="form-group">
                         <p><strong>URL del recurso:</strong> {{ $audit->url }}</p>

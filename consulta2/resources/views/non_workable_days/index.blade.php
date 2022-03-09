@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'non_workable_days', 'title' => 'Consulta2 | Días no laborables',
+@extends('layouts.app', ['activePage' => 'non_workable_days', 'title' => $companyName.' | Días no laborables',
 'navName' => 'Configuración', 'activeButton' => 'laravel'])
 
 @section('content')

@@ -35,7 +35,8 @@ class ReminderController extends Controller
             'treatment' => $reminder->calendarEvent->cite->treatment,
             'patient' => $reminder->calendarEvent->cite->treatment->patientProfile
         ], function ($message) use ($data) {
-            $message->to($data['email'], $data['fullname'])->subject('Consulta2 | Paciente confirmó promesa de pago ');
+            $companyName = DB::table('settings')->where('name', 'company-name')->first(['value']);
+            $message->to($data['email'], $data['fullname'])->subject($companyName->value.' | Paciente confirmó promesa de pago ');
             $message->from('sistema@consulta2.com', 'Consulta2');
         });
 
@@ -61,7 +62,8 @@ class ReminderController extends Controller
             'treatment' => $treatment,
             'patient' => $treatment->medicalHistory->patientProfile
         ], function ($message) use ($data) {
-            $message->to($data['email'], $data['fullname'])->subject('Consulta2 | Paciente informó un error');
+            $companyName = DB::table('settings')->where('name', 'company-name')->first(['value']);
+            $message->to($data['email'], $data['fullname'])->subject($companyName->value.' | Paciente informó un error');
             $message->from('sistema@consulta2.com', 'Consulta2');
         });
         return view('external.deleted');

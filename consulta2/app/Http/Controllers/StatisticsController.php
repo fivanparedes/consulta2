@@ -23,7 +23,11 @@ class StatisticsController extends Controller
         if ($request->ajax()) {
             $user = User::find(auth()->user()->id);
             $professionalProfile = $user->profile->professionalProfile;
-            $calendarEvents = CalendarEvent::where('professional_profile_id', $professionalProfile->id)->get();
+            $calendarEvents = CalendarEvent::where('professional_profile_id', $professionalProfile->id);
+            if ($request->has('datestart') && $request->has('dateend')) {
+                $calendarEvents = $calendarEvents->where('start', '>=', $request->datestart)->where('start', '<=', $request->dateend);
+            }
+            $calendarEvents = $calendarEvents->get();
             if ($calendarEvents->count() == 0) {
                 return response()->json(["status" => "error"]);
             }
@@ -76,7 +80,12 @@ class StatisticsController extends Controller
         if ($request->ajax()) {
             $user = User::find(auth()->user()->id);
             $professionalProfile = $user->profile->professionalProfile;
-            $calendarEvents = CalendarEvent::where('professional_profile_id', $professionalProfile->id)->get();
+
+            $calendarEvents = CalendarEvent::where('professional_profile_id', $professionalProfile->id);
+            if ($request->has('datestart') && $request->has('dateend')) {
+                $calendarEvents = $calendarEvents->where('start', '>=', $request->datestart)->where('start', '<=', $request->dateend);
+            }
+            $calendarEvents = $calendarEvents->get();
             $totalEvents = $calendarEvents->count();
             
             if ($totalEvents == 0) {

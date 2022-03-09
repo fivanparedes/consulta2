@@ -49,7 +49,7 @@ class EventController extends Controller
                         "id" => $event->id,
                         "start" => $event->start,
                         "end" => $event->end,
-                        "title" => $event->professionalProfile->getFullName()
+                        "title" => $event->patientProfiles->first()->getFullName()
                     ];
                     array_push($data, $obj);
                 }
@@ -253,12 +253,12 @@ class EventController extends Controller
                 $medical_history->professional_profile_id = $professional->id;
                 $medical_history->save();
             }
-            $_cite = new Cite([
-                'assisted' => false,
-                'covered' => $covered,
-                'paid' => false,
-                'total' => $request->total
-            ]);
+            $_cite = new Cite();
+
+            $_cite->assisted = false;
+            $_cite->covered = $covered;
+            $_cite->paid = false;
+            $_cite->total = $request->total;
             $_cite->calendarEvent()->associate($_event);
             $_cite->practice()->associate($_practice);
             $_cite->medicalHistory()->associate($medical_history);
@@ -267,7 +267,7 @@ class EventController extends Controller
             $_cite->save();
 
             
-            /* $gevent = new GoogleCalendarEvent();
+            $gevent = new GoogleCalendarEvent();
             $gevent->name = $_consult_type->name;
             $gevent->description = 'Turno agendado por medio de Consulta2.';
             $gevent->startDateTime = new Carbon(date_create_from_format('d/m/Y h:i', $selectedDate)->format('Y-m-d h:i:s'), new DateTimeZone("-0300"));;
@@ -278,14 +278,16 @@ class EventController extends Controller
             ]);
             $gevent->addAttendee(['email' => $professional->profile->user->email]);
 
-            $gevent->save(); */
+            $gevent->save();
 
             if ($_consult_type->requires_auth != 0) {
                 Mail::send('external.created', [
                     'user' => $user,
                     'event' => $_event
                 ], function ($message) use ($user){
-                    $message->to($user->email, $user->name . ' ' . $user->lastname)->subject('Consulta2 | Turno pendiente de aprobación');
+                    $companyName = DB::table('settings')->where('name', 'company-name')->first(['value']);
+                    $companyName = $companyName->value;
+                    $message->to($user->email, $user->name . ' ' . $user->lastname)->subject($companyName->value.' | Turno pendiente de aprobación');
                     $message->from('sistema@consulta2.com', 'Consulta2');
                 });
                 $reminder = new Reminder();
@@ -297,20 +299,21 @@ class EventController extends Controller
                     'user' => $user,
                     'event' => $_event
                 ], function ($message) use ($user) {
-                    $message->to($user->email, $user->name . ' ' . $user->lastname)->subject('Consulta2 | Turno agendado exitosamente');
+                    $companyName = DB::table('settings')->where('name', 'company-name')->first(['value']);
+                    $message->to($user->email, $user->name . ' ' . $user->lastname)->subject($companyName->value.' | Turno agendado exitosamente');
                     $message->from('sistema@consulta2.com', 'Consulta2');
                 });
             }
 
             DB::commit();
-            /* $gevents = GoogleCalendarEvent::get();
+            $gevents = GoogleCalendarEvent::get();
             foreach ($gevents as $item) {
                 if ($item->startDateTime == new Carbon($_event->start)) {
                     $_event->gid = $item->id;
                     $_event->save();
                     break;
                 }
-            } */
+            }
             if ($user->hasRole('Patient')) {
                 return redirect()->route('events.success', ['event' => $_event]);
             } else {
@@ -318,6 +321,7 @@ class EventController extends Controller
             }
         } catch (\Throwable $th) {
             DB::rollBack();
+            dd($th);
             return back()->withErrors('turno', 'Error al agendar turno, intente de nuevo');
         }
         
@@ -325,8 +329,8 @@ class EventController extends Controller
     }
 
     public function success(CalendarEvent $event) {
-        /* $gevent = GoogleCalendarEvent::find($event->gid); */
-        return view('events.success')->with(['event' => $event, /* 'gevent' => $gevent */]);
+        $gevent = GoogleCalendarEvent::find($event->gid);
+        return view('events.success')->with(['event' => $event, 'gevent' => $gevent]);
     }
 
     public function massCancel(Request $request) {
@@ -353,7 +357,8 @@ class EventController extends Controller
                             'user' => $user,
                             'event' => $event
                         ], function ($message) use ($data) {
-                            $message->to($data['email'], $data['fullname'])->subject('Consulta2 | Turno cancelado');
+                            $companyName = DB::table('settings')->where('name', 'company-name')->first(['value']);
+                            $message->to($data['email'], $data['fullname'])->subject($companyName->value.' | Turno cancelado');
                             $message->from('sistema@consulta2.com', 'Consulta2');
                         });
                     }
@@ -379,7 +384,7 @@ class EventController extends Controller
         DB::beginTransaction();
         try {
             $event = CalendarEvent::find($request->id);
-            //$gevent = \Spatie\GoogleCalendar\Event::find($event->gid);
+            $gevent = \Spatie\GoogleCalendar\Event::find($event->gid);
             $patients = $event->patientProfiles;
             $user = User::find(Auth::user()->id);
             $event->delete();
@@ -398,7 +403,8 @@ class EventController extends Controller
                         'user' => $user,
                         'event' => $event
                     ], function ($message) use ($data) {
-                        $message->to($data['email'], $data['fullname'])->subject('Consulta2 | Turno cancelado');
+                        $companyName = DB::table('settings')->where('name', 'company-name')->first(['value']);
+                        $message->to($data['email'], $data['fullname'])->subject($companyName->value.' | Turno cancelado');
                         $message->from('sistema@consulta2.com', 'Consulta2');
                     });
                     return redirect('/cite');

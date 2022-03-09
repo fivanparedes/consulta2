@@ -83,7 +83,7 @@
             <ul class="navbar-nav   d-flex align-items-center">
                 <li class="nav-item">
                     <a class="nav-link" href=" {{ route('profile.edit') }} ">
-                        <span class="no-icon">{{ __('Cuenta') }}</span>
+                        <span class="no-icon">{{ Auth::user()->name . ' ' . Auth::user()->lastname }}</span>
                     </a>
                 </li>
                 {{-- <li class="nav-item dropdown">

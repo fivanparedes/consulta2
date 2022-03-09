@@ -1,4 +1,4 @@
-@extends('layouts/app', ['activePage' => 'login', 'title' => 'Consulta2 | Iniciar sesión'])
+@extends('layouts.app', ['activePage' => 'login', 'title' => $companyName.' | Iniciar sesión'])
 
 @section('content')
     <div class="full-page section-image" data-color="black" data-image="{{ asset('light-bootstrap/img/full-screen-image-2.jpg') }}">

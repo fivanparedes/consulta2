@@ -22,18 +22,22 @@ class MedicalHistoryController extends Controller
     {
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $user = User::find(auth()->user()->id);
         if ($user->isAbleTo('patient-profile')) {
             $medicalHistories = $user->profile->patientProfile->medicalHistories;
+            //dd(Auth::user()->profile->patientProfile);
             return view('medical_histories.home')->with([
-                'medicalHistories' => $medicalHistories
+                'medicalHistories' => $medicalHistories,
+                'patientProfile' => Auth::user()->profile->patientProfile
             ]);
         } else {
             if ($user->isAbleTo('professional-profile')) {
-                return view('medical_histories.index')->with([
-                    'medicalHistories'
+                $medicalHistories = PatientProfile::find($request->patientid)->medicalHistories;
+                return view('medical_histories.home')->with([
+                    'medicalHistories' => $medicalHistories,
+                    'patientProfile' => PatientProfile::find($request->patientid)
                 ]);
             }
             return abort(404);

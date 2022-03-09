@@ -240,14 +240,14 @@ class autoAssignOverTreatment extends Command
                             $_cite->treatment()->associate($treatment);
 
                             $_cite->save();
-
+                            $companyName = DB::table('settings')->where('name', 'company-name')->first(['value']);
                             $user = $treatment->medicalHistory->patientProfile->profile->user;
                             Mail::send('external.created', [
                                 'user' => $user,
                                 'event' => $_event
-                            ], function ($message) use ($user) {
-                                $message->to($user->email, $user->name . ' ' . $user->lastname)->subject('Consulta2 | Turno pendiente de aprobación');
-                                $message->from('sistema@consulta2.com', 'Consulta2');
+                            ], function ($message) use ($user, $companyName) {
+                                $message->to($user->email, $user->name . ' ' . $user->lastname)->subject($companyName->value.' | Turno pendiente de aprobación');
+                                $message->from('sistema@consulta2.com', $companyName->value);
                             });
                             $reminder = new Reminder();
                             $reminder->calendarEvent()->associate($_event);

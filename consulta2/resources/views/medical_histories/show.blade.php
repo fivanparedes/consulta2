@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'medical_histories', 'title' => 'Consulta2 | Editar institución', 'navName' =>
+@extends('layouts.app', ['activePage' => 'medical_histories', 'title' => $companyName.' | Editar institución', 'navName' =>
 'Configuración', 'activeButton' => 'laravel'])
 
 @section('content')
@@ -36,6 +36,10 @@
                                 @if (Auth::user()->isAbleTo('manage-histories'))
                                     <a class="btn bg-secondary" href="/medical_history/{{ encrypt($medical_history->id) }}/edit">Modificar</a>
                                 @endif
+                            </div>
+                            <div class="col">
+                                <form action="/medical_history"><input type="hidden" name="patientid" value="{{ $medical_history->patient_profile_id }}"><button type="submit" class="btn bg-primary text-light">Ver historial completo</button></form>
+                                
                             </div>
                     </div>
                     <hr>

@@ -17,7 +17,7 @@
             <div class="row">
                 <div class="col">
                     <img style="position: relative; float:left"
-                        src='https://static.vecteezy.com/system/resources/previews/000/499/145/original/vector-health-sign-icon-design.jpg'
+                        src='{{ $companyLogo != null? asset('/storage/images/' . explode('/', $companyLogo)[2]): asset('light-bootstrap/img/default-avatar.png') }}'
                         width="100" height="100" alt="Logo" />
                 </div>
                 <div class="col">

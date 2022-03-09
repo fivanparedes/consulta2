@@ -6,6 +6,7 @@ use App\Models\Coverage;
 use App\Models\Reminder;
 use App\Models\Treatment;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class debtResume extends Command
@@ -41,6 +42,7 @@ class debtResume extends Command
      */
     public function handle()
     {
+        $companyName = DB::table('settings')->where('name', 'company-name')->first(['value']);
         $treatments = Treatment::where('start', '<', now())->where('end', '>', now())->get();
         if (count($treatments) > 0) {
             foreach ($treatments as $treatment) {
@@ -68,8 +70,8 @@ class debtResume extends Command
                             'event' => $cite->calendarEvent,
                             'reminder' => $reminder,
                             'patient' => $treatment->medicalHistory->patientProfile
-                        ], function ($message) use ($data) {
-                            $message->to($data['email'], $data['fullname'])->subject('Consulta2 | Recordatorio de deuda ');
+                        ], function ($message) use ($data, $companyName) {
+                            $message->to($data['email'], $data['fullname'])->subject($companyName->value.' | Recordatorio de deuda ');
                             $message->from('sistema@consulta2.com', 'Consulta2');
                         });
                         echo "Enviado un email a " . $data['email'] . "\n";
@@ -94,8 +96,8 @@ class debtResume extends Command
                             'event' => $cite->calendarEvent,
                             'debt' => $total,
                             'patient' => $treatment->medicalHistory->patientProfile
-                        ], function ($message) use ($data) {
-                            $message->to($data['email'], $data['fullname'])->subject('Consulta2 | Recordatorio de deuda ');
+                        ], function ($message) use ($data, $companyName) {
+                            $message->to($data['email'], $data['fullname'])->subject($companyName->value.' | Recordatorio de deuda ');
                             $message->from('sistema@consulta2.com', 'Consulta2');
                         });
                         echo "Enviado un email a " . $data['email'] . "\n";
@@ -122,8 +124,8 @@ class debtResume extends Command
                             'debt' => $total,
                             'patient' => $treatment->medicalHistory->patientProfile,
                             'disabling' => true
-                        ], function ($message) use ($data) {
-                            $message->to($data['email'], $data['fullname'])->subject('Consulta2 | Recordatorio de deuda ');
+                        ], function ($message) use ($data, $companyName) {
+                            $message->to($data['email'], $data['fullname'])->subject($companyName->value.' | Recordatorio de deuda ');
                             $message->from('sistema@consulta2.com', 'Consulta2');
                         });
                         echo "Enviado un email a " . $data['email'] . "\n";

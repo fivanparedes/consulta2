@@ -6,6 +6,7 @@ use App\Http\Controllers\CityController;
 use App\Http\Controllers\CountryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\MedicalHistoryController;
 use App\Http\Controllers\PatientController;
@@ -43,13 +44,15 @@ Route::get('/clearapp', function() {
 });
 
 
-
+Route::get('/oauth', [HomeController::class, 'oauth']);
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Auth::routes();
 
 Route::get('/home', 'App\Http\Controllers\HomeController@index')->name('dashboard');
+
+
 
 Route::group(['middleware' => 'auth'], function () {
 
@@ -105,7 +108,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/cite/edit/{id}', ['as' => 'cite.edit', 'uses' => 'App\Http\Controllers\CiteController@edit']);
 	Route::get('/cite_pdf', ['as' => 'cite.pdf', 'uses' => 'App\Http\Controllers\CiteController@createPDF']);
 	Route::patch('/cite/update/{id}', ['as' => 'cite.update', 'uses' => 'App\Http\Controllers\CiteController@update']);
-	
+
 	Route::resource('/treatments','App\Http\Controllers\TreatmentController', ['except' => ['show']]);
 	/**
 	 * Perfiles de usuario

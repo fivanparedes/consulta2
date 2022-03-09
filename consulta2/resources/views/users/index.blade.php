@@ -12,7 +12,7 @@
 =========================================================
 
  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.  -->
- @extends('layouts.app', ['activePage' => 'users.index', 'title' => 'Consulta2 | Mi hoja de vida', 'navName' => 'users.index', 'activeButton' => 'laravel'])
+ @extends('layouts.app', ['activePage' => 'users.index', 'title' => $companyName.' | Mi hoja de vida', 'navName' => 'users.index', 'activeButton' => 'laravel'])
 
  @section('content')
  <div class="content">

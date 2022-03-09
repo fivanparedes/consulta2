@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'cites', 'title' => 'Consulta2 | Lista de sesiones y consultas', 'navName' =>
+@extends('layouts.app', ['activePage' => 'cites', 'title' => $companyName.' | Lista de sesiones y consultas', 'navName' =>
 'Sesiones programadas', 'activeButton' => 'laravel'])
 
 @section('content')
@@ -161,6 +161,7 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($cites as $cite)
+                                        @if (isset($cite->cite))
                                             <tr>
                                                 <td>{{ $cite->id }}</td>
                                                 <td>{{ $cite->title }}</td>
@@ -190,6 +191,8 @@
                                                         <i class="nc-icon nc-badge"></i>
                                                     </a></td>
                                             </tr>
+                                        @endif
+                                            
                                         @endforeach
 
                                     </tbody>

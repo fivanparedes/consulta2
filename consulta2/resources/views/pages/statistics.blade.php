@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'statistics', 'title' => 'Consulta2 | Panel de estadística', 'navName' =>
+@extends('layouts.app', ['activePage' => 'statistics', 'title' => $companyName.' | Panel de estadística', 'navName' =>
 'Estadísticas', 'activeButton' => 'laravel'])
 
 @section('content')
@@ -17,6 +17,13 @@
                             <h4 class="card-title">{{ __('Obras sociales más atendidas') }}</h4>
                             <p class="card-category">{{ __('Histórico en base a los turnos y consultas registradas') }}
                             </p>
+                            <div class="form-group">
+                                <label for="input-datestart">Rango de fechas</label>
+                                <input type="date" name="datestart" id="input-datestart" class="form-control" value="{{ date('Y-m-d', strtotime(now() . '-30 day')) }}" max="{{ date_create()->format('Y-m-d') }}" onchange="refreshPieChart()">
+                            </div>
+                            <div class="form-group">
+                                <input type="date" name="dateend" id="input-dateend" class="form-control" value="{{ date('Y-m-d', strtotime(now())) }}" max="{{ date_create()->format('Y-m-d') }}" onchange="refreshPieChart()">
+                            </div>
                         </div>
                         <div class="card-body ">
                             <div id="chartPreferences" class="ct-chart ct-perfect-fourth"></div>
@@ -41,6 +48,13 @@
                                 <h4 class="card-title">{{ __('Rangos etarios más típicos') }}</h4>
                                 <p class="card-category">
                                     {{ __('Histórico basado en los turnos agendados y consultas realizadas') }}</p>
+                                    <div class="form-group">
+                                <label for="input-agestart">Rango de fechas</label>
+                                <input type="date" name="agestart" id="input-agestart" class="form-control" value="{{ date('Y-m-d', strtotime(now() . '-30 day')) }}" max="{{ date_create()->format('Y-m-d') }}" onchange="refreshBarChart()">
+                            </div>
+                            <div class="form-group">
+                                <input type="date" name="ageend" id="input-ageend" class="form-control" value="{{ date('Y-m-d', strtotime(now())) }}" max="{{ date_create()->format('Y-m-d') }}" onchange="refreshBarChart()">
+                            </div>
                             </div>
                             <div class="card-body ">
                                 <div id="chartActivity" class="ct-chart"></div>
@@ -70,6 +84,13 @@
 @push('js')
     <script type="text/javascript">
         $(document).ready(function() {
+            refreshBarChart();
+            refreshPieChart();
+        });
+
+        function refreshPieChart() {
+            var datestart = $('#input-datestart').val();
+            var dateend = $('#input-dateend').val();
             // Todo el renderizado de gráficos lo hago en el front, el controlador StatisticsController solo se encarga de juntar la data.
             var dataPreferences = {
                 series: [
@@ -87,12 +108,22 @@
                     showGrid: false
                 }
             };
+            $('#particular').empty();
+            $('#most_used_1').empty();
+            $('#most_used_2').empty();
+            $('#most_used_3').empty();
+            $('#least_used').empty();
             $.ajax({
                 method: 'GET',
                 url: '/statistics/loadCoverageComparison',
                 dataType: 'json',
+                data: {
+                    datestart: datestart,
+                    dateend: dateend
+                },
                 success: function(response) {
                     if (response.status == "success") {
+                        $('#chartPreferences').empty();
                         console.log(JSON.stringify(response));
                         var series = response.series;
                         var labels = response.labels;
@@ -130,9 +161,11 @@
                     $('#least_used').append('<p>' + pieData.labels[4] + '</p>');
                 }
             });
+        }
 
-
-
+        function refreshBarChart() {
+            var agestart = $('#input-agestart').val();
+            var ageend = $('#input-ageend').val();
             var options = {
                 seriesBarDistance: 10,
                 axisX: {
@@ -152,13 +185,22 @@
                     }
                 }]
             ];
-
+                 $('#particular').empty();
+            $('#most_used_1').empty();
+            $('#most_used_2').empty();
+            $('#most_used_3').empty();
+            $('#least_used').empty();
             $.ajax({
                 method: 'GET',
                 url: '/statistics/loadAgeRange',
                 dataType: 'json',
+                data: {
+                    datestart: agestart,
+                    dateend: ageend
+                },
                 success: function(response) {
                     if (response.status == "success") {
+                        $('#chartActivity').empty();
                         console.log(JSON.stringify(response));
                         var series = response.series;
                         var data = {
@@ -199,6 +241,6 @@
                             responsiveOptions);
                 }
             });
-        });
+        }
     </script>
 @endpush

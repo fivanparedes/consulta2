@@ -352,7 +352,7 @@ class PatientController extends Controller
     {
         $event = CalendarEvent::find($id);
         $gevent = null;
-        /* if ($event->gid == null) {
+        if ($event->gid == null) {
             $gevents = Event::get();
             foreach ($gevents as $item) {
                 if ($item->startDateTime == new Carbon($event->start, new DateTimeZone("-0300"))) {
@@ -362,7 +362,7 @@ class PatientController extends Controller
             }
         } else {
             $gevent = Event::find($event->gid);
-        } */
+        }
 
         //dd($gevents);
         //$gevent = null;

@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'dashboard', 'title' => 'Consulta2 | Panel', 'navName' => 'Dashboard', 'activeButton' => 'laravel'])
+@extends('layouts.app', ['activePage' => 'dashboard', 'title' => $companyName.' | Panel', 'navName' => 'Dashboard', 'activeButton' => 'laravel'])
 
 @section('content')
     <div class="content">

@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'register', 'title' => 'Consulta2 | Crear cuenta'])
+@extends('layouts.app', ['activePage' => 'register', 'title' => $companyName.' | Crear cuenta'])
 
 @section('content')
     <div class="full-page register-page section-image" data-color="black" data-image="{{ asset('light-bootstrap/img/bg5.jpg') }}">

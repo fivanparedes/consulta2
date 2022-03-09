@@ -242,7 +242,8 @@ class CiteController extends Controller
                     'reminder' => $calendarEvent->reminder,
                     'patient' => $patient
                 ], function ($message) use ($data) {
-                    $message->to($data['email'], $data['fullname'])->subject('Consulta2 | Recordatorio de turno para el día ');
+                    $companyName = DB::table('settings')->where('name', 'company-name')->first(['value']);
+                    $message->to($data['email'], $data['fullname'])->subject($companyName->value.' | Recordatorio de turno para el día ');
                     $message->from('sistema@consulta2.com', 'Consulta2');
                 });
             }
@@ -279,4 +280,5 @@ class CiteController extends Controller
     {
         //
     }
+
 }

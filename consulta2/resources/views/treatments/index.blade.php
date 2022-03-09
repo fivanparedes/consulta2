@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'treatments', 'title' => 'Consulta2 | Lista de tratamientos en progreso',
+@extends('layouts.app', ['activePage' => 'treatments', 'title' => $companyName.' | Lista de tratamientos en progreso',
 'navName' => 'Configuración', 'activeButton' => 'laravel'])
 
 @section('content')
