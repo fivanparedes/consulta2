@@ -48,4 +48,8 @@ class Cite extends Model
     public function treatment() {
         return $this->belongsTo(Treatment::class);
     }
+
+    public function document() {
+        return $this->hasOne(Document::class);
+    }
 }

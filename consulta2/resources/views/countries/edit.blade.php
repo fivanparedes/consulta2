@@ -37,11 +37,6 @@
                 </div>
         </div>
         </form>
-        <form action="/countries/{{ $country->id }}" method="post">
-            @csrf
-            @method('delete')
-            <button type="submit" class="btn btn-danger text-light">Eliminar país</button>
-        </form>
     </div>
     </div>
 @endsection

@@ -82,11 +82,6 @@
                 </div>
         </div>
         </form>
-        <form action="/institutions/{{ $institution->id }}" method="post">
-            @csrf
-            @method('delete')
-            <button type="submit" class="btn btn-danger text-light">Eliminar institución</button>
-        </form>
     </div>
     </div>
     <script>

@@ -101,7 +101,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/institutions/pdf', 'App\Http\Controllers\InstitutionController@createPDF');
 
 	/**
-	 * Controlador de citas (sesiones de consultorio)
+	 * Controlador de citas (consultas y sesiones de consultorio)
 	 */
 	Route::get('cite', ['as' => 'cite.index', 'uses' => 'App\Http\Controllers\CiteController@index']);
 	Route::get('/cite/{id}', ['as' => 'cite.show', 'uses' => 'App\Http\Controllers\CiteController@_show']);
@@ -109,7 +109,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/cite_pdf', ['as' => 'cite.pdf', 'uses' => 'App\Http\Controllers\CiteController@createPDF']);
 	Route::patch('/cite/update/{id}', ['as' => 'cite.update', 'uses' => 'App\Http\Controllers\CiteController@update']);
 
-	Route::resource('/treatments','App\Http\Controllers\TreatmentController', ['except' => ['show']]);
+	Route::resource('/treatments','App\Http\Controllers\TreatmentController');
 	/**
 	 * Perfiles de usuario
 	 */
@@ -186,7 +186,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('statistics/loadCoverageComparison', [StatisticsController::class, 'loadCoverageComparison']);
 	Route::get('statistics/loadAgeRange', [StatisticsController::class, 'loadAgeRange']);
 	Route::get('statistics', [StatisticsController::class, 'index']);
-	Route::get('statistics/pdf', [StatisticsController::class, 'createPDF']);
+	Route::get('statistics_pdf', [StatisticsController::class, 'createPDF']);
 
 	Route::get('/icons', function() {
 		return view('pages.icons');

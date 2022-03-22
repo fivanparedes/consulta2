@@ -18,7 +18,7 @@
 
                     </div>
                     <div class="col">
-                        <a href="{{ url('/statistics_pdf') }}" class="btn bg-primary text-light">Imprimir</a>
+                        <a href="{{ url('statistics_pdf') }}" class="btn bg-primary text-light">Imprimir</a>
                     </div>
                 </div>
             </div>

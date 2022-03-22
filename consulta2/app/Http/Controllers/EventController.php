@@ -33,7 +33,7 @@ class EventController extends Controller
             $user = User::find(auth()->user()->id);
             $data = array();
             if ($user->isAbleTo('patient-profile')) {
-                foreach ($user->profile->patientProfile->calendarEvents as $event) {
+                foreach ($user->profile->patientProfile->calendarEvents->where('active', true) as $event) {
                     $obj = [
                         "id" => $event->id,
                         "start" => $event->start,
@@ -44,7 +44,7 @@ class EventController extends Controller
                 }
 
             } elseif ($user->isAbleTo('professional-profile')) {
-                foreach($user->profile->professionalProfile->calendarEvents as $event) {
+                foreach($user->profile->professionalProfile->calendarEvents->where('active', true) as $event) {
                     $obj = [
                         "id" => $event->id,
                         "start" => $event->start,
@@ -71,7 +71,7 @@ class EventController extends Controller
                 $arr = array();
 
                 //Find the availability of hours given a date
-                $dayturns = CalendarEvent::where('professional_profile_id', $professional->id)->where('start', 'like', '%' . $request->currentdate . '%')->get();
+                $dayturns = CalendarEvent::where('active', true)->where('professional_profile_id', $professional->id)->where('start', 'like', '%' . $request->currentdate . '%')->get();
                 $nonworkabledays = NonWorkableDay::where('professional_profile_id', $professional->id)
                     ->where('from', '<=', $request->currentdate)->where('to', '>=', $request->currentdate)->get();
                 foreach ($hours as $hour) {
@@ -217,18 +217,21 @@ class EventController extends Controller
             
             $_practice = Practice::find($request->input('practice-id'));
             $_consult_type = ConsultType::find($request->input('consult-type'));
-            $carbonDate = new Carbon(date_create_from_format('d/m/Y h:i',$selectedDate)->format('Y-m-d h:i:s'), new DateTimeZone("-0300"));
+            //dd(date_create_from_format('d/m/Y H:i', $selectedDate)->format('Y-m-d h:i:s'));
+            $partialdate = date_create_from_format('d/m/Y H:i', $selectedDate)->format('Y-m-d h:i:s');
+            $carbonDate = new Carbon($partialdate, new DateTimeZone("-0300"));
             //$currentDate = date($selectedDate);
             //dd($carbonDate);
             $futureDate = $carbonDate;
             $futureDate = $futureDate->addHour();
             $_event = new CalendarEvent([
                 'title' => $user->name . ' ' . $user->lastname,
-                'start' => new Carbon(date_create_from_format('d/m/Y h:i',$selectedDate)->format('Y-m-d h:i:s'), new DateTimeZone("-0300")),
+                'start' => new Carbon($partialdate, new DateTimeZone("-0300")),
                 'end' => $futureDate->setTimezone("-0300"),
                 'approved' => $_consult_type->requires_auth ? 0 : 1,
                 'confirmed' => false,
                 'isVirtual' => boolval($request->input('isVirtual')),
+                'active' => true
             ]);
             $_patient = PatientProfile::where('profile_id', $user->profile->id)->first();
 
@@ -270,7 +273,7 @@ class EventController extends Controller
             $gevent = new GoogleCalendarEvent();
             $gevent->name = $_consult_type->name;
             $gevent->description = 'Turno agendado por medio de Consulta2.';
-            $gevent->startDateTime = new Carbon(date_create_from_format('d/m/Y h:i', $selectedDate)->format('Y-m-d h:i:s'), new DateTimeZone("-0300"));;
+            $gevent->startDateTime = new Carbon($partialdate, new DateTimeZone("-0300"));;
             $gevent->endDateTime = $futureDate->setTimezone("-0300");
             $gevent->addAttendee([
                 'email' => $_patient->profile->user->email,
@@ -341,12 +344,13 @@ class EventController extends Controller
         try {
             DB::beginTransaction();
             $user = User::find(auth()->user()->id);
-            $events = CalendarEvent::where('professional_profile_id', $user->profile->professionalProfile->id)
+            $events = CalendarEvent::where('active', true)->where('professional_profile_id', $user->profile->professionalProfile->id)
                 ->where('start', '>=', date_create($request->from))->where('start', '<=', date_create($request->input('to')))->get();
             if ($events->count() > 0) {
                 foreach ($events as $event) {
                     $patients = $event->patientProfiles;
-                    $event->delete();
+                    $event->active = false;
+                    $event->save();
                     foreach ($patients as $patient) {
                         $data = array(
                             'email' => $patient->profile->user->email,
@@ -384,13 +388,17 @@ class EventController extends Controller
         DB::beginTransaction();
         try {
             $event = CalendarEvent::find($request->id);
-            $gevent = \Spatie\GoogleCalendar\Event::find($event->gid);
+            if ($event->gid != null) {
+                $gevent = \Spatie\GoogleCalendar\Event::find($event->gid);
+                if (isset($gevent)) {
+                    $gevent->delete();
+                }
+            }
             $patients = $event->patientProfiles;
             $user = User::find(Auth::user()->id);
-            $event->delete();
-            if (isset($gevent)) {
-                $gevent->delete();
-            }
+            $event->active = false;
+            $event->save();
+            
             DB::commit();
             if ($user->hasRole('Professional')) {
                 foreach ($patients as $patient) {
@@ -426,7 +434,9 @@ class EventController extends Controller
 
     public function externalDelete(Request $request)
     {
-        $event = CalendarEvent::find($request->id)->delete();
+        $event = CalendarEvent::find($request->id);
+        $event->active = false;
+        $event->save();
         return view('external.deleted');
     }
 

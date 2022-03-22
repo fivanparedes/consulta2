@@ -11,6 +11,7 @@ use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class StatisticsController extends Controller
 {
@@ -23,7 +24,7 @@ class StatisticsController extends Controller
         if ($request->ajax()) {
             $user = User::find(auth()->user()->id);
             $professionalProfile = $user->profile->professionalProfile;
-            $calendarEvents = CalendarEvent::where('professional_profile_id', $professionalProfile->id);
+            $calendarEvents = CalendarEvent::where('active', true)->where('professional_profile_id', $professionalProfile->id);
             if ($request->has('datestart') && $request->has('dateend')) {
                 $calendarEvents = $calendarEvents->where('start', '>=', $request->datestart)->where('start', '<=', $request->dateend);
             }
@@ -81,7 +82,7 @@ class StatisticsController extends Controller
             $user = User::find(auth()->user()->id);
             $professionalProfile = $user->profile->professionalProfile;
 
-            $calendarEvents = CalendarEvent::where('professional_profile_id', $professionalProfile->id);
+            $calendarEvents = CalendarEvent::where('active', true)->where('professional_profile_id', $professionalProfile->id);
             if ($request->has('datestart') && $request->has('dateend')) {
                 $calendarEvents = $calendarEvents->where('start', '>=', $request->datestart)->where('start', '<=', $request->dateend);
             }
@@ -124,5 +125,10 @@ class StatisticsController extends Controller
                 "series" => $series
             ]);
         }
+    }
+
+    public function createPDF(Request $request) {
+        $pdf = PDF::loadView('pages.statistics_pdf');
+        return $pdf->download("reporte_estadistico.pdf");
     }
 }

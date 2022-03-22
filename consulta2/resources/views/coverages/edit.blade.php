@@ -52,11 +52,6 @@
                 </div>
         </div>
         </form>
-        <form action="/coverages/{{ $coverage->id }}" method="post">
-            @csrf
-            @method('delete')
-            <button type="submit" class="btn btn-danger text-light">Eliminar Obra Social</button>
-        </form>
     </div>
     </div>
 @endsection

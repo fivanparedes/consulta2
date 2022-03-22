@@ -107,7 +107,8 @@ class TreatmentController extends Controller
      */
     public function show(Treatment $treatment)
     {
-        //
+        $preferred_days = explode(';', $treatment->preferred_days);
+        return view('treatments.edit')->with(['treatment' => $treatment, 'preferred_days' => $preferred_days]);
     }
 
     /**

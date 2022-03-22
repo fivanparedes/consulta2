@@ -35,11 +35,11 @@ class PatientController extends Controller
         if ($user->isAbleTo('professional-profile')) {
             $col = new Collection();
 
-            $medical_histories = $user->profile->professionalProfile->medicalHistories;
+            /* $medical_histories = $user->profile->professionalProfile->medicalHistories;
             foreach ($medical_histories as $medical_history) {
                 $col->push($medical_history->patientProfile);
-            }
-            $events = CalendarEvent::where('professional_profile_id', $user->profile->professionalProfile->id);
+            } */
+            $events = $user->profile->professionalProfile->calendarEvents->where('active', true);
             foreach ($events as $calendarevent) {
                 if (count($calendarevent->patientProfiles) > 0) {
                     foreach ($calendarevent->patientProfiles as $patientProfile) {
@@ -49,8 +49,8 @@ class PatientController extends Controller
                     }
                 }
             }
-
-            $patients = PatientProfile::whereIn('id', $col->toArray(['id']));
+            
+            $patients = $col->toQuery();
             if ($request->has('filter1') && $request->filter1 != "") {
                 $user_ids = array();
                 foreach ($col as $item) {
@@ -104,7 +104,7 @@ class PatientController extends Controller
         } elseif ($user->isAbleTo('institution-profile')) {
             $patients = new Collection();
             $professionals = Auth::user()->institutionProfile->professionalProfiles->toArray(['id']);
-            $events = CalendarEvent::whereIn('professional_profile_id', $professionals)->get();
+            $events = CalendarEvent::where('active', true)->whereIn('professional_profile_id', $professionals)->get();
             foreach ($events as $event) {
                 if ($event->patientProfiles->count() > 0) {
                     foreach ($event->patientProfiles as $profile) {
@@ -229,7 +229,7 @@ class PatientController extends Controller
         $user = User::find(auth()->user()->id);
         if ($user->isAbleTo('professional-profile')) {
             $patients = new Collection();
-            $events = CalendarEvent::where('professional_profile_id', Auth::user()->profile->professionalProfile->id)->get();
+            $events = CalendarEvent::where('active', true)->where('professional_profile_id', Auth::user()->profile->professionalProfile->id)->get();
             foreach ($events as $event) {
                 if ($event->patientProfiles->count() > 0) {
                     foreach ($event->patientProfiles as $profile) {
@@ -255,7 +255,7 @@ class PatientController extends Controller
         } elseif ($user->isAbleTo('institution-profile')) {
             $patients = new Collection();
             $professionals = Auth::user()->institutionProfile->professionalProfiles->all(['id']);
-            $events = CalendarEvent::whereIn('professional_profile_id', $professionals)->get();
+            $events = CalendarEvent::where('active', true)->whereIn('professional_profile_id', $professionals)->get();
             foreach ($events as $event) {
                 if ($event->patientProfiles->count() > 0) {
                     foreach ($event->patientProfiles as $profile) {
@@ -343,7 +343,7 @@ class PatientController extends Controller
         if (!$usermodel->isAbleTo('patient-profile')) {
             return abort(404);
         }
-        $calendarevents = Auth::user()->profile->patientProfile->calendarEvents;
+        $calendarevents = Auth::user()->profile->patientProfile->calendarEvents->where('active', true);
         if ($calendarevents->count() > 0) {
             $calendarevents = $calendarevents->toQuery();
             $calendarevents = $calendarevents->sortable()->paginate(10);

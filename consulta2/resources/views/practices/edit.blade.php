@@ -102,11 +102,6 @@
         </div>
     </div>
     </form>
-    <form action="/practices/{{ $practice->id }}" method="post">
-        @csrf
-        @method('delete')
-        <button type="submit" class="btn btn-danger text-light">Eliminar práctica</button>
-    </form>
     </div>
     </div>
     <script>

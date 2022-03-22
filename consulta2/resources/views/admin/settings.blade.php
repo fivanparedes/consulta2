@@ -18,9 +18,14 @@
                         <div class="row">
                             <div class="col">
                                 <div class="form-group">
-                                    <label for="name">Nombre de la organización</label>
+                                    <label for="name">Razón social</label>
                                     <input type="text" name="company-name" class="form-control"
                                         value="{{ $companyName }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cuit">CUIT</label>
+                                    <input type="text" name="cuit" class="form-control"
+                                        value="{{ $cuit }}">
                                 </div>
                                 <div class="form-group">
                                     <label for="company-email">E-mail del establecimiento:</label>

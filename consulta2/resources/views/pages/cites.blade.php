@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'cites', 'title' => $companyName.' | Lista de sesiones y consultas', 'navName' =>
+@extends('layouts.app', ['activePage' => 'cites', 'title' => $companyName.' | Lista de consultas y sesiones', 'navName' =>
 'Sesiones programadas', 'activeButton' => 'laravel'])
 
 @section('content')
@@ -8,8 +8,8 @@
                 <div class="col-md-12">
                     <div class="card strpied-tabled-with-hover">
                         <div class="card-header ">
-                            <h4 class="card-title">Sesiones y consultas</h4>
-                            <p class="card-category">Lista de sesiones pasadas, presentes y futuras.</p>
+                            <h4 class="card-title">Consultas</h4>
+                            <p class="card-category">Lista de consultas y sesiones pasadas, presentes y futuras.</p>
                         </div>
                         @if (Auth::user()->isAbleTo('receive-consults'))
                         <div class="row mt-2">
@@ -147,7 +147,7 @@
                             @endif
                             
                             @if ($cites->count() == 0)
-                                <p class="ml-5 card-category">No hay sesiones agendadas.</p>
+                                <p class="ml-5 card-category">No hay consultas agendadas.</p>
                             @else
                                 <table class="table table-hover table-striped">
                                     <thead>

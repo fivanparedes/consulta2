@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Reminder;
 use App\Models\Treatment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class ReminderController extends Controller

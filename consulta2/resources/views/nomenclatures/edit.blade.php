@@ -47,11 +47,6 @@
                 </div>
         </div>
         </form>
-        <form action="/nomenclatures/{{ $nomenclature->id }}" method="post">
-            @csrf
-            @method('delete')
-            <button type="submit" class="btn btn-danger text-light">Eliminar nomenclatura</button>
-        </form>
     </div>
     </div>
 @endsection

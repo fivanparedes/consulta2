@@ -44,9 +44,6 @@
                                             <option value="created" @if (isset($filter2) && $filter2 == "created")
                                                 selected
                                             @endif>Insert</option>
-                                            <option value="deleted" @if (isset($filter2) && $filter2 == "deleted")
-                                                selected
-                                            @endif>Delete</option>
                                         </select>
                                     </div>
                                     <div class="col" style="width: 10%;">
@@ -80,9 +77,7 @@
                                         <th>@sortablelink('user_id', 'ID de Usuario')</th>
                                         <th>@sortablelink('created_at', 'Fecha y hora')</th>
                                         <th>@sortablelink('event', 'Evento')</th>
-                                        <th>@sortablelink('auditable_type', 'Modelo')</th>
-                                        <th style="max-width: 200px;">@sortablelink('old_values', 'Valores anteriores')</th>
-                                        <th style="max-width: 200px;">@sortablelink('new_values', 'Valores posteriores')</th>
+                                        <th>@sortablelink('auditable_type', 'Tabla')</th>
                                         <th>Ver</th>
                                     </thead>
                                     <tbody>
@@ -92,9 +87,7 @@
                                                 <td>{{ $audit->user_id }}</td>
                                                 <td>{{ date_create($audit->created_at)->format('d/m/Y h:i') }}</td>
                                                 <td>{{ $audit->event }}</td>
-                                                <td>{{ substr($audit->auditable_type, 11) }}</td>
-                                                <td style="max-width: 150px;">{{ ($audit->old_values != []) ? substr(implode('-', $audit->old_values), 0, 50) : "Vacío"}}</td>
-                                                <td style="max-width: 150px;">{{ ($audit->new_values != []) ? substr(implode('-', $audit->new_values), 0, 50) : "Vacío" }}</td>
+                                                <td>{{ strtolower(substr($audit->auditable_type, 11)) }}</td>
                                                 <td><a href="/audits/{{ $audit->id }}"
                                                         class="btn bg-primary text-light">Detalles</a></td>
                                             </tr>

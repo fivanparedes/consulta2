@@ -81,7 +81,7 @@ class autoAssignOverTreatment extends Command
                     # code...
                     foreach ($this->getAllDaysInAMonth(date_create($month)->format('Y'), date_create($month)->format('m'), "Monday") as $key => $value) {
                         $chosendate = $value->format('Y-m-d') . ' ' . $time;
-                        $event = CalendarEvent::where('start','>=', date_create($chosendate))->exists();
+                        $event = CalendarEvent::where('active', true)->where('start','>=', date_create($chosendate))->exists();
                         if (!$event) {
                             array_push($chosendates, $chosendate);
                         }
@@ -91,7 +91,7 @@ class autoAssignOverTreatment extends Command
                     # code...
                     foreach ($this->getAllDaysInAMonth(date_create($month)->format('Y'), date_create($month)->format('m'), "Tuesday") as $key => $value) {
                         $chosendate = $value->format('Y-m-d') . ' ' . $time;
-                        $event = CalendarEvent::where('start','>=', date_create($chosendate))->exists();
+                        $event = CalendarEvent::where('active', true)->where('start','>=', date_create($chosendate))->exists();
                         if (!$event) {
                             array_push($chosendates, $chosendate);
                         }
@@ -101,7 +101,7 @@ class autoAssignOverTreatment extends Command
                     # code...
                     foreach ($this->getAllDaysInAMonth(date_create($month)->format('Y'), date_create($month)->format('m'), "Wednesday") as $key => $value) {
                         $chosendate = $value->format('Y-m-d') . ' ' . $time;
-                        $event = CalendarEvent::where('start','>=', date_create($chosendate))->where('end', '<', date_create($chosendate))->exists();
+                        $event = CalendarEvent::where('active', true)->where('start','>=', date_create($chosendate))->where('end', '<', date_create($chosendate))->exists();
                         if (!$event) {
                             array_push($chosendates, $chosendate);
                         }
@@ -111,7 +111,7 @@ class autoAssignOverTreatment extends Command
                     # code...
                     foreach ($this->getAllDaysInAMonth(date_create($month)->format('Y'), date_create($month)->format('m'), "Thursday") as $key => $value) {
                         $chosendate = $value->format('Y-m-d') . ' ' . $time;
-                        $event = CalendarEvent::where('start','>=', date_create($chosendate))->where('end', '<', date_create($chosendate))->exists();
+                        $event = CalendarEvent::where('active', true)->where('start','>=', date_create($chosendate))->where('end', '<', date_create($chosendate))->exists();
                         if (!$event) {
                             array_push($chosendates, $chosendate);
                         }
@@ -121,7 +121,7 @@ class autoAssignOverTreatment extends Command
                     # code...
                     foreach ($this->getAllDaysInAMonth(date_create($month)->format('Y'), date_create($month)->format('m'), "Friday") as $key => $value) {
                         $chosendate = $value->format('Y-m-d') . ' ' . $time;
-                        $event = CalendarEvent::where('start','>=', date_create($chosendate))->where('end', '<', date_create($chosendate))->exists();
+                        $event = CalendarEvent::where('active', true)->where('start','>=', date_create($chosendate))->where('end', '<', date_create($chosendate))->exists();
                         if (!$event) {
                             array_push($chosendates, $chosendate);
                         }
@@ -131,7 +131,7 @@ class autoAssignOverTreatment extends Command
                     # code...
                     foreach ($this->getAllDaysInAMonth(date_create($month)->format('Y'), date_create($month)->format('m'), "Saturday") as $key => $value) {
                         $chosendate = $value->format('Y-m-d') . ' ' . $time;
-                        $event = CalendarEvent::where('start','>=', date_create($chosendate))->where('end', '<', date_create($chosendate))->exists();
+                        $event = CalendarEvent::where('active', true)->where('start','>=', date_create($chosendate))->where('end', '<', date_create($chosendate))->exists();
                         if (!$event) {
                             array_push($chosendates, $chosendate);
                         }
@@ -141,7 +141,7 @@ class autoAssignOverTreatment extends Command
                     # code...
                     foreach ($this->getAllDaysInAMonth(date_create($month)->format('Y'), date_create($month)->format('m'), "Sunday") as $key => $value) {
                         $chosendate = $value->format('Y-m-d') . ' ' . $time;
-                        $event = CalendarEvent::where('start', '>=',date_create($chosendate))->where('end', '<', date_create($chosendate))->exists();
+                        $event = CalendarEvent::where('active', true)->where('start', '>=',date_create($chosendate))->where('end', '<', date_create($chosendate))->exists();
                         if (!$event) {
                             array_push($chosendates, $chosendate);
                         }

@@ -5,8 +5,8 @@
                 <div class="col-md-12">
                     <div class="card strpied-tabled-with-hover">
                         <div class="card-header ">
-                            <h4 class="card-title">Sesiones y consultas</h4>
-                            <p class="card-category">Lista de sesiones pasadas, presentes y futuras.</p>
+                            <h4 class="card-title">Consultas</h4>
+                            <p class="card-category">Lista de consultas y sesiones pasadas, presentes y futuras.</p>
                         </div>
                         <div class="card-body table-full-width table-responsive">
                             @if (isset($professional))
@@ -23,7 +23,7 @@
                             @endif
                             
                             @if ($cites->count() == 0)
-                                <p class="ml-5 card-category">No hay sesiones agendadas.</p>
+                                <p class="ml-5 card-category">No hay consultas agendadas.</p>
                             @else
                                 <table class="table table-hover table-striped">
                                     <thead>

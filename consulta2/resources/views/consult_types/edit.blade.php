@@ -167,11 +167,6 @@
                         </div>
                     </div>
             </form>
-            <form action="/consult_types/{{ $consult->id }}" method="post">
-                @csrf
-                @method('delete')
-                <button type="submit" class="btn btn-danger text-light">Eliminar configuración</button>
-            </form>
         </div>
     </div>
     <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"

@@ -8,7 +8,7 @@
                     <div class="card strpied-tabled-with-hover">
                         <div class="card-header ">
                             <h4 class="card-title">Pacientes</h4>
-                            <p class="card-category">Lista de pacientes que participaron o participan de sesiones en el consultorio.</p>
+                            <p class="card-category">Lista de pacientes que participaron o participan en el consultorio.</p>
                         </div>
                         {{-- <div class="card-header ">
                             <form class="form-inline" method="GET">

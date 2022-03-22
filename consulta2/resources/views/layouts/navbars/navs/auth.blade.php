@@ -49,14 +49,14 @@
                        {{--  <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
                             <i class="nc-icon nc-planet"></i>
                             <span
-                                class="notification">{{ Auth::user()->profile->professionalProfile->calendarEvents->where('approved', 0)->count() }}</span>
+                                class="notification">{{ Auth::user()->profile->professionalProfile->calendarEvents->where('active', true)->where('approved', 0)->count() }}</span>
                             <span class="d-lg-none">{{ __('Notificaciones') }}</span>
                         </a> --}}
                         {{-- <ul class="dropdown-menu">
-                            @if (Auth::user()->profile->professionalProfile->calendarEvents->where('approved', 0)->count() == 0)
+                            @if (Auth::user()->profile->professionalProfile->calendarEvents->where('active', true)->where('approved', 0)->count() == 0)
                                 <p class="nav-item">No hay recordatorios</p>
                             @else
-                                @foreach (Auth::user()->profile->professionalProfile->calendarEvents as $calendarEvent)
+                                @foreach (Auth::user()->profile->professionalProfile->calendarEvents->where('active', true) as $calendarEvent)
                                     @if ($calendarEvent->approved != 0)
                                         <a class="dropdown-item"
                                             href="/cite/{{ $calendarEvent->cite->id }}">{{ $calendarEvent->consultType->name . ' ' . date_create($calendarEvent->start)->format('d/m/Y h:i') }}</a>

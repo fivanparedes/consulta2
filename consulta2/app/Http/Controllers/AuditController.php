@@ -12,7 +12,7 @@ class AuditController extends Controller
     public function index(Request $request) {
         $user = User::find(auth()->user()->id);
         if ($user->isAbleTo('admin-profile') /* && $user->isAbleTo('AuditController@index') */) {
-            $audits = Audit::all()->toQuery();
+            $audits = Audit::where('event', '<>', 'deleted');
             if ($request->has('filter1') && $request->filter1 != "") {
                 $audits = $audits->where('created_at', '>=', $request->filter1);
             }
@@ -67,6 +67,7 @@ class AuditController extends Controller
             $companyName = DB::table('settings')->where('name', 'company-name')->first('value');
             $companyEmail = DB::table('settings')->where('name', 'company-email')->first('value');
             $companyPhone = DB::table('settings')->where('name', 'company-phone')->first('value');
+            $cuit = DB::table('settings')->where('name', 'cuit')->first('value');
             return view('admin.settings')->with([
                 'timezone' => $timezone->value,
                 'calendar_range' => $calendar_range->value,
@@ -77,6 +78,7 @@ class AuditController extends Controller
                 'companyName' => $companyName->value,
                 'companyEmail' => $companyEmail->value,
                 'companyPhone' => $companyPhone->value,
+                'cuit' => $cuit
             ]);
         } else {
             return abort(404);
@@ -128,6 +130,11 @@ class AuditController extends Controller
             $companyPhone = DB::table('settings')->where('name', 'company-phone')->update(
                 [
                     'value' => $request->input('company-phone')
+                ]
+            );
+            $companyPhone = DB::table('settings')->where('name', 'cuit')->update(
+                [
+                    'value' => $request->input('cuit')
                 ]
             );
             return back()->withStatus('status', 'Configuración actualizada.');

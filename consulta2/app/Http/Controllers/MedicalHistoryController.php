@@ -6,11 +6,14 @@ use App\Models\Document;
 use App\Models\MedicalHistory;
 use App\Models\PatientProfile;
 use App\Models\ProfessionalProfile;
+use App\Models\Specialty;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Crypt;
 use Barryvdh\DomPDF\Facade as PDF;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use SoareCostin\FileVault\Facades\FileVault;
 use Illuminate\Support\Str;
@@ -27,19 +30,58 @@ class MedicalHistoryController extends Controller
         $user = User::find(auth()->user()->id);
         if ($user->isAbleTo('patient-profile')) {
             $medicalHistories = $user->profile->patientProfile->medicalHistories;
+            $patientProfile = Auth::user()->profile->patientProfile;
+            $events = $patientProfile->calendarEvents->where('active', true)->toQuery();
+            if ($request->has('filter2') && $request->filter2 != "") {
+                $professionals = new Collection();
+                $users = User::where('name', 'like', '%'.$request->filter2.'%')->orWhere('lastname', 'like', '%' . $request->filter2 . '%')->get();
+                foreach ($users as $user) {
+                    if (isset($user->profile->professionalProfile)) {
+                        $professionals->push($user->profile->professionalProfile);
+                    }
+                }
+                $events = $events->whereIn('professional_profile_id', $professionals->toArray(['id']));
+            }
+            if ($request->has('filter3') && $request->filter3 != "") {
+                $from = date_create($request->filter3);
+                $events = $events->where('start', '>=', $from);
+            }
+            if ($request->has('filter4') && $request->filter4 != "") {
+                $to = date_create($request->filter4);
+                $events = $events->where('start', '<=', $to);
+            }
+            if ($request->has('filter5') && $request->filter5 != "") {
+                $specialties = Specialty::where('displayname', 'like', '%'.$request->filter5.'%')->get();
+                $professionals = ProfessionalProfile::whereIn('specialty_id', $specialties->toArray(['id']))->get();
+                $events = $events->whereIn('professional_profile_id', $professionals->toArray(['id']));
+            }
+            $events = $events->sortable()->paginate(10);
             //dd(Auth::user()->profile->patientProfile);
             return view('medical_histories.home')->with([
                 'medicalHistories' => $medicalHistories,
-                'patientProfile' => Auth::user()->profile->patientProfile
+                'patientProfile' => $patientProfile,
+                'events' => $events,
+                'filter1' => $request->has('filter1') ? $request->filter1 : '',
+                'filter2' => $request->has('filter2') ? $request->filter2 : '',
+                'filter3' => $request->has('filter3') ? $request->filter3 : '',
+                'filter4' => $request->has('filter4') ? $request->filter4 : '',
+                'filter5' => $request->has('filter5') ? $request->filter5 : '',
             ]);
         } else {
-            if ($user->isAbleTo('professional-profile')) {
+            
                 $medicalHistories = PatientProfile::find($request->patientid)->medicalHistories;
+                $patientProfile = PatientProfile::find($request->patientid);
                 return view('medical_histories.home')->with([
                     'medicalHistories' => $medicalHistories,
-                    'patientProfile' => PatientProfile::find($request->patientid)
+                    'patientProfile' => $patientProfile,
+                    'events' => $patientProfile->calendarEvents->where('active', true)->toQuery()->orderByDesc('start')->sortable()->paginate(10),
+                'filter1' => $request->has('filter1') ? $request->filter1 : '',
+                'filter2' => $request->has('filter2') ? $request->filter2 : '',
+                'filter3' => $request->has('filter3') ? $request->filter3 : '',
+                'filter4' => $request->has('filter4') ? $request->filter4 : '',
+                'filter5' => $request->has('filter5') ? $request->filter5 : '',
                 ]);
-            }
+            
             return abort(404);
         }
     }

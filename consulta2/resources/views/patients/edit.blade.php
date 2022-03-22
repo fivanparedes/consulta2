@@ -72,7 +72,7 @@
                                     <div class="col">
                                         <label for="user_email">Correo electrónico</label>
                                         <input type="email" class="form-control" name="user_email" id="user_email"
-                                            {{ $patient->profile->user->email }} required>
+                                            value="{{ $patient->profile->user->email }}" required>
                                     </div>
                                 </div>
                                 <p style="font-size: 85%"><i class="fa fa-info-circle"></i>El número de documento será la
@@ -143,14 +143,12 @@
                         </div>
                     </div>
                     <hr>
-                    <a id="btn-next" class="btn btn-danger text-light" href="{{ url('/patients') }}">
+                    <div class="form-group text-center">
+                        <a id="btn-next" class="btn btn-danger text-light" href="{{ url('/patients') }}">
                         Cancelar</a>
                     <button type="submit" class="btn btn-light text-dark">Guardar</button>
-            </form>
-            <form action="/patients/{{ $patient->id }}" method="post">
-                @csrf
-                @method('delete')
-                <button type="submit" class="btn btn-danger text-light">Eliminar paciente</button>
+                    </div>
+                    
             </form>
         </div>
     </div>

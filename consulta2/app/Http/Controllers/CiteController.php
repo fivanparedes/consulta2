@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CalendarEvent;
 use App\Models\Cite;
+use App\Models\Document;
 use App\Models\MedicalHistory;
 use App\Models\Practice;
 use App\Models\User;
@@ -15,6 +16,8 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
+use SoareCostin\FileVault\Facades\FileVault;
 
 class CiteController extends Controller
 {
@@ -110,12 +113,12 @@ class CiteController extends Controller
         $user = User::find(auth()->user()->id);
         $cites = CalendarEvent::all()->toQuery();
         if ($user->isAbleTo('professional-profile')) {
-            $cites = CalendarEvent::where('professional_profile_id', Auth::user()->profile->professionalProfile->id);
+            $cites = CalendarEvent::where('active', true)->where('professional_profile_id', Auth::user()->profile->professionalProfile->id);
         } elseif ($user->isAbleTo('institution-profile')) {
             $professionals = Auth::user()->institutionProfile->professionalProfiles->get(['id']);
-            $cites = CalendarEvent::whereIn('professional_profile_id', $professionals);
+            $cites = CalendarEvent::where('active', true)->whereIn('professional_profile_id', $professionals);
         } elseif ($user->isAbleTo('admin-profile')) {
-            $cites = CalendarEvent::whereHas('professionalProfile', function ($q) {
+            $cites = CalendarEvent::where('active', true)->whereHas('professionalProfile', function ($q) {
                 return $q->where('status', '<>', 0);
             });
         }
@@ -212,6 +215,9 @@ class CiteController extends Controller
      */
     public function update(Request $request)
     {
+        $request->validate([
+            'document' => 'mimes:pdf,doc,docx,odt|max:10240'
+        ]);
         $cite = Cite::find($request->id);
         
         $practice = Practice::find($request->input('practice'));
@@ -226,8 +232,30 @@ class CiteController extends Controller
             $cite->practice()->dissociate();
             $cite->practice()->associate($practice);
         }
+        $patarr = $calendarEvent->patientProfiles->toArray(['id']);
+        $medicalHistory = MedicalHistory::where('professional_profile_id', $calendarEvent->professional_profile_id)->where('patient_profile_id', $patarr[0])->first();
+        //dd($medicalHistory);
+        if ($request->has('document')) {
+            if ($request->hasFile('document') && $request->file('document')->isValid()) {
+                try {
+                    $path = Storage::putFile('files/histories/' . $medicalHistory->id, $request->file('document'));
+                    FileVault::encrypt($path);
+                    $document = new Document();
+                    $document->name = $request->file('document')->getClientOriginalName();
+                    $document->path = $path;
+                    $document->medical_history_id = $medicalHistory->id;
+                    $document->cite_id = $cite->id;
+                    $document->save();
+                } catch (\Throwable $th) {
+                    return back()->withErrors('error', $th->getMessage());
+                }
+            }
+        }
         
-        $calendarEvent->approved = $request->input('approved');
+        if ($calendarEvent->approved == 0) {
+            $calendarEvent->approved = $request->input('approved');
+        }
+        
 
         if ($request->has('resume') && !empty($request->resume)) {
             $cite->resume = encrypt($request->resume);
@@ -253,7 +281,7 @@ class CiteController extends Controller
             }
 
             if ($request->input('assisted') == 1) {
-                if ($patient->medicalHistory == null) {
+                if ($patient->medicalHistory->where('professional_profile_id', $calendarEvent->professional_profile_id) == null) {
                     $medical_history = new MedicalHistory();
                     $medical_history->indate = now();
                     $medical_history->visitreason = "** Sin datos **";
@@ -271,7 +299,7 @@ class CiteController extends Controller
         }
         
         
-        return back()->withStatus(__('Datos de sesión actualizados.'));
+        return back()->withStatus(__('Datos de consulta actualizados.'));
     }
 
     /**

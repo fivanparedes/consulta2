@@ -36,11 +36,6 @@
                 </div>
         </div>
         </form>
-        <form action="/specialties/{{ $specialty->id }}" method="post">
-            @csrf
-            @method('delete')
-            <button type="submit" class="btn btn-danger text-light">Eliminar especialidad</button>
-        </form>
     </div>
     </div>
 @endsection

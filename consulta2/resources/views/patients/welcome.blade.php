@@ -2,6 +2,12 @@
 'activeButton' => 'laravel'])
 
 @section('content')
+    <style>
+        .fc-event:hover {
+            border-color: #1c7d87;
+            cursor: pointer;
+        }
+    </style>
     <div class="content">
         <div class="container-fluid">
             <div class="container">
@@ -73,8 +79,11 @@
                         selectHelper: true,
                         editable: false,
                         eventClick: function(event) {
-                            var id = event.id;
-                            window.location.href = "{{ Auth::user()->isAbleTo('patient-profile') ? "/profile/events/" : '/cite/' }}" +  id;
+                            if (event.start < today.setDate(today.getDate() + 1)) {
+                                var id = event.id;
+                                window.location.href = "{{ Auth::user()->isAbleTo('patient-profile') ? "/profile/events/" : '/cite/' }}" +  id;
+                            }
+                            
                         }
                     });
 

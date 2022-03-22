@@ -42,7 +42,7 @@ class UserController extends Controller
     public function listAtendees()
     {
         $patients = new Collection;
-        $events = CalendarEvent::where('professional_profile_id', Auth::user()->profile->professionalProfile->id)->get();
+        $events = CalendarEvent::where('active', true)->where('professional_profile_id', Auth::user()->profile->professionalProfile->id)->get();
         foreach ($events as $event) {
             if ($event->patientProfiles->count() > 0) {
                 foreach ($event->patientProfiles as $profile) {

@@ -81,7 +81,7 @@ Tip 2: you can also add an image using data-image tag
                 <li class="nav-item @if ($activePage == 'cites') active @endif">
                     <a class="nav-link" href="{{ route('cite.index') }}">
                         <i class="nc-icon nc-notes"></i>
-                        <p>{{ __('Sesiones') }}</p>
+                        <p>{{ __('Consultas') }}</p>
                     </a>
                 </li>
             @endif
@@ -111,7 +111,7 @@ Tip 2: you can also add an image using data-image tag
                 
             @endif
             @if (Auth::user()->isAbleTo('professional-profile') || Auth::user()->isAbleTo('institution-profile'))
-                <li class="nav-item @if ($activePage == 'dashboard') active @endif">
+                <li class="nav-item @if ($activePage == 'statistics') active @endif">
                     <a class="nav-link" href="{{ url('/statistics') }}">
                         <i class="nc-icon nc-chart-pie-36"></i>
                         <p>{{ __('Estadísticas') }}</p>
