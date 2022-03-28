@@ -60,10 +60,12 @@ class ResourceCleanup extends Command
 
         /**
          * Borra dias no laborables. Esperar a la respuesta del profe...
+         * 
+         * Respuesta del profe: NO SE BORRA NADA.
          */
-        $nonworkabledays = NonWorkableDay::where('to','<=', date('Y-m-d', strtotime(now(). "-2 day")))->get();
+        /* $nonworkabledays = NonWorkableDay::where('to','<=', date('Y-m-d', strtotime(now(). "-2 day")))->get();
         foreach ($nonworkabledays as $nonworkableday) {
             $nonworkableday->delete();
-        }
+        } */
     }
 }
