@@ -10,6 +10,7 @@
                     <p class="card-secondary">Puede asignarle un tratamiento nuevo solamente a pacientes ya atendidos
                         previamente.</p>
                 </div>
+                @include('alerts.errors')
             </div>
             <form id="create-form" class="form-horizontal" action="{{ route('treatments.store') }}" method="post">
                 @csrf

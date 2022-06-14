@@ -59,7 +59,7 @@
                                                 class="btn bg-primary mb-2 ml-5 text-light">Filtrar</button>
                                         </div>
                                     </div>
-                                    <div class="col" style="width: 10%;">
+                                    <div class="col pr-3" style="width: 10%;">
                                         <div class="">
                                             <a href="/cite" class="btn bg-danger"><i class="fa fa-trash"></i></a>
                                         </div>

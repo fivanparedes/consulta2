@@ -30,7 +30,7 @@
                                 @else
                                     <form action="{{ url('/medical_history/create') }}" method="get">
                                         <input name="patient" type="hidden" value="{{ $patient->id }}">
-                                        <button class="btn bg-primary text-light">Agregar historial</button>
+                                        {{-- <button class="btn bg-primary text-light">Agregar historial</button> --}}
                                     </form>
                                 @endif
                             @endif
@@ -41,7 +41,7 @@
                 </div>
 
             </div>
-            <form id="create-form" class="form-horizontal" action="{{ url('/patients/' . $patient->id) }}" method="post">
+            <form id="create-form" class="form-horizontal" action="{{ url('/manage/patients/' . $patient->id) }}" method="post">
                 @csrf
                 @method('patch')
                 <div class="card" id="card-one">
@@ -63,6 +63,7 @@
                                 </div>
 
                             </div>
+                            <input type="hidden" name="id" value="{{ $patient->profile->user->id }}">
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col"><label for="user_dni">Número de documento</label>
@@ -97,6 +98,16 @@
                                     <option value="{{ $city->id }}" @if ($city == $patient->profile->city)
                                         selected
                                 @endif>{{ $city->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="input-coverage">Obra social:</label>
+                            <select name="coverage" id="input-coverage" class="form-control">
+                                @foreach (\App\Models\Coverage::all() as $coverage)
+                                    <option value="{{ $coverage->id }}" @if ($coverage == $patient->lifesheet->coverage)
+                                        selected
+                                    @endif>{{ $coverage->name }}</option>
                                 @endforeach
                             </select>
                         </div>

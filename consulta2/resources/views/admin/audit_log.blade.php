@@ -34,6 +34,13 @@
                                         </div>
                                     </div>
                                     <div class="col">
+                                        <div class="">
+                                            <input type="text" class="form-control" id="filter4" name="filter4"
+                                                style="width: 97%;" placeholder="Nombre de tabla..."
+                                                value="{{ isset($filter4) ? $filter4 : '' }}">
+                                        </div>
+                                    </div>
+                                    <div class="col">
                                         <select name="filter2" id="input-filter2" class="form-control">
                                             <option value="all" @if (!isset($filter2))
                                                 selected

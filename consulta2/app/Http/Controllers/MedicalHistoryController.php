@@ -31,7 +31,8 @@ class MedicalHistoryController extends Controller
         if ($user->isAbleTo('patient-profile')) {
             $medicalHistories = $user->profile->patientProfile->medicalHistories;
             $patientProfile = Auth::user()->profile->patientProfile;
-            $events = $patientProfile->calendarEvents->where('active', true)->toQuery();
+            $events = $patientProfile->calendarEvents->where('active', true);
+            $events = $events->isNotEmpty() ? $events->toQuery() : $events;
             if ($request->has('filter2') && $request->filter2 != "") {
                 $professionals = new Collection();
                 $users = User::where('name', 'like', '%'.$request->filter2.'%')->orWhere('lastname', 'like', '%' . $request->filter2 . '%')->get();
@@ -55,7 +56,11 @@ class MedicalHistoryController extends Controller
                 $professionals = ProfessionalProfile::whereIn('specialty_id', $specialties->toArray(['id']))->get();
                 $events = $events->whereIn('professional_profile_id', $professionals->toArray(['id']));
             }
-            $events = $events->sortable()->paginate(10);
+            if (empty($events)) {
+                $events = count($events->get()) > 0 ? $events->sortable()->paginate(10) : $events->get();
+            }
+            //$events = $events->paginate(10);
+            
             //dd(Auth::user()->profile->patientProfile);
             return view('medical_histories.home')->with([
                 'medicalHistories' => $medicalHistories,

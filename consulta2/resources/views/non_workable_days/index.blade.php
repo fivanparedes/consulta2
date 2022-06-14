@@ -14,6 +14,7 @@
                                     <p class="card-category">Días donde los pacientes no podrán agendar turnos. Esta
                                         restricción se puede saltar con el agendamiento manual.</p>
                                 </div>
+                                @include('alerts.errors')
                                 @if (Auth::user()->isAbleTo('receive-consults'))
                                     <div class="row mt-2">
                                         <div class="col ml-5">
@@ -21,23 +22,13 @@
                                                 id="any-cancel" data-target="#programCancelModal">+ Agregar
                                                 registro</button>
                                         </div>
-                                        <div class="col">
-                                            <button type="button" class="btn bg-primary text-light" data-toggle="modal"
-                                                id="today-cancel" data-target="#programCancelModal">Cancelar los turnos de
-                                                hoy</button>
-                                        </div>
-                                        <div class="col">
-                                            <button type="button" class="btn bg-primary text-light" data-toggle="modal"
-                                                id="tomorrow-cancel" data-target="#programCancelModal">Cancelar los turnos
-                                                de mañana...</button>
-                                        </div>
                                     </div>
 
                                 @endif
                             </div>
                         </div>
                         <div class="card-header table">
-                            <form class="form-inline" action="{{ url('/non_workable_days') }}" method="GET">
+                            <form class="form-inline" action="{{ url('/non_workable_days') }}" method="POST">
                                 <div class="row ml-4">
                                     <p class="pt-1 ">Filtro</p>
                                     <div class="col" style="width: 10%;">
@@ -117,9 +108,8 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="post" action="/event/massCancel">
+                <form method="post" action="/event_massCancel">
                     @csrf
-                    @method('post')
                     <div class="modal-body">
                         <p>Se le enviará a cada paciente un aviso de que su turno queda cancelado, y podrán elegir cuando
                             reubicar dichas consultas pendientes.</p>

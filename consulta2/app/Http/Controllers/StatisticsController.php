@@ -112,8 +112,8 @@ class StatisticsController extends Controller
             $series = array();
             $labels = array();
             foreach ($countingarray as $key => $value) {
-                array_push($series, ($value/$totalEvents)*100);
-                array_push($labels, (string)(($value / $totalEvents) * 100).'%');
+                array_push($series, number_format(($value/$totalEvents) * 100, 2));
+                array_push($labels, (string)(number_format(($value / $totalEvents)* 100, 2)).'%');
             }
             //retornar array bidimensional de 5 lugares (indizado 0-4)
             //una fila para los porcentajes en formato entero N%

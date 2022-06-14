@@ -11,7 +11,7 @@
                             <h4 class="card-title">Consultas</h4>
                             <p class="card-category">Lista de consultas y sesiones pasadas, presentes y futuras.</p>
                         </div>
-                        @if (Auth::user()->isAbleTo('receive-consults'))
+                        {{-- @if (Auth::user()->isAbleTo('receive-consults'))
                         <div class="row mt-2">
                             <div class="col ml-5">
                                 <button type="button" class="btn bg-primary text-light" data-toggle="modal"
@@ -27,7 +27,7 @@
                             </div>
                         </div>
                                 
-                        @endif
+                        @endif --}}
 
                         <div class="card-header table">
                             <form class="form-inline" action="{{ url('/cite') }}" method="GET">
@@ -216,7 +216,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="post" action="/event/store">
+                <form method="post" action="/event_store">
                     @csrf
                     @method('post')
                     <div class="modal-body">
@@ -274,7 +274,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="post" action="/event/massCancel">
+                <form method="post" action="/event_massCancel">
                     @csrf
                     @method('post')
                     <div class="modal-body">
@@ -314,7 +314,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="post" action="/event/massCancel">
+                <form method="post" action="/event_massCancel">
                     @csrf
                     @method('post')
                     <div class="modal-body">

@@ -23,11 +23,15 @@ class AuditController extends Controller
             if ($request->has('filter3') && $request->filter3 != "") {
                 $audits = $audits->where('created_at', '<=', $request->filter3);
             }
+            if ($request->has('filter4') && $request->filter4 != "") {
+                $audits = $audits->where('auditable_type', 'like', '%'.strtolower($request->filter4).'%');
+            }
             $audits = $audits->orderByDesc('created_at')->sortable()->paginate(10);
             return view('admin.audit_log')->with(['audits' => $audits,
                 'filter1' => $request->filter1 != "" ? $request->filter1 : "",
                 'filter2'=> $request->filter2 != "" ? $request->filter2 : "",
                 'filter3' => $request->filter3 != "" ? $request->filter3 : "",
+                'filter4' => $request->filter4 != "" ? $request->filter4 : "",
         ]);
         } else {
             return abort(404);
@@ -78,7 +82,7 @@ class AuditController extends Controller
                 'companyName' => $companyName->value,
                 'companyEmail' => $companyEmail->value,
                 'companyPhone' => $companyPhone->value,
-                'cuit' => $cuit
+                'cuit' => $cuit->value
             ]);
         } else {
             return abort(404);

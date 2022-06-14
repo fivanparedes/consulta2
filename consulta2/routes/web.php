@@ -81,7 +81,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/show-available-hours', [EventController::class, 'showAvailableTimes']);
 	Route::get('/event/confirm', [EventController::class, 'confirm']);
 	Route::post('/event_store', [EventController::class, 'store']);
-	Route::post('/event/massCancel', [EventController::class, 'massCancel']);
+	Route::match(['GET', 'POST'],'/event_massCancel', [EventController::class, 'massCancel']);
 
 	Route::get('/external/event/cancel/{id}', [EventController::class, 'externalCancel']);
 	Route::delete('/external/event/delete/{id}', [EventController::class, 'externalDelete']);

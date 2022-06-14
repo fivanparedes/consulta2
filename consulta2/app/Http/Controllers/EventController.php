@@ -142,6 +142,7 @@ class EventController extends Controller
                 $calendarEvent = new CalendarEvent([
                     'title' => auth()->user()->name . ' ' . auth()->user()->lastname,
                     'start' => $request->start,
+                    'active' => true,
                     'end' => $request->end
                 ]);
                 $calendarEvent->save();
@@ -251,6 +252,10 @@ class EventController extends Controller
             $medical_history = $_patient->medicalHistories->where('professional_profile_id', $professional->id)->first();
             if ($medical_history == null) {
                 $medical_history = new MedicalHistory();
+                $medical_history->visitreason = encrypt("** Sin datos **");
+                $medical_history->diagnosis = encrypt("** Sin datos **");
+                $medical_history->clinical_history = encrypt("** Sin datos **");
+                $medical_history->psicological_history = encrypt("**Sin datos**");
                 $medical_history->indate = $selectedDate;
                 $medical_history->patient_profile_id = $_patient->id;
                 $medical_history->professional_profile_id = $professional->id;
@@ -342,11 +347,11 @@ class EventController extends Controller
             return abort(404);
         }
         try {
-            DB::beginTransaction();
+            /* DB::beginTransaction(); */
             $user = User::find(auth()->user()->id);
             $events = CalendarEvent::where('active', true)->where('professional_profile_id', $user->profile->professionalProfile->id)
                 ->where('start', '>=', date_create($request->from))->where('start', '<=', date_create($request->input('to')))->get();
-            if ($events->count() > 0) {
+            if (count($events) > 0) {
                 foreach ($events as $event) {
                     $patients = $event->patientProfiles;
                     $event->active = false;
@@ -368,16 +373,21 @@ class EventController extends Controller
                     }
                 }
             }
+            
+            /* DB::commit(); */
+            
+        } catch (\Throwable $th) {
+            /* DB::rollBack(); */
+            return back()->withErrors('Error al dar de baja los turnos. '. $th->getMessage());
+        }
+        
+        if ($request->has('from')) {
             $non = new NonWorkableDay();
             $non->concept = $request->concept != "" ? $request->concept : "Dado de baja por medio de panel de sesiones y consultas.";
-            $non->from = $request->from;
-            $non->to = $request->to;
+            $non->from = $request->input('from');
+            $non->to = $request->input('to');
             $non->professional_profile_id = $user->profile->professionalProfile->id;
             $non->save();
-            DB::commit();
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            return back()->withErrors('Error al dar de baja los turnos.');
         }
         
         return back();

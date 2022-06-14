@@ -29,7 +29,7 @@
                             <h6 class="heading-small text-muted mb-4">{{ __('Enfermedades') }}</h6>
                             
                             @include('alerts.success')
-                            @include('alerts.error_self_update', ['key' => 'not_allow_profile'])
+                            @include('alerts.errors')
     
                             <div class="pl-lg-4">
                                 <div class="form-group{{ $errors->has('coverage') ? ' has-danger' : '' }}">
@@ -66,6 +66,14 @@
                                     <textarea name="medication" id="medication" class="form-control{{ $errors->has('medication') ? ' is-invalid' : '' }}" placeholder="{{ __('Lista de medicamentos que consuma actualmente.') }}" value="{{ old('medication', $lifesheet->medication) }}" autofocus></textarea>
                                     
                                     @include('alerts.feedback', ['field' => 'medication'])
+                                </div>
+                                <div class="form-group{{ $errors->has('allergies') ? ' has-danger' : '' }}">
+                                    <label class="form-control-label" for="allergies">
+                                    <i class="w3-xxlarge fa fa-user"></i>{{ __('Alergias') }}
+                                    </label>
+                                    <textarea name="allergies" id="allergies" class="form-control{{ $errors->has('allergies') ? ' is-invalid' : '' }}" placeholder="{{ __('¿Tiene alguna alergia actualmente?') }}" value="{{ old('allergies', $lifesheet->allergies) }}" autofocus></textarea>
+                                    
+                                    @include('alerts.feedback', ['field' => 'allergies'])
                                 </div>
         
                                 <hr class="my-4" />

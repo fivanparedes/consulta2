@@ -42,7 +42,13 @@ class TreatmentController extends Controller
     {
         $user = User::find(auth()->user()->id);
         if ($user->isAbleTo('professional-profile')) {
-            return view('treatments.create')->with(['medical_histories' => $user->profile->professionalProfile->medicalHistories]);
+            $medical_histories = new Collection();
+            foreach ($user->profile->professionalProfile->medicalHistories as $medical_history) {
+                if (!$medical_histories->contains($medical_history)) {
+                    $medical_histories->push($medical_history);
+                }
+            }
+            return view('treatments.create')->with(['medical_histories' => $medical_histories]);
         } else {
             return abort(404);
         }

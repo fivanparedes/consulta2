@@ -393,8 +393,8 @@ class PatientController extends Controller
             'familyGroup' => 'required|string|filled|max:100',
             'familyPhone' => 'required',
             'civilState' => 'required|string|filled|max:40',
-            'scholarity' => 'required|string|filled|max:20',
-            'occupation' => 'required|string|filled|max:20'
+            'scholarity' => 'required|string|filled|max:40',
+            'occupation' => 'required|string|filled|max:40'
         ]);
         if ($user->isAbleTo('patient-profile') || $user->isAbleTo('professional-profile')) {
             $user_profile = Profile::where('user_id', auth()->user()->id)->first();
@@ -439,7 +439,7 @@ class PatientController extends Controller
             $patuser->name = $request->user_name;
             $patuser->lastname = $request->user_lastname;
             $patuser->dni = $request->user_dni;
-            $patuser->email = $request->email;
+            $patuser->email = $request->user_email;
             $patuser->password = Hash::make($request->user_dni);
             $patuser->save();
 
@@ -493,7 +493,7 @@ class PatientController extends Controller
             'user_name' => 'required|string|filled|max:60',
             'user_lastname' => 'required|string|filled|max:60',
             'user_dni' => 'required|numeric|unique:users,dni',
-            'user_email' => 'required|email:strict|unique:users,email',
+            'user_email' => 'required|email:strict',
             'bornDate' => 'required|date_format:Y-m-d|before:' . date('Y-m-d'),
             'gender' => 'required|string',
             'phone' => 'required',
@@ -541,6 +541,10 @@ class PatientController extends Controller
 
         if (!$user->isAbleTo('admin-profile')) {
             $medical_history = new MedicalHistory();
+            $medical_history->visitreason = encrypt("** Sin datos **");
+            $medical_history->diagnosis = encrypt("** Sin datos **");
+            $medical_history->clinical_history = encrypt("** Sin datos **");
+            $medical_history->psicological_history = encrypt("**Sin datos**");
             $medical_history->patient_profile_id = $patientProfile->id;
             if ($user->isAbleTo('professional-profile')) {
                 $medical_history->professional_profile_id = $user->profile->professionalProfile->id;

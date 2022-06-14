@@ -29,7 +29,7 @@ class CiteController extends Controller
     public function index(Request $request)
     {
         $user = User::find(auth()->user()->id);
-        $cites = CalendarEvent::all()->toQuery();
+        $cites = CalendarEvent::where('active', true);
         if ($user->isAbleTo('professional-profile')) {
             $cites = $cites->where('professional_profile_id', Auth::user()->profile->professionalProfile->id);
         } elseif ($user->isAbleTo('institution-profile')) {
@@ -281,17 +281,20 @@ class CiteController extends Controller
             }
 
             if ($request->input('assisted') == 1) {
-                if ($patient->medicalHistory->where('professional_profile_id', $calendarEvent->professional_profile_id) == null) {
+                if ($patient->medicalHistories->where('professional_profile_id', $calendarEvent->professional_profile_id) == null) {
                     $medical_history = new MedicalHistory();
                     $medical_history->indate = now();
-                    $medical_history->visitreason = "** Sin datos **";
+                    $medical_history->visitreason = encrypt("** Sin datos **");
+                    $medical_history->diagnosis = encrypt("** Sin datos **");
+                    $medical_history->clinical_history = encrypt("** Sin datos **");
+                    $medical_history->psicological_history = encrypt("**Sin datos**");
                     $medical_history->patient_profile_id = $patient->id;
                     $medical_history->professional_profile_id = $calendarEvent->professionalProfile->id;
                     $medical_history->save();
                     $cite->medical_history_id = $medical_history->id;
                     $cite->save();
                 } else {
-                    $cite->medical_history_id = $patient->medicalHistory->id;
+                    $cite->medical_history_id = $patient-> medicalHistories->where('professional_profile_id', $calendarEvent->professional_profile_id)->first()->id;
                     $cite->save();
                 }
                 

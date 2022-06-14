@@ -78,7 +78,7 @@ class ProfessionalController extends Controller
             'user_name' => 'required|string|filled|max:60',
             'user_lastname' => 'required|string|filled|max:60',
             'user_dni' => 'required|numeric|unique:users,dni',
-            'user_email' => 'required|email:strict|unique:users,email',
+            'user_email' => 'required|email:strict',
             'bornDate' => 'required|date_format:Y-m-d|before:' . date('Y-m-d'),
             'gender' => 'required|string',
             'phone' => 'required',
