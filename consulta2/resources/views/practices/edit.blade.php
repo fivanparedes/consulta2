@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'practices', 'title' => 'Consulta2 | Editar práctica profesional', 'navName' =>
+@extends('layouts.app', ['activePage' => 'practices', 'title' => $companyName.' | Editar práctica profesional', 'navName' =>
 'Configuración', 'activeButton' => 'laravel'])
 
 @section('content')
@@ -101,11 +101,6 @@
 
         </div>
     </div>
-    </form>
-    <form action="/practices/{{ $practice->id }}" method="post">
-        @csrf
-        @method('delete')
-        <button type="submit" class="btn btn-danger text-light">Eliminar práctica</button>
     </form>
     </div>
     </div>

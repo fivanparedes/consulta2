@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'maps', 'title' => 'Consulta2 | Dónde estamos', 'navName' => 'Mapa', 'activeButton' => 'laravel'])
+@extends('layouts.app', ['activePage' => 'maps', 'title' => $companyName.' | Dónde estamos', 'navName' => 'Mapa', 'activeButton' => 'laravel'])
 
 @section('content')
     <div class="map-container">

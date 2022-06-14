@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'treatments', 'title' => 'Consulta2 | Iniciar tratamiento', 'navName' =>
+@extends('layouts.app', ['activePage' => 'treatments', 'title' => $companyName.' | Iniciar tratamiento', 'navName' =>
 'Tratamientos', 'activeButton' => 'laravel'])
 
 @section('content')
@@ -10,6 +10,7 @@
                     <p class="card-secondary">Puede asignarle un tratamiento nuevo solamente a pacientes ya atendidos
                         previamente.</p>
                 </div>
+                @include('alerts.errors')
             </div>
             <form id="create-form" class="form-horizontal" action="{{ route('treatments.store') }}" method="post">
                 @csrf

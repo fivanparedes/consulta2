@@ -5,8 +5,8 @@
                 <div class="col-md-12">
                     <div class="card strpied-tabled-with-hover">
                         <div class="card-header ">
-                            <h4 class="card-title">Sesiones y consultas</h4>
-                            <p class="card-category">Lista de sesiones pasadas, presentes y futuras.</p>
+                            <h4 class="card-title">Consultas</h4>
+                            <p class="card-category">Lista de consultas y sesiones pasadas, presentes y futuras.</p>
                         </div>
                         <div class="card-body table-full-width table-responsive">
                             @if (isset($professional))
@@ -23,17 +23,16 @@
                             @endif
                             
                             @if ($cites->count() == 0)
-                                <p class="ml-5 card-category">No hay sesiones agendadas.</p>
+                                <p class="ml-5 card-category">No hay consultas agendadas.</p>
                             @else
                                 <table class="table table-hover table-striped">
                                     <thead>
                                         <th>ID</th>
-                                        <th>@sortablelink('title', 'Nombre y apellido')</th>
-                                        <th>@sortablelink('start', 'Fecha y hora')</th>
-                                        <th>@sortablelink('assisted', '¿Asistió?')</th>
-                                        <th>@sortablelink('isVirtual', 'Modalidad')</th>
-                                        <th>@sortablelink('confirmed', '¿Confirmó asistencia?')</th>
-                                        <th>Más</th>
+                                        <th>Nombre y apellido</th>
+                                        <th>Fecha y hora</th>
+                                        <th>¿Asistió?</th>
+                                        <th>'Modalidad'</th>
+                                        <th>¿Confirmó asistencia?</th>
                                     </thead>
                                     <tbody>
                                         @foreach ($cites as $cite)
@@ -62,9 +61,6 @@
                                                         Sin confirmar.
                                                     @endif
                                                 </td>
-                                                <td><a class="nav-link" href="/cite/{{ $cite->cite->id }}">
-                                                        <i class="nc-icon nc-badge"></i>
-                                                    </a></td>
                                             </tr>
                                         @endforeach
 

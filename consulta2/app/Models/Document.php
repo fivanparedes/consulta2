@@ -12,4 +12,8 @@ class Document extends Model
     public function medicalHistory() {
         return $this->belongsTo(MedicalHistory::class);
     }
+
+    public function cite() {
+        return $this->belongsTo(Cite::class);
+    }
 }

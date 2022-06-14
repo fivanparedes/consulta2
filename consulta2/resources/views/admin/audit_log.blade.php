@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'audits', 'title' => 'Consulta2 | Log de Auditoría',
+@extends('layouts.app', ['activePage' => 'audits', 'title' => $companyName.' | Log de Auditoría',
 'navName' => 'Configuración', 'activeButton' => 'laravel'])
 
 @section('content')
@@ -27,6 +27,20 @@
                                         </div>
                                     </div>
                                     <div class="col">
+                                        <div class="">
+                                            <input type="date" class="form-control" id="filter3" name="filter3"
+                                                style="width: 97%;" placeholder="Hasta..."
+                                                value="{{ isset($filter3) ? $filter3 : '' }}">
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="">
+                                            <input type="text" class="form-control" id="filter4" name="filter4"
+                                                style="width: 97%;" placeholder="Nombre de tabla..."
+                                                value="{{ isset($filter4) ? $filter4 : '' }}">
+                                        </div>
+                                    </div>
+                                    <div class="col">
                                         <select name="filter2" id="input-filter2" class="form-control">
                                             <option value="all" @if (!isset($filter2))
                                                 selected
@@ -37,9 +51,6 @@
                                             <option value="created" @if (isset($filter2) && $filter2 == "created")
                                                 selected
                                             @endif>Insert</option>
-                                            <option value="deleted" @if (isset($filter2) && $filter2 == "deleted")
-                                                selected
-                                            @endif>Delete</option>
                                         </select>
                                     </div>
                                     <div class="col" style="width: 10%;">
@@ -51,7 +62,7 @@
                                     </div>
                                     <div class="col ml-5" style="width: 10%;">
                                         <div class="">
-                                            <a href="/non_workable_days" class="btn bg-danger"><i
+                                            <a href="/audits" class="btn bg-danger"><i
                                                     class="fa fa-trash"></i></a>
                                         </div>
                                     </div>
@@ -71,10 +82,9 @@
                                     <thead>
                                         <th>@sortablelink('id', 'ID')</th>
                                         <th>@sortablelink('user_id', 'ID de Usuario')</th>
+                                        <th>@sortablelink('created_at', 'Fecha y hora')</th>
                                         <th>@sortablelink('event', 'Evento')</th>
-                                        <th style="max-width: 200px;">@sortablelink('old_values', 'Valores anteriores')</th>
-                                        <th style="max-width: 200px;">@sortablelink('new_values', 'Valores posteriores')</th>
-                                        <th>@sortablelink('url', 'URL')</th>
+                                        <th>@sortablelink('auditable_type', 'Tabla')</th>
                                         <th>Ver</th>
                                     </thead>
                                     <tbody>
@@ -82,10 +92,9 @@
                                             <tr>
                                                 <td>{{ $audit->id }}</td>
                                                 <td>{{ $audit->user_id }}</td>
+                                                <td>{{ date_create($audit->created_at)->format('d/m/Y h:i') }}</td>
                                                 <td>{{ $audit->event }}</td>
-                                                <td style="max-width: 200px;">{{ ($audit->old_values != []) ? substr(implode('-', $audit->old_values), 0, 50) : "Vacío"}}</td>
-                                                <td style="max-width: 200px;">{{ ($audit->new_values != []) ? substr(implode('-', $audit->new_values), 0, 50) : "Vacío" }}</td>
-                                                <td>{{ $audit->url }}</td>
+                                                <td>{{ strtolower(substr($audit->auditable_type, 11)) }}</td>
                                                 <td><a href="/audits/{{ $audit->id }}"
                                                         class="btn bg-primary text-light">Detalles</a></td>
                                             </tr>

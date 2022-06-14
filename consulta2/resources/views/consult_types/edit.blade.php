@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'consult_types', 'title' => 'Consulta2 | Agregar tipo de consulta', 'navName'
+@extends('layouts.app', ['activePage' => 'consult_types', 'title' => $companyName.' | Agregar tipo de consulta', 'navName'
 => 'Configuración', 'activeButton' => 'laravel'])
 
 @section('content')
@@ -166,11 +166,6 @@
                             </div>
                         </div>
                     </div>
-            </form>
-            <form action="/consult_types/{{ $consult->id }}" method="post">
-                @csrf
-                @method('delete')
-                <button type="submit" class="btn btn-danger text-light">Eliminar configuración</button>
             </form>
         </div>
     </div>

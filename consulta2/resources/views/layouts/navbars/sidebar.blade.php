@@ -4,13 +4,14 @@ Tip 1: You can change the color of the sidebar using: data-color="purple | blue 
 
 Tip 2: you can also add an image using data-image tag
 -->
+
     <div class="sidebar-wrapper" style="background-color: black">
         <div class="logo">
             <img style="position: relative; float:left; filter:invert(); margin-right: -30px;"
-                    src='https://static.vecteezy.com/system/resources/previews/000/499/145/original/vector-health-sign-icon-design.jpg'
+                    src='{{ $companyLogo != null? asset('/storage/images/' . explode('/', $companyLogo)[2]): asset('light-bootstrap/img/default-avatar.png') }}'
                     width="40" height="40" alt="Logo" />
             <a href="/home" class="simple-text">
-                {{ __('Consulta2') }}
+                {{ $companyName }}
             </a>
         </div>
 
@@ -80,7 +81,7 @@ Tip 2: you can also add an image using data-image tag
                 <li class="nav-item @if ($activePage == 'cites') active @endif">
                     <a class="nav-link" href="{{ route('cite.index') }}">
                         <i class="nc-icon nc-notes"></i>
-                        <p>{{ __('Sesiones') }}</p>
+                        <p>{{ __('Consultas') }}</p>
                     </a>
                 </li>
             @endif
@@ -110,7 +111,7 @@ Tip 2: you can also add an image using data-image tag
                 
             @endif
             @if (Auth::user()->isAbleTo('professional-profile') || Auth::user()->isAbleTo('institution-profile'))
-                <li class="nav-item @if ($activePage == 'dashboard') active @endif">
+                <li class="nav-item @if ($activePage == 'statistics') active @endif">
                     <a class="nav-link" href="{{ url('/statistics') }}">
                         <i class="nc-icon nc-chart-pie-36"></i>
                         <p>{{ __('Estadísticas') }}</p>

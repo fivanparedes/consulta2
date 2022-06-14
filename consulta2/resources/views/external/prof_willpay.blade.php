@@ -1,4 +1,4 @@
-<h1>Consulta2 | Confirmación de promesa de pago</h1>
+<h1>{{$companyName}} | Confirmación de promesa de pago</h1>
 <p>El paciente {{ $patient->getFullName() }} con DNI N° {{ $patient->profile->user->dni }} ha informado que desea pagar sus deudas por su tratamiento de {{ $treatment->name }}.
 </p>
 <h2>Datos del tratamiento:</h2>

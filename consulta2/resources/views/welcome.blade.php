@@ -1,4 +1,4 @@
-@extends('layouts/app', ['activePage' => 'welcome', 'title' => 'Consulta2 | Bienvenido/a'])
+@extends('layouts/app', ['activePage' => 'welcome', 'title' => $companyName.' | Bienvenido/a'])
 
 @section('content')
     <div class="full-page section-image" data-color="black" data-image="https://img-new.cgtrader.com/items/719713/9c483c1c1f/modern-grey-hospital-building-001-3d-model-max.jpg">

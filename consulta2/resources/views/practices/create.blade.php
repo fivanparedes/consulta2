@@ -1,4 +1,5 @@
-@extends('layouts.app', ['activePage' => 'practices', 'title' => 'Consulta2 | Editar práctica profesional', 'navName' =>
+@extends('layouts.app', ['activePage' => 'practices', 'title' => $companyName.' | Editar práctica profesional',
+'navName' =>
 'Configuración', 'activeButton' => 'laravel'])
 
 @section('content')
@@ -10,6 +11,7 @@
                     <p>La práctica tendrá un precio, un coseguro o copago (si la obra social lo exige) y está vinculada al
                         Nomenclador Nacional.</p>
                 </div>
+                @include('alerts.errors')
             </div>
             <form id="create-form" class="form-horizontal" action="{{ url('/practices') }}" method="post">
                 @csrf

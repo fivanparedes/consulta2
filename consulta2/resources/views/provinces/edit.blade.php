@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'config', 'title' => 'Consulta2 | Editar provincia', 'navName' =>
+@extends('layouts.app', ['activePage' => 'config', 'title' => $companyName.' | Editar provincia', 'navName' =>
 'Configuración', 'activeButton' => 'laravel'])
 
 @section('content')
@@ -40,11 +40,6 @@
 
                 </div>
         </div>
-        </form>
-        <form action="/provinces/{{ $province->id }}" method="post">
-            @csrf
-            @method('delete')
-            <button type="submit" class="btn btn-danger text-light">Eliminar provincia</button>
         </form>
     </div>
     </div>

@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'config', 'title' => 'Consulta2 | Editar país', 'navName' =>
+@extends('layouts.app', ['activePage' => 'config', 'title' => $companyName.' | Editar país', 'navName' =>
 'Configuración', 'activeButton' => 'laravel'])
 
 @section('content')
@@ -36,11 +36,6 @@
 
                 </div>
         </div>
-        </form>
-        <form action="/countries/{{ $country->id }}" method="post">
-            @csrf
-            @method('delete')
-            <button type="submit" class="btn btn-danger text-light">Eliminar país</button>
         </form>
     </div>
     </div>

@@ -5,11 +5,13 @@ namespace App\Models;
 use Akaunting\Sortable\Traits\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Cite extends Model
+class Cite extends Model implements Auditable
 {
     use HasFactory;
     use Sortable;
+    use \OwenIt\Auditing\Auditable;
 
     protected $table = 'cites';
 
@@ -47,5 +49,9 @@ class Cite extends Model
 
     public function treatment() {
         return $this->belongsTo(Treatment::class);
+    }
+
+    public function document() {
+        return $this->hasOne(Document::class);
     }
 }

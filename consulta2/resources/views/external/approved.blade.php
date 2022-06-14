@@ -1,4 +1,4 @@
-<h1>Consulta2 |  Turno aprobado</h1>
+<h1>{{$companyName}} |  Turno aprobado</h1>
 <p>El profesional le autorizó el turno agendado para el día {{ date_create($event->start)->format('d/m/Y i') }}.<br>
 </p>
 <h2>Datos del turno:</h2>

@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'config', 'title' => 'Consulta2 | Editar ciudad', 'navName' =>
+@extends('layouts.app', ['activePage' => 'config', 'title' => $companyName.' | Editar ciudad', 'navName' =>
 'Configuración', 'activeButton' => 'laravel'])
 
 @section('content')
@@ -52,11 +52,6 @@
 
                 </div>
         </div>
-        </form>
-        <form action="/cities/{{ $city->id }}" method="post">
-            @csrf
-            @method('delete')
-            <button type="submit" class="btn btn-danger text-light">Eliminar ciudad</button>
         </form>
     </div>
     </div>

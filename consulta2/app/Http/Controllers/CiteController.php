@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CalendarEvent;
 use App\Models\Cite;
+use App\Models\Document;
 use App\Models\MedicalHistory;
 use App\Models\Practice;
 use App\Models\User;
@@ -15,6 +16,8 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
+use SoareCostin\FileVault\Facades\FileVault;
 
 class CiteController extends Controller
 {
@@ -26,7 +29,7 @@ class CiteController extends Controller
     public function index(Request $request)
     {
         $user = User::find(auth()->user()->id);
-        $cites = CalendarEvent::all()->toQuery();
+        $cites = CalendarEvent::where('active', true);
         if ($user->isAbleTo('professional-profile')) {
             $cites = $cites->where('professional_profile_id', Auth::user()->profile->professionalProfile->id);
         } elseif ($user->isAbleTo('institution-profile')) {
@@ -110,12 +113,12 @@ class CiteController extends Controller
         $user = User::find(auth()->user()->id);
         $cites = CalendarEvent::all()->toQuery();
         if ($user->isAbleTo('professional-profile')) {
-            $cites = CalendarEvent::where('professional_profile_id', Auth::user()->profile->professionalProfile->id);
+            $cites = CalendarEvent::where('active', true)->where('professional_profile_id', Auth::user()->profile->professionalProfile->id);
         } elseif ($user->isAbleTo('institution-profile')) {
             $professionals = Auth::user()->institutionProfile->professionalProfiles->get(['id']);
-            $cites = CalendarEvent::whereIn('professional_profile_id', $professionals);
+            $cites = CalendarEvent::where('active', true)->whereIn('professional_profile_id', $professionals);
         } elseif ($user->isAbleTo('admin-profile')) {
-            $cites = CalendarEvent::whereHas('professionalProfile', function ($q) {
+            $cites = CalendarEvent::where('active', true)->whereHas('professionalProfile', function ($q) {
                 return $q->where('status', '<>', 0);
             });
         }
@@ -152,6 +155,7 @@ class CiteController extends Controller
         if ($request->has('filter6') && $request->filter6 != "") {
             $cites = $cites->where('assisted', $request->filter6);
         }
+        $companyLogo = DB::table('settings')->where('name', 'company-logo')->first(['value']);
         $cites = $cites->get();
         $pdf = PDF::loadView('external.pdf', [
             'cites' => $cites,
@@ -162,6 +166,7 @@ class CiteController extends Controller
             'filter4' => $request->input('filter4') != "" ? $request->input('filter4') : null,
             'filter5' => $request->input('filter5') != "" ? $request->input('filter5') : null,
             'filter6' => $request->input('filter6') != "" ? $request->input('filter6') : null,
+            'companyLogo' => $companyLogo->value
         ]);
 
         return $pdf->download('cites.pdf');
@@ -210,6 +215,9 @@ class CiteController extends Controller
      */
     public function update(Request $request)
     {
+        $request->validate([
+            'document' => 'mimes:pdf,doc,docx,odt|max:10240'
+        ]);
         $cite = Cite::find($request->id);
         
         $practice = Practice::find($request->input('practice'));
@@ -217,14 +225,38 @@ class CiteController extends Controller
         $calendarEvent = $cite->calendarEvent;
         $cite->update([
             'assisted' => $request->input('assisted'),
-            'isVirtual' => $request->input('isVirtual')
+            'isVirtual' => $request->input('isVirtual'),
+            'paid' => $request->input('paid')
         ]);
         if ($cite->practice != $practice) {
             $cite->practice()->dissociate();
             $cite->practice()->associate($practice);
         }
+        $patarr = $calendarEvent->patientProfiles->toArray(['id']);
+        $medicalHistory = MedicalHistory::where('professional_profile_id', $calendarEvent->professional_profile_id)->where('patient_profile_id', $patarr[0])->first();
+        //dd($medicalHistory);
+        if ($request->has('document')) {
+            if ($request->hasFile('document') && $request->file('document')->isValid()) {
+                try {
+                    $path = Storage::putFile('files/histories/' . $medicalHistory->id, $request->file('document'));
+                    FileVault::encrypt($path);
+                    $document = new Document();
+                    $document->name = $request->file('document')->getClientOriginalName();
+                    $document->path = $path;
+                    $document->medical_history_id = $medicalHistory->id;
+                    $document->cite_id = $cite->id;
+                    $document->save();
+                } catch (\Throwable $th) {
+                    return back()->withErrors('error', $th->getMessage());
+                }
+            }
+        }
         
-        $calendarEvent->approved = $request->input('approved');
+        if ($calendarEvent->approved == 0) {
+            $calendarEvent->approved = $request->input('approved');
+        }
+        
+
         if ($request->has('resume') && !empty($request->resume)) {
             $cite->resume = encrypt($request->resume);
         }
@@ -242,23 +274,27 @@ class CiteController extends Controller
                     'reminder' => $calendarEvent->reminder,
                     'patient' => $patient
                 ], function ($message) use ($data) {
-                    $message->to($data['email'], $data['fullname'])->subject('Consulta2 | Recordatorio de turno para el día ');
+                    $companyName = DB::table('settings')->where('name', 'company-name')->first(['value']);
+                    $message->to($data['email'], $data['fullname'])->subject($companyName->value.' | Recordatorio de turno para el día ');
                     $message->from('sistema@consulta2.com', 'Consulta2');
                 });
             }
 
             if ($request->input('assisted') == 1) {
-                if ($patient->medicalHistory == null) {
+                if ($patient->medicalHistories->where('professional_profile_id', $calendarEvent->professional_profile_id) == null) {
                     $medical_history = new MedicalHistory();
                     $medical_history->indate = now();
-                    $medical_history->visitreason = "** Sin datos **";
+                    $medical_history->visitreason = encrypt("** Sin datos **");
+                    $medical_history->diagnosis = encrypt("** Sin datos **");
+                    $medical_history->clinical_history = encrypt("** Sin datos **");
+                    $medical_history->psicological_history = encrypt("**Sin datos**");
                     $medical_history->patient_profile_id = $patient->id;
                     $medical_history->professional_profile_id = $calendarEvent->professionalProfile->id;
                     $medical_history->save();
                     $cite->medical_history_id = $medical_history->id;
                     $cite->save();
                 } else {
-                    $cite->medical_history_id = $patient->medicalHistory->id;
+                    $cite->medical_history_id = $patient-> medicalHistories->where('professional_profile_id', $calendarEvent->professional_profile_id)->first()->id;
                     $cite->save();
                 }
                 
@@ -266,7 +302,7 @@ class CiteController extends Controller
         }
         
         
-        return back()->withStatus(__('Datos de sesión actualizados.'));
+        return back()->withStatus(__('Datos de consulta actualizados.'));
     }
 
     /**
@@ -279,4 +315,5 @@ class CiteController extends Controller
     {
         //
     }
+
 }

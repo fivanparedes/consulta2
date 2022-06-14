@@ -55,6 +55,10 @@
             'professional_show',
             'institutions'
     ];
+     $companyLogo =  DB::table('settings')->where('name', 'company-logo')->first(['value']);
+     $companyLogo = $companyLogo->value;
+     $companyName = DB::table('settings')->where('name', 'company-name')->first(['value']);
+     $companyName = $companyName->value;
     @endphp
     <div
         class="wrapper @if ((!auth()->check() ||

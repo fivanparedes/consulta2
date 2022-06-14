@@ -1,33 +1,44 @@
-@extends('layouts.app', ['activePage' => 'dashboard', 'title' => 'Consulta2 | Panel', 'navName' => 'Bienvenida',
+@extends('layouts.app', ['activePage' => 'dashboard', 'title' => $companyName.' | Panel', 'navName' => 'Bienvenida',
 'activeButton' => 'laravel'])
 
 @section('content')
+    <style>
+        .fc-event:hover {
+            border-color: #1c7d87;
+            cursor: pointer;
+        }
+    </style>
     <div class="content">
         <div class="container-fluid">
             <div class="container">
                 <div class="row">
-                    <div class="col" style="max-width: 20vw">
+                    @if (Auth::user()->isAbleTo('patient-profile'))
+                        <div class="col" style="max-width: 20vw">
 
-                        <div class="card">
-                            <div class="card-body text-center">
-                                <div class="row">
-                                    <div class="col">
-                                        <h2>Inicio</h2>
-                                    </div>
-                                    <div class="col">
-                                        <a class="btn bg-primary text-light" href="{{ url('/professionals/list') }}">Ver
-                                            lista
-                                            de prestadores</a>
-                                    </div>
-                                    <div class="col">
-                                        <a href="{{ url('/institutions/list') }}" class="btn bg-primary text-light">Ver
-                                            centros de salud cercanos</a>
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <div class="row">
+                                        <div class="col">
+                                            <h2>Inicio</h2>
+                                        </div>
+                                        <div class="col">
+                                            <a class="btn bg-primary text-light"
+                                                href="{{ url('/professionals/list') }}">Ver
+                                                lista
+                                                de prestadores</a>
+                                        </div>
+                                        <div class="col">
+                                            <a href="{{ url('/institutions/list') }}"
+                                                class="btn bg-primary text-light">Ver
+                                                centros de salud cercanos</a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
+                            </div>
                         </div>
-                    </div>
+                    @endif
+
                     <div class="col" style="width: 70vw">
                         <div id="calendar" style="margin-top:2px"></div>
                     </div>
@@ -68,8 +79,11 @@
                         selectHelper: true,
                         editable: false,
                         eventClick: function(event) {
-                            var id = event.id;
-                            window.location.href = "/profile/events/" + id;
+                            if (event.start < today.setDate(today.getDate() + 1)) {
+                                var id = event.id;
+                                window.location.href = "{{ Auth::user()->isAbleTo('patient-profile') ? "/profile/events/" : '/cite/' }}" +  id;
+                            }
+                            
                         }
                     });
 

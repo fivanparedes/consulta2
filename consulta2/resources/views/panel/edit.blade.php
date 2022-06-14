@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'role_permissions', 'title' => 'Consulta2 | Editar permiso', 'navName' => 'Configuración', 'activeButton' => 'laravel'])
+@extends('layouts.app', ['activePage' => 'role_permissions', 'title' => $companyName.' | Editar permiso', 'navName' => 'Configuración', 'activeButton' => 'laravel'])
 
 @section('content')
   <div>

@@ -22,7 +22,8 @@ class CalendarEvent extends Model implements Auditable
         'approved',
         'confirmed',
         'isVirtual',
-        'gid'
+        'gid',
+        'active'
     ];
 
     public $sortable = [

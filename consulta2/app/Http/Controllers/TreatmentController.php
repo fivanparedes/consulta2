@@ -42,7 +42,13 @@ class TreatmentController extends Controller
     {
         $user = User::find(auth()->user()->id);
         if ($user->isAbleTo('professional-profile')) {
-            return view('treatments.create')->with(['medical_histories' => $user->profile->professionalProfile->medicalHistories]);
+            $medical_histories = new Collection();
+            foreach ($user->profile->professionalProfile->medicalHistories as $medical_history) {
+                if (!$medical_histories->contains($medical_history)) {
+                    $medical_histories->push($medical_history);
+                }
+            }
+            return view('treatments.create')->with(['medical_histories' => $medical_histories]);
         } else {
             return abort(404);
         }
@@ -107,7 +113,8 @@ class TreatmentController extends Controller
      */
     public function show(Treatment $treatment)
     {
-        //
+        $preferred_days = explode(';', $treatment->preferred_days);
+        return view('treatments.edit')->with(['treatment' => $treatment, 'preferred_days' => $preferred_days]);
     }
 
     /**

@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'patients', 'title' => 'Consulta2 | Lista de pacientes registrados',
+@extends('layouts.app', ['activePage' => 'patients', 'title' => $companyName.' | Lista de pacientes registrados',
 'navName' => 'Configuración', 'activeButton' => 'laravel'])
 
 @section('content')
@@ -17,9 +17,9 @@
                                     <a class="text-light right btn btn-primary"
                                         href="{{ route('patients.create') }}">+
                                         Agregar paciente</a>
-                                        @if (Auth::user()->isAbleTo('manage-histories'))
+                                        {{-- @if (Auth::user()->isAbleTo('manage-histories'))
                                             <a href="{{ url('/medical_history/create') }}" class="btn bg-secondary text-light">Agregar historial médico</a> 
-                                        @endif
+                                        @endif --}}
                                         
                                 </div>
                             </div>

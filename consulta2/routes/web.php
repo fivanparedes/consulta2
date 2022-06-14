@@ -6,6 +6,7 @@ use App\Http\Controllers\CityController;
 use App\Http\Controllers\CountryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\MedicalHistoryController;
 use App\Http\Controllers\PatientController;
@@ -43,13 +44,15 @@ Route::get('/clearapp', function() {
 });
 
 
-
+Route::get('/oauth', [HomeController::class, 'oauth']);
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Auth::routes();
 
 Route::get('/home', 'App\Http\Controllers\HomeController@index')->name('dashboard');
+
+
 
 Route::group(['middleware' => 'auth'], function () {
 
@@ -78,7 +81,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/show-available-hours', [EventController::class, 'showAvailableTimes']);
 	Route::get('/event/confirm', [EventController::class, 'confirm']);
 	Route::post('/event_store', [EventController::class, 'store']);
-	Route::post('/event/massCancel', [EventController::class, 'massCancel']);
+	Route::match(['GET', 'POST'],'/event_massCancel', [EventController::class, 'massCancel']);
 
 	Route::get('/external/event/cancel/{id}', [EventController::class, 'externalCancel']);
 	Route::delete('/external/event/delete/{id}', [EventController::class, 'externalDelete']);
@@ -98,15 +101,15 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/institutions/pdf', 'App\Http\Controllers\InstitutionController@createPDF');
 
 	/**
-	 * Controlador de citas (sesiones de consultorio)
+	 * Controlador de citas (consultas y sesiones de consultorio)
 	 */
 	Route::get('cite', ['as' => 'cite.index', 'uses' => 'App\Http\Controllers\CiteController@index']);
 	Route::get('/cite/{id}', ['as' => 'cite.show', 'uses' => 'App\Http\Controllers\CiteController@_show']);
 	Route::get('/cite/edit/{id}', ['as' => 'cite.edit', 'uses' => 'App\Http\Controllers\CiteController@edit']);
 	Route::get('/cite_pdf', ['as' => 'cite.pdf', 'uses' => 'App\Http\Controllers\CiteController@createPDF']);
 	Route::patch('/cite/update/{id}', ['as' => 'cite.update', 'uses' => 'App\Http\Controllers\CiteController@update']);
-	
-	Route::resource('/treatments','App\Http\Controllers\TreatmentController', ['except' => ['show']]);
+
+	Route::resource('/treatments','App\Http\Controllers\TreatmentController');
 	/**
 	 * Perfiles de usuario
 	 */
@@ -183,7 +186,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('statistics/loadCoverageComparison', [StatisticsController::class, 'loadCoverageComparison']);
 	Route::get('statistics/loadAgeRange', [StatisticsController::class, 'loadAgeRange']);
 	Route::get('statistics', [StatisticsController::class, 'index']);
-	Route::get('statistics/pdf', [StatisticsController::class, 'createPDF']);
+	Route::get('statistics_pdf', [StatisticsController::class, 'createPDF']);
 
 	Route::get('/icons', function() {
 		return view('pages.icons');

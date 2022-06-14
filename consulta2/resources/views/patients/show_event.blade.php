@@ -1,5 +1,5 @@
-@extends('layouts.app', ['activePage' => 'patient_events', 'title' => 'Consulta2 | Ver turno', 'navName' => 'Detalles de
-sesión', 'activeButton' => 'laravel'])
+@extends('layouts.app', ['activePage' => 'patient_events', 'title' => $companyName.' | Ver turno', 'navName' => 'Detalles de
+la consulta', 'activeButton' => 'laravel'])
 
 @section('content')
     <div class="content">
@@ -28,6 +28,7 @@ sesión', 'activeButton' => 'laravel'])
                                         <span
                                             class="badge {{ $event->cite->paid ? 'badge-success' : 'badge-secondary' }}">{{ $event->cite->paid ? 'Pagado' : 'No pagado' }}</span>
                                     </p>
+                                    <p><strong>Modalidad:</strong> {{ $event->isVirtual == 1 ? "Virtual" : "Presencial" }}</p>  
                                     @if (date_create($event->start) > date_create('now'))
                                         <div class="alert alert-warning">
                                             <button type="button" aria-hidden="true" class="close"
@@ -52,41 +53,17 @@ sesión', 'activeButton' => 'laravel'])
                                             
                                         </div>
                                     @endif
-                                    <div class="row">
-                                        <div class="col">
-                                            <button id="btn-cancelar" class="btn bg-danger text-light mt-4"
-                                                data-toggle="modal"
-                                                data-target="#exampleModal">{{ __('Cancelar turno') }}</button>
-                                        </div>
-                                    </div>
-
-
                                 </div>
 
                             </div>
                         </div>
                         <div class="card-body">
                             <form method="post" action="" autocomplete="off" enctype="multipart/form-data">
-                                @csrf
-                                @method('patch')
-
-                                <h4 class="heading-small text-muted mb-4">{{ __('Datos del turno') }}</h4>
-
-                                @include('alerts.success')
-                                @include('alerts.error_self_update', ['key' => 'not_allow_profile'])
 
                                 <div class="pl-lg-4">
 
-                                    <div class="form-group{{ $errors->has('isVirtual') ? ' has-error' : '' }}">
-                                        <label for="input-isVirtual">Modalidad</label>
-                                        <select class="form-control" name="isVirtual" id="input-isVirtual">
-                                            <option value="1" @if (old('isVirtual', $event->cite->isVirtual) == 1) selected @endif>Virtual</option>
-                                            <option value="0" @if (old('isVirtual', $event->cite->isVirtual) == 0) selected @endif>Presencial</option>
-                                        </select>
-
-                                        @include('alerts.feedback', ['field' => 'isVirtual'])
-                                    </div>
-                                    @if (date_create('now') <= date_sub(date_create($event->start), date_interval_create_from_date_string('1 days')))
+                                     
+                                    @if (date_create('now')->format('Y-m-d') == date_sub(date_create($event->start), date_interval_create_from_date_string('2 days'))->format('Y-m-d'))
                                         <div class="form-group">
                                             <h5>Confirmar asistencia</h5>
                                             <p>La consulta está a punto de tomar lugar. Confirme su asistencia para evitar
@@ -95,6 +72,16 @@ sesión', 'activeButton' => 'laravel'])
                                                 data-target="#confirmModal">Confirmar</button>
                                         </div>
                                     @endif
+                                    @if (date_create('now') < date_create($event->start))
+                                            <div class="form-group">
+                                        <div class="col">
+                                            <button id="btn-cancelar" class="btn bg-danger text-light mt-4"
+                                                data-toggle="modal"
+                                                data-target="#exampleModal">{{ __('Cancelar turno') }}</button>
+                                        </div>
+                                    </div>
+                                    @endif
+                                    
                                 </div>
                             </form>
 

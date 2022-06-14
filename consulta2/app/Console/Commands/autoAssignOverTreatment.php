@@ -5,7 +5,10 @@ namespace App\Console\Commands;
 use App\Models\CalendarEvent;
 use App\Models\Cite;
 use App\Models\ConsultType;
+use App\Models\Coverage;
+use App\Models\MedicalHistory;
 use App\Models\Practice;
+use App\Models\ProfessionalProfile;
 use App\Models\Reminder;
 use App\Models\Treatment;
 use Cron\DayOfMonthField;
@@ -81,7 +84,7 @@ class autoAssignOverTreatment extends Command
                     # code...
                     foreach ($this->getAllDaysInAMonth(date_create($month)->format('Y'), date_create($month)->format('m'), "Monday") as $key => $value) {
                         $chosendate = $value->format('Y-m-d') . ' ' . $time;
-                        $event = CalendarEvent::where('start','>=', date_create($chosendate))->exists();
+                        $event = CalendarEvent::where('active', true)->where('start','>=', date_create($chosendate))->exists();
                         if (!$event) {
                             array_push($chosendates, $chosendate);
                         }
@@ -91,7 +94,7 @@ class autoAssignOverTreatment extends Command
                     # code...
                     foreach ($this->getAllDaysInAMonth(date_create($month)->format('Y'), date_create($month)->format('m'), "Tuesday") as $key => $value) {
                         $chosendate = $value->format('Y-m-d') . ' ' . $time;
-                        $event = CalendarEvent::where('start','>=', date_create($chosendate))->exists();
+                        $event = CalendarEvent::where('active', true)->where('start','>=', date_create($chosendate))->exists();
                         if (!$event) {
                             array_push($chosendates, $chosendate);
                         }
@@ -101,7 +104,7 @@ class autoAssignOverTreatment extends Command
                     # code...
                     foreach ($this->getAllDaysInAMonth(date_create($month)->format('Y'), date_create($month)->format('m'), "Wednesday") as $key => $value) {
                         $chosendate = $value->format('Y-m-d') . ' ' . $time;
-                        $event = CalendarEvent::where('start','>=', date_create($chosendate))->where('end', '<', date_create($chosendate))->exists();
+                        $event = CalendarEvent::where('active', true)->where('start','>=', date_create($chosendate))->where('end', '<', date_create($chosendate))->exists();
                         if (!$event) {
                             array_push($chosendates, $chosendate);
                         }
@@ -111,7 +114,7 @@ class autoAssignOverTreatment extends Command
                     # code...
                     foreach ($this->getAllDaysInAMonth(date_create($month)->format('Y'), date_create($month)->format('m'), "Thursday") as $key => $value) {
                         $chosendate = $value->format('Y-m-d') . ' ' . $time;
-                        $event = CalendarEvent::where('start','>=', date_create($chosendate))->where('end', '<', date_create($chosendate))->exists();
+                        $event = CalendarEvent::where('active', true)->where('start','>=', date_create($chosendate))->where('end', '<', date_create($chosendate))->exists();
                         if (!$event) {
                             array_push($chosendates, $chosendate);
                         }
@@ -121,7 +124,7 @@ class autoAssignOverTreatment extends Command
                     # code...
                     foreach ($this->getAllDaysInAMonth(date_create($month)->format('Y'), date_create($month)->format('m'), "Friday") as $key => $value) {
                         $chosendate = $value->format('Y-m-d') . ' ' . $time;
-                        $event = CalendarEvent::where('start','>=', date_create($chosendate))->where('end', '<', date_create($chosendate))->exists();
+                        $event = CalendarEvent::where('active', true)->where('start','>=', date_create($chosendate))->where('end', '<', date_create($chosendate))->exists();
                         if (!$event) {
                             array_push($chosendates, $chosendate);
                         }
@@ -131,7 +134,7 @@ class autoAssignOverTreatment extends Command
                     # code...
                     foreach ($this->getAllDaysInAMonth(date_create($month)->format('Y'), date_create($month)->format('m'), "Saturday") as $key => $value) {
                         $chosendate = $value->format('Y-m-d') . ' ' . $time;
-                        $event = CalendarEvent::where('start','>=', date_create($chosendate))->where('end', '<', date_create($chosendate))->exists();
+                        $event = CalendarEvent::where('active', true)->where('start','>=', date_create($chosendate))->where('end', '<', date_create($chosendate))->exists();
                         if (!$event) {
                             array_push($chosendates, $chosendate);
                         }
@@ -141,7 +144,7 @@ class autoAssignOverTreatment extends Command
                     # code...
                     foreach ($this->getAllDaysInAMonth(date_create($month)->format('Y'), date_create($month)->format('m'), "Sunday") as $key => $value) {
                         $chosendate = $value->format('Y-m-d') . ' ' . $time;
-                        $event = CalendarEvent::where('start', '>=',date_create($chosendate))->where('end', '<', date_create($chosendate))->exists();
+                        $event = CalendarEvent::where('active', true)->where('start', '>=',date_create($chosendate))->where('end', '<', date_create($chosendate))->exists();
                         if (!$event) {
                             array_push($chosendates, $chosendate);
                         }
@@ -164,6 +167,13 @@ class autoAssignOverTreatment extends Command
      */
     public function handle()
     {
+        foreach (MedicalHistory::all() as $medical_history) {
+            $medical_history->visitreason = $medical_history->visitreason == null ? encrypt("** Sin datos **") : $medical_history->visitreason;
+            $medical_history->diagnosis = $medical_history->diagnosis == null ? encrypt("** Sin datos **") : $medical_history->diagnosis;
+            $medical_history->clinical_history = $medical_history->clinical_history == null ? encrypt("** Sin datos **") : $medical_history->clinical_history;
+            $medical_history->psicological_history = $medical_history->psicological_history == null ? encrypt("**Sin datos**") : $medical_history->psicological_history;
+            $medical_history->save();
+        }
         $treatments = Treatment::where('start', '<', now())->where('end', '>', now())->get();
         if ($treatments->count() > 0) {
             foreach ($treatments as $treatment) {
@@ -209,6 +219,7 @@ class autoAssignOverTreatment extends Command
                                 'title' => $treatment->medicalHistory->patientProfile->profile->user->name . ' ' . $treatment->medicalHistory->patientProfile->profile->user->lastname,
                                 'start' => $selectedDate,
                                 'end' => $formatDate,
+                                'active' => true,
                                 'approved' => 1,
                                 'confirmed' => false,
                                 'isVirtual' => false,
@@ -240,14 +251,14 @@ class autoAssignOverTreatment extends Command
                             $_cite->treatment()->associate($treatment);
 
                             $_cite->save();
-
+                            $companyName = DB::table('settings')->where('name', 'company-name')->first(['value']);
                             $user = $treatment->medicalHistory->patientProfile->profile->user;
                             Mail::send('external.created', [
                                 'user' => $user,
                                 'event' => $_event
-                            ], function ($message) use ($user) {
-                                $message->to($user->email, $user->name . ' ' . $user->lastname)->subject('Consulta2 | Turno pendiente de aprobación');
-                                $message->from('sistema@consulta2.com', 'Consulta2');
+                            ], function ($message) use ($user, $companyName) {
+                                $message->to($user->email, $user->name . ' ' . $user->lastname)->subject($companyName->value.' | Turno pendiente de aprobación');
+                                $message->from('sistema@consulta2.com', $companyName->value);
                             });
                             $reminder = new Reminder();
                             $reminder->calendarEvent()->associate($_event);

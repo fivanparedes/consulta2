@@ -11,6 +11,7 @@ use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class StatisticsController extends Controller
 {
@@ -23,7 +24,11 @@ class StatisticsController extends Controller
         if ($request->ajax()) {
             $user = User::find(auth()->user()->id);
             $professionalProfile = $user->profile->professionalProfile;
-            $calendarEvents = CalendarEvent::where('professional_profile_id', $professionalProfile->id)->get();
+            $calendarEvents = CalendarEvent::where('active', true)->where('professional_profile_id', $professionalProfile->id);
+            if ($request->has('datestart') && $request->has('dateend')) {
+                $calendarEvents = $calendarEvents->where('start', '>=', $request->datestart)->where('start', '<=', $request->dateend);
+            }
+            $calendarEvents = $calendarEvents->get();
             if ($calendarEvents->count() == 0) {
                 return response()->json(["status" => "error"]);
             }
@@ -76,7 +81,12 @@ class StatisticsController extends Controller
         if ($request->ajax()) {
             $user = User::find(auth()->user()->id);
             $professionalProfile = $user->profile->professionalProfile;
-            $calendarEvents = CalendarEvent::where('professional_profile_id', $professionalProfile->id)->get();
+
+            $calendarEvents = CalendarEvent::where('active', true)->where('professional_profile_id', $professionalProfile->id);
+            if ($request->has('datestart') && $request->has('dateend')) {
+                $calendarEvents = $calendarEvents->where('start', '>=', $request->datestart)->where('start', '<=', $request->dateend);
+            }
+            $calendarEvents = $calendarEvents->get();
             $totalEvents = $calendarEvents->count();
             
             if ($totalEvents == 0) {
@@ -102,8 +112,8 @@ class StatisticsController extends Controller
             $series = array();
             $labels = array();
             foreach ($countingarray as $key => $value) {
-                array_push($series, ($value/$totalEvents)*100);
-                array_push($labels, (string)(($value / $totalEvents) * 100).'%');
+                array_push($series, number_format(($value/$totalEvents) * 100, 2));
+                array_push($labels, (string)(number_format(($value / $totalEvents)* 100, 2)).'%');
             }
             //retornar array bidimensional de 5 lugares (indizado 0-4)
             //una fila para los porcentajes en formato entero N%
@@ -115,5 +125,10 @@ class StatisticsController extends Controller
                 "series" => $series
             ]);
         }
+    }
+
+    public function createPDF(Request $request) {
+        $pdf = PDF::loadView('pages.statistics_pdf');
+        return $pdf->download("reporte_estadistico.pdf");
     }
 }

@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'treatments', 'title' => 'Consulta2 | Actualizar tratamiento N°'.$treatment->id, 'navName' =>
+@extends('layouts.app', ['activePage' => 'treatments', 'title' => $companyName.' | Actualizar tratamiento N°'.$treatment->id, 'navName' =>
 'Tratamientos', 'activeButton' => 'laravel'])
 
 @section('content')
@@ -112,11 +112,6 @@
         </div>
         </form>
         <div class="text-center form-group">
-            <form action="{{ url('/treatments/'.$treatment->id) }}" method="post">
-            @csrf
-            @method('delete')
-                <button type="submit" class="btn bg-danger text-light">Eliminar tratamiento</button>
-            </form>
         </div>
         
     </div>

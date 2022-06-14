@@ -66,6 +66,14 @@ class ProfileController extends Controller
     {
         auth()->user()->update($request->all());
 
+        if (auth()->user()->isAbleTo('professional-profile')) {
+            foreach ($request->input('coverages[]') as $key => $value) {
+                $coverage = Coverage::find($value);
+                auth()->user()->profile->professionalProfile->coverages()->attach($coverage);
+                auth()->user()->profile->professionalProfile->save();
+            }
+        }
+
         return back()->withStatus(__('Perfil actualizado exitosamente.'));
     }
 
@@ -78,6 +86,8 @@ class ProfileController extends Controller
     public function password(PasswordRequest $request)
     {
         auth()->user()->update(['password' => Hash::make($request->get('password'))]);
+
+        
 
         return back()->withPasswordStatus(__('Contraseña actualizada exitosamente.'));
     }

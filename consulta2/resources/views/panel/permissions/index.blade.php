@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'role_permissions', 'title' => 'Consulta2 | Permisos', 'navName' => 'Configuración', 'activeButton' => 'laravel'])
+@extends('layouts.app', ['activePage' => 'role_permissions', 'title' => $companyName.' | Permisos', 'navName' => 'Configuración', 'activeButton' => 'laravel'])
 
 @section('content')
   <div class="flex flex-col">

@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Hash;
 use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
 use DateTimeZone;
+use Illuminate\Support\Facades\DB;
 use Spatie\GoogleCalendar\Event;
 
 class PatientController extends Controller
@@ -34,11 +35,11 @@ class PatientController extends Controller
         if ($user->isAbleTo('professional-profile')) {
             $col = new Collection();
 
-            $medical_histories = $user->profile->professionalProfile->medicalHistories;
+            /* $medical_histories = $user->profile->professionalProfile->medicalHistories;
             foreach ($medical_histories as $medical_history) {
                 $col->push($medical_history->patientProfile);
-            }
-            $events = CalendarEvent::where('professional_profile_id', $user->profile->professionalProfile->id);
+            } */
+            $events = $user->profile->professionalProfile->calendarEvents->where('active', true);
             foreach ($events as $calendarevent) {
                 if (count($calendarevent->patientProfiles) > 0) {
                     foreach ($calendarevent->patientProfiles as $patientProfile) {
@@ -48,8 +49,8 @@ class PatientController extends Controller
                     }
                 }
             }
-
-            $patients = PatientProfile::whereIn('id', $col->toArray(['id']));
+            
+            $patients = $col->toQuery();
             if ($request->has('filter1') && $request->filter1 != "") {
                 $user_ids = array();
                 foreach ($col as $item) {
@@ -103,7 +104,7 @@ class PatientController extends Controller
         } elseif ($user->isAbleTo('institution-profile')) {
             $patients = new Collection();
             $professionals = Auth::user()->institutionProfile->professionalProfiles->toArray(['id']);
-            $events = CalendarEvent::whereIn('professional_profile_id', $professionals)->get();
+            $events = CalendarEvent::where('active', true)->whereIn('professional_profile_id', $professionals)->get();
             foreach ($events as $event) {
                 if ($event->patientProfiles->count() > 0) {
                     foreach ($event->patientProfiles as $profile) {
@@ -228,7 +229,7 @@ class PatientController extends Controller
         $user = User::find(auth()->user()->id);
         if ($user->isAbleTo('professional-profile')) {
             $patients = new Collection();
-            $events = CalendarEvent::where('professional_profile_id', Auth::user()->profile->professionalProfile->id)->get();
+            $events = CalendarEvent::where('active', true)->where('professional_profile_id', Auth::user()->profile->professionalProfile->id)->get();
             foreach ($events as $event) {
                 if ($event->patientProfiles->count() > 0) {
                     foreach ($event->patientProfiles as $profile) {
@@ -248,12 +249,13 @@ class PatientController extends Controller
 
             $patients = PatientProfile::whereIn('id', $patients->toArray());
             $patients = $patients->sortable()->paginate(10);
-            $pdf = PDF::loadView('patients.pdf', ['patients' => $patients]);
+            $companyLogo = DB::table('settings')->where('name', 'company-logo')->first(['value']);
+            $pdf = PDF::loadView('patients.pdf', ['patients' => $patients, 'companyLogo' => $companyLogo->value]);
             return $pdf->download('pacientes.pdf');
         } elseif ($user->isAbleTo('institution-profile')) {
             $patients = new Collection();
             $professionals = Auth::user()->institutionProfile->professionalProfiles->all(['id']);
-            $events = CalendarEvent::whereIn('professional_profile_id', $professionals)->get();
+            $events = CalendarEvent::where('active', true)->whereIn('professional_profile_id', $professionals)->get();
             foreach ($events as $event) {
                 if ($event->patientProfiles->count() > 0) {
                     foreach ($event->patientProfiles as $profile) {
@@ -273,11 +275,13 @@ class PatientController extends Controller
 
             $patients = PatientProfile::whereIn('id', $patients->toArray());
             $patients = $patients->sortable()->paginate(10);
+            $companyLogo = DB::table('settings')->where('name', 'company-logo')->first(['value']);
             $pdf = PDF::loadView('patients.pdf', ['patients' => $patients,
                 'filter1' => $request->filter1 != "" ? $request->filter1 : "",
                 'filter2' => $request->filter2 != "" ? $request->filter2 : "",
                 'filter3' => $request->filter3 != "" ? $request->filter3 : "",
-                'filter4' => $request->filter4 != "" ? $request->filter4 : "",]);
+                'filter4' => $request->filter4 != "" ? $request->filter4 : "",
+                'companyLogo' => $companyLogo->value]);
             return $pdf->download('pacientes.pdf');
         } elseif ($user->isAbleTo('admin-profile')) {
             $patients = PatientProfile::all()->toQuery();
@@ -322,11 +326,13 @@ class PatientController extends Controller
                 $patients = $patients->whereIn('id', $user_ids);
             }
             $patients = $patients->get();
+            $companyLogo = DB::table('settings')->where('name', 'company-logo')->first(['value']);
             $pdf = PDF::loadView('patients.pdf', ['patients' => $patients,
                 'filter1' => $request->filter1 != "" ? $request->filter1 : "",
                 'filter2' => $request->filter2 != "" ? $request->filter2 : "",
                 'filter3' => $request->filter3 != "" ? $request->filter3 : "",
-                'filter4' => $request->filter4 != "" ? $request->filter4 : "",]);
+                'filter4' => $request->filter4 != "" ? $request->filter4 : "",
+                'companyLogo' => $companyLogo->value]);
             return $pdf->download('pacientes.pdf');
         }
     }
@@ -337,7 +343,7 @@ class PatientController extends Controller
         if (!$usermodel->isAbleTo('patient-profile')) {
             return abort(404);
         }
-        $calendarevents = Auth::user()->profile->patientProfile->calendarEvents;
+        $calendarevents = Auth::user()->profile->patientProfile->calendarEvents->where('active', true);
         if ($calendarevents->count() > 0) {
             $calendarevents = $calendarevents->toQuery();
             $calendarevents = $calendarevents->sortable()->paginate(10);
@@ -352,7 +358,7 @@ class PatientController extends Controller
     {
         $event = CalendarEvent::find($id);
         $gevent = null;
-        /* if ($event->gid == null) {
+        if ($event->gid == null) {
             $gevents = Event::get();
             foreach ($gevents as $item) {
                 if ($item->startDateTime == new Carbon($event->start, new DateTimeZone("-0300"))) {
@@ -362,7 +368,7 @@ class PatientController extends Controller
             }
         } else {
             $gevent = Event::find($event->gid);
-        } */
+        }
 
         //dd($gevents);
         //$gevent = null;
@@ -387,8 +393,8 @@ class PatientController extends Controller
             'familyGroup' => 'required|string|filled|max:100',
             'familyPhone' => 'required',
             'civilState' => 'required|string|filled|max:40',
-            'scholarity' => 'required|string|filled|max:20',
-            'occupation' => 'required|string|filled|max:20'
+            'scholarity' => 'required|string|filled|max:40',
+            'occupation' => 'required|string|filled|max:40'
         ]);
         if ($user->isAbleTo('patient-profile') || $user->isAbleTo('professional-profile')) {
             $user_profile = Profile::where('user_id', auth()->user()->id)->first();
@@ -433,7 +439,7 @@ class PatientController extends Controller
             $patuser->name = $request->user_name;
             $patuser->lastname = $request->user_lastname;
             $patuser->dni = $request->user_dni;
-            $patuser->email = $request->email;
+            $patuser->email = $request->user_email;
             $patuser->password = Hash::make($request->user_dni);
             $patuser->save();
 
@@ -487,7 +493,7 @@ class PatientController extends Controller
             'user_name' => 'required|string|filled|max:60',
             'user_lastname' => 'required|string|filled|max:60',
             'user_dni' => 'required|numeric|unique:users,dni',
-            'user_email' => 'required|email:strict|unique:users,email',
+            'user_email' => 'required|email:strict',
             'bornDate' => 'required|date_format:Y-m-d|before:' . date('Y-m-d'),
             'gender' => 'required|string',
             'phone' => 'required',
@@ -535,6 +541,10 @@ class PatientController extends Controller
 
         if (!$user->isAbleTo('admin-profile')) {
             $medical_history = new MedicalHistory();
+            $medical_history->visitreason = encrypt("** Sin datos **");
+            $medical_history->diagnosis = encrypt("** Sin datos **");
+            $medical_history->clinical_history = encrypt("** Sin datos **");
+            $medical_history->psicological_history = encrypt("**Sin datos**");
             $medical_history->patient_profile_id = $patientProfile->id;
             if ($user->isAbleTo('professional-profile')) {
                 $medical_history->professional_profile_id = $user->profile->professionalProfile->id;

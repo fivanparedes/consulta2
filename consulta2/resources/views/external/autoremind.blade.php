@@ -1,4 +1,4 @@
-<h1>Consulta2 | Recordatorio de turno</h1>
+<h1>{{$companyName}} | Recordatorio de turno</h1>
 <p>Se le recuerda que mañana {{ date_create($event->start)->format('d/m/Y h:i') }} tiene agendado un turno.<br>
     En caso de no confirmar la asistencia, se cobrará un recargo
 </p>

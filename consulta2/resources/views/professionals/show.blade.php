@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'professional_show', 'title' => 'Consulta2 | Ver perfil ', 'navName' => 'Ver
+@extends('layouts.app', ['activePage' => 'professional_show', 'title' => $companyName.' | Ver perfil ', 'navName' => 'Ver
 perfil', 'activeButton' => 'laravel'])
 
 @section('content')
@@ -59,7 +59,7 @@ perfil', 'activeButton' => 'laravel'])
                                 <label class="form-label" for="input-day">Elegir fecha:</label>
                                 <input class="datepicker form-control" type="date" name="date" id="input-day"
                                     value="{{ date('Y-m-d', strtotime(now() . '+1 days')) }}"
-                                    min="{{ date('Y-m-d', strtotime(now() . '+ 1 days')) }}"
+                                    min="{{ date('Y-m-d', strtotime(now())) }}"
                                     max="{{ date('Y-m-d', strtotime(now() . ' + 15 days')) }}" />
                             </div>
                         </div>

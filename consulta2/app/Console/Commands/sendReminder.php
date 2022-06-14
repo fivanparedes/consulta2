@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Reminder;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class sendReminder extends Command
@@ -39,6 +40,7 @@ class sendReminder extends Command
      */
     public function handle()
     {
+        $companyName = DB::table('settings')->where('name', 'company-name')->first(['value']);
         $reminders = Reminder::whereNull('sent')->get();
         foreach ($reminders as $reminder) {
             $startdate = date_create($reminder->calendarEvent->start);
@@ -54,8 +56,8 @@ class sendReminder extends Command
                             'event' => $reminder->calendarEvent,
                             'reminder' => $reminder,
                             'patient' => $patient
-                        ], function ($message) use ($data) {
-                            $message->to($data['email'], $data['fullname'])->subject('Consulta2 | Recordatorio de turno para el día ');
+                        ], function ($message) use ($data, $companyName) {
+                            $message->to($data['email'], $data['fullname'])->subject($companyName->value.' | Recordatorio de turno para el día ');
                             $message->from('sistema@consulta2.com', 'Consulta2');
                         });
                         echo "Enviado un email a ". $data['email'] . "\n";

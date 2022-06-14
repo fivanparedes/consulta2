@@ -88,10 +88,10 @@ class PracticeController extends Controller
             'name' => 'required|string|filled|max:60',
             'maxtime' => 'required|numeric|max:100',
             'description' => 'required|string|filled|max:100',
-            'allowed_modes' => 'required|numeric|max:1',
             'price' => 'required',
             'copayment' => 'required'
         ]);
+        
         $practice = new Practice();
         $practice->name = $request->input('name');
         $practice->maxtime = $request->input('maxtime');
@@ -157,7 +157,6 @@ class PracticeController extends Controller
             'name' => 'required|string|filled|max:60',
             'maxtime' => 'required|numeric|max:100',
             'description' => 'required|string|filled|max:100',
-            'allowed_modes' => 'required|numeric|max:1',
             'price' => 'required',
             'copayment' => 'required'
         ]);
