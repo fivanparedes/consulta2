@@ -23,7 +23,7 @@ class CreateTreatmentsTable extends Migration
             $table->string('preferred_days', 20);
             $table->date('start')->default(now());
             $table->date('end')->default(now());
-            $table->unsignedBigInteger('medical_history_id');
+            //$table->unsignedBigInteger('medical_history_id');
             $table->foreignIdFor(MedicalHistory::class);
             $table->timestamps();
         });
