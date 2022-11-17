@@ -36,6 +36,11 @@ jobs:
           echo "${{ secrets.DOT_ENV_STAGING }}" > .env
           echo "DB_PORT=${{ job.services.mysql.ports[3306] }}" > .env
           cat .env
+    
+    - name: Set up MySQL
+      run: |
+        sudo /etc/init.d/mysql start
+        mysql -e 'CREATE DATABASE test_db' -uroot -p
     - name: Install Dependencies
       working-directory: ./consulta2
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
