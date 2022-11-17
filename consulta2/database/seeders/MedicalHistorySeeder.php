@@ -6,6 +6,7 @@ use App\Models\BusinessHour;
 use App\Models\MedicalHistory;
 use App\Models\ProfessionalProfile;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class MedicalHistorySeeder extends Seeder
 {
@@ -24,5 +25,15 @@ class MedicalHistorySeeder extends Seeder
                 $professional_profile->save();
             }
         }
+
+        DB::table('settings')->insert([
+            'name' => "company-name",
+            'value' => 'Consulta2'
+        ]);
+
+        DB::table('settings')->insert([
+            'name' => "company-logo",
+            'value' => 'Consulta2.jpg'
+        ]);
     }
 }
