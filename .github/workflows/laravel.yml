@@ -34,6 +34,7 @@ jobs:
       run: |
           touch .env
           echo "${{ secrets.DOT_ENV_STAGING }}" > .env
+          echo "DB_PORT=${{ job.services.mysql.ports[3306] }}" > .env
           cat .env
     - name: Install Dependencies
       working-directory: ./consulta2
