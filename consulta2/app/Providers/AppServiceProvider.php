@@ -25,10 +25,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $companyLogo =  DB::table('settings')->where('name', 'company-logo')->first(['value']);
+        try {
+            $companyLogo =  DB::table('settings')->where('name', 'company-logo')->first(['value']);
         $companyLogo = $companyLogo->value;
         $companyName = DB::table('settings')->where('name', 'company-name')->first(['value']);
         $companyName = $companyName->value;
+        } catch (Throwable $th) {
+            $companyLogo = "consulta2.png";
+            $companyName = "Consulta2";
+        }
+        
         view()->share(['companyLogo' => $companyLogo, 'companyName' => $companyName]);
         Paginator::defaultView('vendor.pagination.bootstrap-4');
         Paginator::defaultSimpleView('vendor.pagination.simple-bootstrap-4');
