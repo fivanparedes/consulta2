@@ -14,8 +14,10 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_ALLOW_EMPTY_PASSWORD: true
           MYSQL_DATABASE: test_db
+          MYSQL_ROOT_USER: root
+          MYSQL_ROOT_PASSWORD: ''
         ports:
           - 3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -27,6 +29,13 @@ jobs:
     - name: Copy .env
       working-directory: ./consulta2
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+    - name: Put content in .env
+      working-directory: ./consulta2
+      run: |
+          touch .env
+          echo API_ENDPOINT="https://xxx.execute-api.us-west-2.amazonaws.com" >> .env
+          echo API_KEY=${{ secrets.DOT_ENV_STAGING }} >> .env
+          cat .env
     - name: Install Dependencies
       working-directory: ./consulta2
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
