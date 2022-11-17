@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
         $companyLogo = $companyLogo->value;
         $companyName = DB::table('settings')->where('name', 'company-name')->first(['value']);
         $companyName = $companyName->value;
-        } catch (Throwable $th) {
+        } catch (\QueryException $ex) {
             $companyLogo = "consulta2.png";
             $companyName = "Consulta2";
         }
