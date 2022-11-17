@@ -52,9 +52,9 @@ jobs:
     #    touch database/database.sqlite
     - name: Execute tests (Unit and Feature tests) via PHPUnit
       working-directory: ./consulta2
-      env:
-        DB_CONNECTION: mysql
-        DB_DATABASE: test_db
-        DB_USER: root
-        DB_PASSWORD: root
+      #env:
+      #  DB_CONNECTION: mysql
+      #  DB_DATABASE: test_db
+      #  DB_USER: root
+      #  DB_PASSWORD: root
       run: php artisan test
