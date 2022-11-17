@@ -10,7 +10,15 @@ jobs:
   laravel-tests:
 
     runs-on: ubuntu-latest
-
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: test_db
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
     - uses: shivammathur/setup-php@15c43e89cdef867065b0213be354c2841860869e
       with:
@@ -22,6 +30,8 @@ jobs:
     - name: Install Dependencies
       working-directory: ./consulta2
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+    - name: Execute migrations
+      run: php artisan migrate:fresh --seed
     - name: Generate key
       working-directory: ./consulta2
       run: php artisan key:generate
