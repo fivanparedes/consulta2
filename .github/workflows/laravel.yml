@@ -31,6 +31,7 @@ jobs:
       working-directory: ./consulta2
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
     - name: Execute migrations
+      working-directory: ./consulta2
       run: php artisan migrate:fresh --seed
     - name: Generate key
       working-directory: ./consulta2
