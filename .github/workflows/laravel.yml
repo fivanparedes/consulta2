@@ -65,6 +65,7 @@ jobs:
     - name: Install Newman
       run: npm i newman -g
     - name: Run API tests with Newman
+      working-directory: ./consulta2
       run: |
         nohup php -S localhost:8000 -t public/ > phpd.log 2>&1 &
         sleep 2
