@@ -62,10 +62,8 @@ jobs:
         DB_PASSWORD: root
         APP_KEY: base64:APyfmB7+oWd6sZ86iYKtrqBJR1EvHkuxoESjME0DAu4=
       run: php artisan test
-    - name: Newman Test
-      uses: matt-ball/newman-action@v1.0.4
-      with:
-        apiKey: ${{ secrets.POSTMAN_API_KEY }}
-        collection: 17315207-94c1fccb-2d22-4254-b587-665b5f6d3f65
-        environment: 17315207-d7dde9b5-ffd1-4157-9d39-e9486937365c
+    - name: Install Newman
+      run: npm i newman -g
+    - name: Run API tests with Newman
+      run: newman run https://api.getpostman.com/collections/17315207-94c1fccb-2d22-4254-b587-665b5f6d3f65?apikey=${{ secrets.POSTMAN_API_KEY}} --environment https://api.getpostman.com/environments/17315207-d7dde9b5-ffd1-4157-9d39-e9486937365c?apikey=${{ secrets.POSTMAN_API_KEY}}
   
