@@ -16,7 +16,7 @@ jobs:
       with:
         php-version: '8.0'
     - name: Tell me the port
-      run: lsof -i -P -n | grep LISTEN
+      run: less /etc/services
     - uses: actions/checkout@v3
     #- name: Copy .env
     #  working-directory: ./consulta2
