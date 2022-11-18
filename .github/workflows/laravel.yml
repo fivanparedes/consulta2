@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: shivammathur/setup-php@15c43e89cdef867065b0213be354c2841860869e
+      id: setup-php
       with:
         php-version: '8.0'
     - uses: actions/checkout@v3
@@ -65,4 +66,5 @@ jobs:
         apiKey: ${{ secrets.POSTMAN_API_KEY }}
         collection: 17315207-94c1fccb-2d22-4254-b587-665b5f6d3f65
         environment: 17315207-d7dde9b5-ffd1-4157-9d39-e9486937365c
+        envVar: '[{ "key": "prefix", "value": "http://localhost:${{ steps.setup-php.ports[80] }}" }]'
       
