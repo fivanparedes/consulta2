@@ -60,7 +60,7 @@ jobs:
         APP_KEY: base64:APyfmB7+oWd6sZ86iYKtrqBJR1EvHkuxoESjME0DAu4=
       run: php artisan test
     - name: Newman Test
-      uses: matt-ball/newman-action@latest
+      uses: matt-ball/newman-action@v1.0.4
       with:
         apiKey: ${{ secrets.POSTMAN_API_KEY }}
         collection: 17315207-94c1fccb-2d22-4254-b587-665b5f6d3f65
