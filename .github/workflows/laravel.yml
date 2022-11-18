@@ -15,6 +15,8 @@ jobs:
       id: setup-php
       with:
         php-version: '8.0'
+    - name: Tell me the port
+      run: ip a
     - uses: actions/checkout@v3
     #- name: Copy .env
     #  working-directory: ./consulta2
@@ -66,5 +68,5 @@ jobs:
         apiKey: ${{ secrets.POSTMAN_API_KEY }}
         collection: 17315207-94c1fccb-2d22-4254-b587-665b5f6d3f65
         environment: 17315207-d7dde9b5-ffd1-4157-9d39-e9486937365c
-        envVar: '[{ "key": "prefix", "value": "http://localhost:${{ steps.setup-php.ports[80] }}" }]'
+        envVar: '[{ "key": "prefix", "value": "http://localhost:${{ steps.setup-php.outputs.ports[80] }}" }]'
       
