@@ -67,7 +67,7 @@ jobs:
     - name: Run API tests with Newman
       working-directory: ./consulta2
       run: |
-        nohup php artisan serve --port=8000
+        nohup php -S localhost:80 -t public/ > phpd.log 2>&1 &
         sleep 2
         newman run https://api.getpostman.com/collections/17315207-94c1fccb-2d22-4254-b587-665b5f6d3f65?apikey=${{ secrets.POSTMAN_API_KEY}} --environment https://api.getpostman.com/environments/17315207-d7dde9b5-ffd1-4157-9d39-e9486937365c?apikey=${{ secrets.POSTMAN_API_KEY}}
         kill -9 `lsof -i:8000 -t`
